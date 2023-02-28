@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 function Login() {
   var loginName;
   var loginPassword;
@@ -10,7 +9,6 @@ function Login() {
     var obj = { login: loginName.value, password: loginPassword.value };
     var js = JSON.stringify(obj);
     try {
-      console.log(js);
       const response = await fetch('http://localhost:5000/api/login', {
         method: 'POST',
         body: js,
@@ -34,7 +32,6 @@ function Login() {
       return;
     }
   };
-
   return (
     <div id="loginDiv">
       <form onSubmit={doLogin}>
@@ -57,12 +54,12 @@ function Login() {
         <input
           type="submit"
           id="loginButton"
-          class="buttons"
+          className="buttons"
           value="Do It"
           onClick={doLogin}
         />
       </form>
-      <span id="loginResult">{message}</span>
+      <span id="loginResult">{message}</span>{' '}
     </div>
   );
 }

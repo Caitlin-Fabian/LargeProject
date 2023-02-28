@@ -73,7 +73,7 @@ function CardUI() {
       <button
         type="button"
         id="searchCardButton"
-        class="buttons"
+        className="buttons"
         onClick={searchCard}
       >
         Search Card
@@ -92,7 +92,7 @@ function CardUI() {
       <button
         type="button"
         id="addCardButton"
-        class="buttons"
+        className="buttons"
         onClick={addCard}
       >
         Add Card
