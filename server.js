@@ -140,17 +140,20 @@ app.post('/api/login', async (req, res, next) => {
   // outgoing: id, firstName, lastName, error
   var error = '';
   const { login, password } = req.body;
+  const db = client.db('UCFGO');
+  const results = await db
+    .collection('Users')
+    .find({ Username: login, Password: password })
+    .toArray();
   var id = -1;
   var fn = '';
   var ln = '';
-  if (login.toLowerCase() == 'rickl' && password == 'COP4331') {
-    id = 1;
-    fn = 'Rick';
-    ln = 'Leinecker';
-  } else {
-    error = 'Invalid user name/password';
+  if (results.length > 0) {
+    id = results[0].UserID;
+    fn = results[0].FirstName;
+    ln = results[0].LastName;
   }
-  var ret = { id: id, firstName: fn, lastName: ln, error: error };
+  var ret = { id: id, firstName: fn, lastName: ln, error: '' };
   res.status(200).json(ret);
 });
 app.post('/api/searchcards', async (req, res, next) => {

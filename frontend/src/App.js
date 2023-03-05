@@ -5,9 +5,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // Pages
 import LoginPage from './pages/LoginPage';
 import CardPage from './pages/CardPage';
+import InventoryPage from './pages/InventoryPage';
 
 // CSS files
 import './css/login.scss';
+import './css/Navbar.scss';
 import './App.css';
 
 function App() {
@@ -19,10 +21,15 @@ function App() {
           index
           element={<LoginPage />}
         />
-        <Route
+        {/* <Route
           path="/cards"
           index
           element={<CardPage />}
+        /> */}
+        <Route
+          path="/inventory"
+          index
+          element={<InventoryPage />}
         />
       </Routes>
     </BrowserRouter>

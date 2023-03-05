@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import pokeball from '../assets/Balls.svg';
+
 function Login() {
   var loginName;
   var loginPassword;
@@ -9,6 +10,7 @@ function Login() {
     event.preventDefault();
     var obj = { login: loginName.value, password: loginPassword.value };
     var js = JSON.stringify(obj);
+    console.log(js);
     try {
       const response = await fetch('http://localhost:5000/api/login', {
         method: 'POST',
@@ -17,6 +19,7 @@ function Login() {
       });
       var res = JSON.parse(await response.text());
       if (res.id <= 0) {
+        console.log(res);
         setMessage('User/Password combination incorrect');
       } else {
         var user = {
@@ -26,7 +29,7 @@ function Login() {
         };
         localStorage.setItem('user_data', JSON.stringify(user));
         setMessage('');
-        window.location.href = '/cards';
+        window.location.href = '/inventory';
       }
     } catch (e) {
       alert(e.toString());
