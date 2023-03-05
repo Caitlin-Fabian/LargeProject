@@ -23,15 +23,10 @@ function BasicExample() {
       </Container>
       <div>
         <Nav className="me-5 text-nowrap align ">
-          <Nav.Link
-            href="#"
-            className="text-gold"
-          >
-            Inventory
-          </Nav.Link>
-          <Nav.Link href="#">Journey</Nav.Link>
-          <Nav.Link href="#">Score Board</Nav.Link>
-          <Nav.Link href="#">profile</Nav.Link>
+          <Nav.Link href="/inventory">Inventory</Nav.Link>
+          <Nav.Link href="/journey">Journey</Nav.Link>
+          <Nav.Link href="/Scoreboard">Score Board</Nav.Link>
+          <Nav.Link href="/profile">profile</Nav.Link>
         </Nav>
       </div>
     </Navbar>

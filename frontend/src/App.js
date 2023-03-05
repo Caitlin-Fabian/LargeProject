@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import CardPage from './pages/CardPage';
 import InventoryPage from './pages/InventoryPage';
+import ProfilePage from './pages/ProfilePage';
+import JourneyPage from './pages/JourneyPage';
+import ScoreBoardPage from './pages/ScoreBoardPage';
 
 // CSS files
 import './css/login.scss';
@@ -30,6 +33,21 @@ function App() {
           path="/inventory"
           index
           element={<InventoryPage />}
+        />
+        <Route
+          path="/journey"
+          index
+          element={<JourneyPage />}
+        />
+        <Route
+          path="/Scoreboard"
+          index
+          element={<ScoreBoardPage />}
+        />
+        <Route
+          path="/profile"
+          index
+          element={<ProfilePage />}
         />
       </Routes>
     </BrowserRouter>

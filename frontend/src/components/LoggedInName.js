@@ -21,7 +21,7 @@ function LoggedInName() {
       <button
         type="button"
         id="logoutButton"
-        class="buttons"
+        className="buttons"
         onClick={doLogout}
       >
         {' '}
