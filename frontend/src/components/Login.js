@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import pokeball from '../assets/Ball.svg';
 function Login() {
   var loginName;
   var loginPassword;
@@ -33,34 +34,61 @@ function Login() {
     }
   };
   return (
-    <div id="loginDiv">
-      <form onSubmit={doLogin}>
-        <span id="inner-title">PLEASE LOG IN</span>
-        <br />
-        <input
-          type="text"
-          id="loginName"
-          placeholder="Username"
-          ref={(c) => (loginName = c)}
-        />
-        <br />
-        <input
-          type="password"
-          id="loginPassword"
-          placeholder="Password"
-          ref={(c) => (loginPassword = c)}
-        />
-        <br />
-        <input
-          type="submit"
-          id="loginButton"
-          className="buttons"
-          value="Do It"
-          onClick={doLogin}
-        />
-      </form>
-      <span id="loginResult">{message}</span>{' '}
-    </div>
+    <>
+      <div className="d-flex justify-content-center align-content-center">
+        <div className="title">
+          <h1>UCF GO</h1>
+        </div>
+        <div
+          id="loginDiv"
+          className="text-center login p-4 rounded"
+        >
+          <form onSubmit={doLogin}>
+            <h2>LOG IN</h2>
+            <br />
+            <label>
+              Name:
+              <br />
+              <input
+                type="text"
+                id="loginName"
+                className="rounded mb-3 text-left"
+                placeholder="Username"
+                ref={(c) => (loginName = c)}
+              />
+            </label>
+
+            <br />
+            <label>
+              Password:
+              <br />
+              <input
+                type="password"
+                className="rounded mb-3"
+                id="loginPassword"
+                placeholder="Password"
+                ref={(c) => (loginPassword = c)}
+              />
+            </label>
+            <br />
+            <input
+              type="submit"
+              id="loginButton"
+              className="buttons"
+              value="Do It"
+              onClick={doLogin}
+            />
+          </form>
+          <span id="loginResult">{message}</span>{' '}
+        </div>
+        <div className="pokeball-outline"></div>
+        <img
+          src={pokeball}
+          className="pokeball"
+          alt="yellow and white pokeball"
+        ></img>
+      </div>
+    </>
   );
 }
 export default Login;

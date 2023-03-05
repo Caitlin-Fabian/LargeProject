@@ -1,0 +1,40 @@
+$transparent-white: rgba(255,255,255,0.7);
+$dark-yellow: #CCA30F;
+
+.ucf-background{
+    background-image: url('../assets/reflectionpond.jpg');
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: blur(4px);
+}
+
+.title{
+    position: absolute;
+    top:3%;
+    color: $dark-yellow;
+    -webkit-text-stroke: 3px black; 
+}
+.title h1 {
+    font-size: 10vw;
+}
+
+.pokeball{
+    position: absolute;
+    height: 60vh;
+    top:25%;
+}
+
+
+
+
+.login{
+    position: absolute;
+    top: 40%;
+    z-index:5;
+    background-color: $transparent-white;
+    height: 50vh;
+    width: 40vw;
+    min-width: 30vw;
+}
