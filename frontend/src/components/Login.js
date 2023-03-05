@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import pokeball from '../assets/Ball.svg';
+import pokeball from '../assets/Balls.svg';
 function Login() {
   var loginName;
   var loginPassword;
@@ -45,9 +45,8 @@ function Login() {
         >
           <form onSubmit={doLogin}>
             <h2>LOG IN</h2>
-            <br />
             <label>
-              Name:
+              Username:
               <br />
               <input
                 type="text"
@@ -75,7 +74,7 @@ function Login() {
               type="submit"
               id="loginButton"
               className="buttons"
-              value="Do It"
+              value="Log In"
               onClick={doLogin}
             />
           </form>

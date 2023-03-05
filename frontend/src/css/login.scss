@@ -1,20 +1,23 @@
 $transparent-white: rgba(255,255,255,0.7);
 $dark-yellow: #CCA30F;
 
+label{
+    text-align: left;
+}
 .ucf-background{
-    background-image: url('../assets/reflectionpond.jpg');
+    background-image: url('../assets/UCF-Campus.jpg');
     height: 100vh;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    filter: blur(4px);
+    filter: blur(4px)brightness(0.6);
 }
 
 .title{
     position: absolute;
     top:3%;
     color: $dark-yellow;
-    -webkit-text-stroke: 3px black; 
+    -webkit-text-stroke: 3px white; 
 }
 .title h1 {
     font-size: 10vw;
@@ -22,19 +25,19 @@ $dark-yellow: #CCA30F;
 
 .pokeball{
     position: absolute;
-    height: 60vh;
+    height: 70vh;
     top:25%;
 }
 
 
-
-
 .login{
     position: absolute;
+    font-family: 'Mako', sans-serif;
     top: 40%;
     z-index:5;
     background-color: $transparent-white;
-    height: 50vh;
-    width: 40vw;
-    min-width: 30vw;
+    min-height: 43vh;
+    width: -moz-fit-content;
+    width: fit-content;
 }
+
