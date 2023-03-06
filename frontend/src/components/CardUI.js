@@ -1,42 +1,52 @@
 import React, { useState } from 'react';
+import { useJwt } from 'react-jwt';
+import axios from 'axios';
 
 function CardUI() {
+  var bp = require('./Path.js');
   var card = '';
   var search = '';
   const [message, setMessage] = useState('');
   const [searchResults, setResults] = useState('');
   const [cardList, setCardList] = useState('');
 
-  const app_name = 'ucf-go';
-  function buildPath(route) {
-    if (process.env.NODE_ENV === 'production') {
-      return 'https://' + app_name + '.herokuapp.com/' + route;
-    } else {
-      return 'http://localhost:5000/' + route;
-    }
-  }
+  // const app_name = 'ucf-go';
+  // function buildPath(route) {
+  //   if (process.env.NODE_ENV === 'production') {
+  //     return 'https://' + app_name + '.herokuapp.com/' + route;
+  //   } else {
+  //     return 'http://localhost:5000/' + route;
+  //   }
+  // }
 
   let _ud = localStorage.getItem('user_data');
   let ud = JSON.parse(_ud);
-  let userId = ud.id;
+  var userId = ud.userId;
   let firstName = ud.firstName;
   let lastName = ud.lastName;
   const addCard = async (event) => {
     event.preventDefault();
-    let obj = { userId: userId, card: card.value };
+    var storage = require('../tokenStorage.js');
+    var obj = {
+      userId: userId,
+      card: card.value,
+      jwtToken: storage.retrieveToken(),
+    };
     let js = JSON.stringify(obj);
     try {
-      const response = await fetch(buildPath('api/addcard'), {
+      var bp = require('./Path.js');
+      const response = await fetch(bp.buildPath('api/addcard'), {
         method: 'POST',
         body: js,
         headers: { 'Content-Type': 'application/json' },
       });
-      let txt = await response.text();
-      let res = JSON.parse(txt);
-      if (res.error.length > 0) {
+      var txt = await response.text();
+      var res = JSON.parse(txt);
+      if (res.error && res.error.length > 0) {
         setMessage('API Error:' + res.error);
       } else {
         setMessage('Card has been added');
+        storage.storeToken(res.jwtToken);
       }
     } catch (e) {
       setMessage(e.toString());
@@ -45,18 +55,24 @@ function CardUI() {
   const searchCard = async (event) => {
     event.preventDefault();
 
-    let obj = { userId: userId, search: search.value };
+    var storage = require('../tokenStorage.js');
+    var obj = {
+      userId: userId,
+      search: search.value,
+      jwtToken: storage.retrieveToken(),
+    };
     let js = JSON.stringify(obj);
     try {
-      const response = await fetch(buildPath('api/searchcards'), {
+      var bp = require('./Path.js');
+      const response = await fetch(bp.buildPath('api/searchcards'), {
         method: 'POST',
         body: js,
         headers: { 'Content-Type': 'application/json' },
       });
-      let txt = await response.text();
-      let res = JSON.parse(txt);
-      let _results = res.results;
-      let resultText = '';
+      var txt = await response.text();
+      var res = JSON.parse(txt);
+      var _results = res.results;
+      var resultText = '';
       for (var i = 0; i < _results.length; i++) {
         resultText += _results[i];
         if (i < _results.length - 1) {
@@ -68,6 +84,7 @@ function CardUI() {
     } catch (e) {
       alert(e.toString());
       setResults(e.toString());
+      storage.storeToken(res.jwtToken);
     }
   };
   return (
