@@ -7,6 +7,15 @@ function CardUI() {
   const [searchResults, setResults] = useState('');
   const [cardList, setCardList] = useState('');
 
+  const app_name = 'ucf-go';
+  function buildPath(route) {
+    if (process.env.NODE_ENV === 'production') {
+      return 'https://' + app_name + '.herokuapp.com/' + route;
+    } else {
+      return 'http://localhost:5000/' + route;
+    }
+  }
+
   let _ud = localStorage.getItem('user_data');
   let ud = JSON.parse(_ud);
   let userId = ud.id;
@@ -17,7 +26,7 @@ function CardUI() {
     let obj = { userId: userId, card: card.value };
     let js = JSON.stringify(obj);
     try {
-      const response = await fetch('http://localhost:5000/api/addcard', {
+      const response = await fetch(buildPath('api/addcard'), {
         method: 'POST',
         body: js,
         headers: { 'Content-Type': 'application/json' },
@@ -39,7 +48,7 @@ function CardUI() {
     let obj = { userId: userId, search: search.value };
     let js = JSON.stringify(obj);
     try {
-      const response = await fetch('http://localhost:5000/api/searchcards', {
+      const response = await fetch(buildPath('api/searchcards'), {
         method: 'POST',
         body: js,
         headers: { 'Content-Type': 'application/json' },
