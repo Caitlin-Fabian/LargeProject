@@ -6,16 +6,8 @@ import pokeball from '../assets/Balls.svg';
 function Login() {
     var loginName;
     var loginPassword;
+    var bp = require('./Path.js');
     const [message, setMessage] = useState('');
-
-    const app_name = 'ucf-go';
-    function buildPath(route) {
-        if (process.env.NODE_ENV === 'production') {
-            return 'https://' + app_name + '.herokuapp.com/' + route;
-        } else {
-            return 'http://localhost:5000/' + route;
-        }
-    }
 
     const doLogin = async (event) => {
         event.preventDefault();
@@ -23,7 +15,7 @@ function Login() {
         var js = JSON.stringify(obj);
         // console.log(js);
         try {
-            const response = await fetch(buildPath('api/login'), {
+            const response = await fetch(bp.buildPath('api/login'), {
                 method: 'POST',
                 body: js,
                 headers: { 'Content-Type': 'application/json' },
