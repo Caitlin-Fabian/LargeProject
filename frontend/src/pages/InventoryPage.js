@@ -1,15 +1,16 @@
 import React from 'react';
+
 import PageTitle from '../components/PageTitle';
-import LoggedInName from '../components/LoggedInName';
-import CardUI from '../components/CardUI';
+// import CardUI from '../components/CardUI';
 import NavBar from '../components/NavBar';
+import Inventory from '../components/Inventory';
+
 const InventoryPage = () => {
-  return (
-    <div>
-      <NavBar />
-      <LoggedInName />
-      <CardUI />
-    </div>
-  );
+    return (
+        <div className="inventory">
+            <NavBar />
+            <Inventory />
+        </div>
+    );
 };
 export default InventoryPage;

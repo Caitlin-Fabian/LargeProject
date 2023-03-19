@@ -26,7 +26,7 @@ label{
 
 .pokeball{
     position: absolute;
-    height: 70vh;
+    height: 70%;
     top:25%;
 }
 
@@ -42,3 +42,20 @@ label{
     width: fit-content;
 }
 
+#Register .pokeball{
+    position: absolute;
+    height: 80%;
+    top:20%;
+}
+
+#Register .login{
+    position: absolute;
+    font-family: 'Mako', sans-serif;
+    top: 25%;
+    z-index:5;
+    background-color: $transparent-white;
+    min-height: 43vh;
+    width: -moz-fit-content;
+    width: fit-content;
+
+}
