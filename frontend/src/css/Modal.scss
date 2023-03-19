@@ -1,0 +1,21 @@
+$transparent-black: rgba(0,0,0,0.2);
+
+.CharModal {
+    height: 80vh;
+    width: 60vw;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+   }
+
+.dimBackground{
+    background-color: $transparent-black;
+    filter: brightness(0.5);
+}
+
+.bg-disabled {
+    background: gray;
+    filter: brightness(0.5);
+  }

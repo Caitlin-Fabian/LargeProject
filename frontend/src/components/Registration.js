@@ -8,16 +8,8 @@ function Login() {
     var newUsername;
     var newPassword;
     var newEmail;
+    var bp = require('./Path.js');
     const [message, setMessage] = useState('');
-
-    const app_name = 'ucf-go';
-    function buildPath(route) {
-        if (process.env.NODE_ENV === 'production') {
-            return 'https://' + app_name + '.herokuapp.com/' + route;
-        } else {
-            return 'http://localhost:5000/' + route;
-        }
-    }
 
     const doRegister = async (event) => {
         event.preventDefault();
@@ -30,7 +22,7 @@ function Login() {
         var js = JSON.stringify(obj);
         console.log(js);
         try {
-            const response = await fetch(buildPath('api/register'), {
+            const response = await fetch(bp.buildPath('api/register'), {
                 method: 'POST',
                 body: js,
                 headers: { 'Content-Type': 'application/json' },

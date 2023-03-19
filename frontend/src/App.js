@@ -14,6 +14,8 @@ import RegistrationPage from './pages/RegistrationPage';
 // CSS files
 import './css/login.scss';
 import './css/Navbar.scss';
+import './css/Modal.scss';
+import './css/inventory.scss';
 import './App.css';
 
 function App() {

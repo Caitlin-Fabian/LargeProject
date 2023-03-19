@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Mako&display=swap');
 body {
-  font-family: 'Bubblegum Sans', cursive;
+    font-family: 'Bubblegum Sans', cursive;
+}
+html {
+    height: 100%;
 }

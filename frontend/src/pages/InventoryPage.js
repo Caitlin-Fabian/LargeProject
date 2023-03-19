@@ -1,14 +1,15 @@
 import React from 'react';
+
 import PageTitle from '../components/PageTitle';
-import LoggedInName from '../components/LoggedInName';
 // import CardUI from '../components/CardUI';
 import NavBar from '../components/NavBar';
+import Inventory from '../components/Inventory';
+
 const InventoryPage = () => {
     return (
-        <div>
+        <div className="inventory">
             <NavBar />
-            <LoggedInName />
-            {/* <CardUI /> */}
+            <Inventory />
         </div>
     );
 };

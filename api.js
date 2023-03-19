@@ -26,7 +26,7 @@ exports.setApp = function (app, client) {
         var name = '';
         var score = '';
         if (results.length > 0) {
-            id = results[0].id;
+            id = results[0]._id;
             name = results[0].Name;
             score = results[0].Score;
         }
@@ -91,8 +91,8 @@ exports.setApp = function (app, client) {
         const db = client.db('UCFGO');
 
         db.collection('Inventory').insertOne({
-            UserID: monsterID,
-            MonsterID: userID,
+            UserID: userID,
+            MonsterID: monsterID,
         });
         //updates user with the given monster score
 
@@ -102,6 +102,7 @@ exports.setApp = function (app, client) {
         db.collection('Users').updateOne(query, { $set: { Score: upScore } });
 
         error = 'N/A';
+
         var ret = { error: error };
         res.status(200).json(ret);
     });
