@@ -42,7 +42,7 @@ const CharacterModal = ({ setMonsterModal, setCharacterModal }) => {
                         `}
                         >
                             <img
-                                className="card-img-top w-75"
+                                className="card-img-top w-75 mx-auto"
                                 src={card.picture}
                                 alt="Character Drawing"
                             />

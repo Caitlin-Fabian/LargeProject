@@ -33,13 +33,13 @@ function Inventory() {
 
     return (
         <>
-            <div className="bg-secondary inventory">
+            <div className="inventory">
                 <div>
-                    <span id="userName">
+                    {/* <span id="userName">
                         Logged In As {name} <br />
                         score: {score}
                     </span>
-                    <br />
+                    <br /> */}
                     <button
                         type="button"
                         id="logoutButton"

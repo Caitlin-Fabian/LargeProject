@@ -1,30 +1,9 @@
 import React, { useState } from 'react';
-
-import citronaut from '../assets/citronaut.png';
-import pegasus from '../assets/pegasus.png';
-import knightro from '../assets/knightro.png';
+import { monsters } from './monsters';
 
 const CharacterModal = ({ setScore, id, setMonsterModal }) => {
     console.log('userid:' + id);
-
-    var teams = [
-        {
-            id: 8,
-            title: 'Pegasus',
-            picture: pegasus,
-        },
-        {
-            id: 6,
-            title: 'Knightro',
-            picture: knightro,
-        },
-        {
-            id: 7,
-            title: 'Citronaut',
-            picture: citronaut,
-        },
-    ];
-
+    const starters = monsters.slice(2);
     const [selectedId, setSelectedId] = useState(null);
 
     const addMonster = async (id, score) => {
@@ -74,7 +53,7 @@ const CharacterModal = ({ setScore, id, setMonsterModal }) => {
             <div className=" d-flex justify-content-center flex-column container">
                 <h1>Choose Your Monster!</h1>
                 <div className="d-flex flex-row justify-content-around">
-                    {teams.map((card) => (
+                    {starters.map((card) => (
                         <div
                             key={card.id}
                             onClick={() => setSelectedId(card.id)}
@@ -87,7 +66,7 @@ const CharacterModal = ({ setScore, id, setMonsterModal }) => {
                         `}
                         >
                             <img
-                                className="card-img-top w-50"
+                                className="card-img-top w-50 mx-auto"
                                 src={card.picture}
                                 alt="Character Drawing"
                             />
