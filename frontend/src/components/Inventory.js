@@ -60,6 +60,7 @@ function Inventory() {
                     <MonsterModal
                         id={userId}
                         setMonsterModal={setMonsterModal}
+                        setScore={setScore}
                     />
                 )}
                 {monster}

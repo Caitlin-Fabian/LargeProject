@@ -4,7 +4,7 @@ import citronaut from '../assets/citronaut.png';
 import pegasus from '../assets/pegasus.png';
 import knightro from '../assets/knightro.png';
 
-const CharacterModal = ({ id, setMonsterModal }) => {
+const CharacterModal = ({ setScore, id, setMonsterModal }) => {
     console.log('userid:' + id);
 
     var teams = [
@@ -65,7 +65,8 @@ const CharacterModal = ({ id, setMonsterModal }) => {
 
     const handleNext = () => {
         addMonster(id, 10);
-        // setMonsterModal(false);
+        setScore(10);
+        setMonsterModal(false);
     };
 
     return (
