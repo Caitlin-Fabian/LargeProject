@@ -6,13 +6,14 @@ import MonsterList from './MonsterList';
 
 function Inventory() {
     var _ud = localStorage.getItem('user_data');
+    console.log(_ud);
     var ud = JSON.parse(_ud);
+    console.log(ud);
     var userId = ud.id;
-    var name = ud.name;
+    var Name = ud.Name;
     var monster;
     const [characterModal, setCharacterModal] = useState(false);
     const [monsterModal, setMonsterModal] = useState(false);
-
     const [score, setScore] = useState(ud.score);
 
     const doLogout = (event) => {
@@ -21,6 +22,8 @@ function Inventory() {
         window.location.href = '/';
     };
 
+    /* This renders monsterlist if the modals are hidden.
+       This means that the player has chosen their character and monster */
     if (!characterModal && !monsterModal) {
         monster = <MonsterList />;
     }

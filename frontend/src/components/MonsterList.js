@@ -11,9 +11,12 @@ function MonsterList() {
     var bp = require('./Path.js');
     var _ud = localStorage.getItem('user_data');
     var ud = JSON.parse(_ud);
+    console.log(ud);
     var userId = ud.id;
     console.log(userId);
     const [monsterList, setMonsterList] = useState([]);
+    const [numList, setNumList] = useState(0);
+
     const [chosenPicture, setChosenPicture] = useState('');
     const [chosenName, setChosenName] = useState('Choose A Monster');
     const [choseDescription, setChosenDescription] = useState('');
@@ -66,6 +69,11 @@ function MonsterList() {
                     res.monsterList.some((o2) => o1.id === o2._id)
                 );
                 console.log(result);
+                if (result.length < 4) {
+                    setNumList(result.length);
+                } else {
+                    setNumList(3);
+                }
                 setMonsterList(result);
             }
         } catch (e) {
@@ -102,7 +110,7 @@ function MonsterList() {
             <div>
                 <Slider
                     dots={true}
-                    slidesToShow={3}
+                    slidesToShow={numList}
                     slidesToScroll={1}
                     autoplay={false}
                 >
