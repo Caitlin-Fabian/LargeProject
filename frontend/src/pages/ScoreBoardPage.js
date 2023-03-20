@@ -2,16 +2,17 @@ import React from 'react';
 import PageTitle from '../components/PageTitle';
 import Login from '../components/Login';
 import NavBar from '../components/NavBar';
+import Scoreboard from '../components/Scoreboard';
 
 const ScoreBoardPage = () => {
-  return (
-    <>
-      <div>
-        <NavBar />
-        <PageTitle />
-        Score
-      </div>
-    </>
-  );
+    return (
+        <>
+            <div>
+                <NavBar />
+                <PageTitle />
+                <Scoreboard />
+            </div>
+        </>
+    );
 };
 export default ScoreBoardPage;

@@ -27,10 +27,11 @@ function Login() {
                 setMessage('User/Password combination incorrect');
             } else {
                 var user = {
-                    name: res.name,
+                    Name: res.Name,
                     score: res.score,
                     id: res.id,
                 };
+                console.log(user);
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
                 window.location.href = '/inventory';

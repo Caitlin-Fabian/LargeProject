@@ -1,3 +1,4 @@
+const { BSON, EJSON, ObjectId } = require('bson');
 require('express');
 require('mongodb');
 
@@ -23,14 +24,14 @@ exports.setApp = function (app, client) {
             .find({ Username: login, Password: password })
             .toArray();
         var id = -1;
-        var name = '';
+        var Name = '';
         var score = '';
         if (results.length > 0) {
             id = results[0]._id;
-            name = results[0].Name;
+            Name = results[0].Name;
             score = results[0].Score;
         }
-        var ret = { id: id, name: name, score: score, error: '' };
+        var ret = { id: id, Name: Name, score: score, error: '' };
         res.status(200).json(ret);
     });
     // app.post('/api/searchcards', async (req, res, next) => {
@@ -64,6 +65,10 @@ exports.setApp = function (app, client) {
             .find({ Username: username })
             .toArray();
         console.log(results);
+
+        var score = '';
+        var id = -1;
+
         if (results.length == 0) {
             db.collection('Users').insertOne({
                 Name: name,
@@ -72,12 +77,20 @@ exports.setApp = function (app, client) {
                 Email: email,
                 Score: 0,
             });
+
+            const res = await db
+                .collection('Users')
+                .find({ Username: username })
+                .toArray();
+            id = res[0]._id;
+            score = res[0].Score;
+
             error = 'N/A';
         } else {
             error =
                 'A user with the same username already exists, Please try again';
         }
-        var ret = { error: error };
+        var ret = { Name: name, id: id, score: score, error: error };
         res.status(200).json(ret);
     });
 
@@ -96,8 +109,10 @@ exports.setApp = function (app, client) {
         });
         //updates user with the given monster score
 
-        var query = { _id: userID };
+        var query = { _id: new BSON.ObjectId(userID) };
+        console.log(query);
         const user = await db.collection('Users').find(query).toArray();
+        console.log(user);
         var upScore = user[0].Score + monsterScore;
         db.collection('Users').updateOne(query, { $set: { Score: upScore } });
 
