@@ -9,7 +9,6 @@ import InventoryPage from './pages/InventoryPage';
 import ProfilePage from './pages/ProfilePage';
 import JourneyPage from './pages/JourneyPage';
 import ScoreBoardPage from './pages/ScoreBoardPage';
-import RegistrationPage from './pages/RegistrationPage';
 
 // CSS files
 import './css/login.scss';
@@ -26,11 +25,6 @@ function App() {
                     path="/"
                     index
                     element={<LoginPage />}
-                />
-                <Route
-                    path="/registration"
-                    index
-                    element={<RegistrationPage />}
                 />
                 <Route
                     path="/inventory"

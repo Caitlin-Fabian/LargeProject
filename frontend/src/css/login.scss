@@ -11,7 +11,7 @@ label{
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    filter: blur(4px)brightness(0.6);
+    filter: blur(2px)brightness(0.8);
 }
 
 .title{
@@ -26,36 +26,103 @@ label{
 
 .pokeball{
     position: absolute;
-    height: 70%;
-    top:25%;
-}
-
-
-.login{
-    position: absolute;
-    font-family: 'Mako', sans-serif;
-    top: 40%;
-    z-index:5;
-    background-color: $transparent-white;
-    min-height: 43vh;
-    width: -moz-fit-content;
-    width: fit-content;
-}
-
-#Register .pokeball{
-    position: absolute;
     height: 80%;
     top:20%;
 }
 
-#Register .login{
-    position: absolute;
-    font-family: 'Mako', sans-serif;
-    top: 35vh;
-    height: 50vh;
-    z-index:5;
-    background-color: $transparent-white;
-    width: -moz-fit-content;
-    width: fit-content;
 
+.Login-container{
+    height: 55vh;
+    width: 50vh;
+    box-shadow: 8px 8px 20px rgb(128, 128, 128);
+    position: absolute;
+    z-index:5;
+    top: 34%;
+    overflow: hidden;
+    background-color: $transparent-white;
+}
+
+.btn{
+    height: 30px;
+    width: 300px;
+    background-color: white;
+    box-shadow: 10px 10px 30px rgb(254, 215, 188);
+    border-radius: 50px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.login-btn,
+.register-btn {
+    font-size: 20px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    position: relative;
+    cursor: pointer;
+}
+
+.slider {
+    height: 30px;
+    width: 150px;
+    border-radius: 50px;
+    background-image: linear-gradient(to right,
+            rgb(242, 189, 0),
+            rgb(240, 163, 15));
+    position: absolute;
+    top: 0;
+    left: 10px;
+    transition: all 0.5s ease-in-out;
+}
+ 
+.moveslider {
+    left: 162px;
+}
+ 
+.form-section {
+    height: 500px;
+    width: 1000px;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    transition: all 0.5s ease-in-out;
+    left: -90px;
+    align-items: center;
+}
+.form-section-move {
+    left: -590px;
+}
+ 
+.login-box,
+.register-box {
+    width: 600px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px 40px;
+}
+.login-box {
+    gap: 20px;
+}
+ 
+.ele {
+    outline: none;
+    border: none;
+    color: rgb(77, 77, 77);
+    background-color: rgb(240, 240, 240);
+    border-radius: 50px;
+    padding-left: 30px;
+    font-size: 18px;
+}
+.clkbtn {
+    width: 40%;
+    border-radius: 50px;
+    background-image: linear-gradient(to right,
+    rgb(242, 189, 0),
+    rgb(240, 163, 15));
+    font-size: 22px;
+    border: none;
+    cursor: pointer;
 }
