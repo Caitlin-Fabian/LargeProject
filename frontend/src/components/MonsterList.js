@@ -13,10 +13,9 @@ function MonsterList() {
     var ud = JSON.parse(_ud);
     console.log(ud);
     var userId = ud.id;
+
     console.log(userId);
     const [monsterList, setMonsterList] = useState([]);
-    const [numList, setNumList] = useState(0);
-
     const [chosenPicture, setChosenPicture] = useState('');
     const [chosenName, setChosenName] = useState('Choose A Monster');
     const [choseDescription, setChosenDescription] = useState('');
@@ -26,21 +25,26 @@ function MonsterList() {
     const handleSelect = (selectedIndex, e) => {
         console.log(selectedIndex);
         let result = monsterList.find((item) => item.id === selectedIndex);
-        console.log(result.picture);
         setChosenPicture(result.picture);
         setChosenName(result.title);
         setChosenDescription(result.description);
         setChosen(true);
     };
 
+    console.log(Object.keys(monsterList));
+
     const renderSlides = () =>
-        monsterList.map((monster) => (
+        monsters.map((monster) => (
             <div className="d-flex align-items-center flex-column">
                 <img
                     onClick={() => handleSelect(monster.id)}
                     src={monster.picture}
                     alt="character design"
-                    className={`mx-auto ${chosen ? 'w-25' : 'w-50'}`}
+                    className={`mx-auto ${chosen ? 'w-25' : 'w-50'} ${
+                        Object.keys(monsterList).includes(monster.id)
+                            ? ''
+                            : 'silhouette'
+                    }`}
                 ></img>
                 <h3>{monster.title}</h3>
             </div>
@@ -61,7 +65,7 @@ function MonsterList() {
             var res = JSON.parse(await response.text());
             console.log(res);
 
-            if (res.MonsterList <= 0) {
+            if (res.monsterList <= 0) {
                 setMessage('You dont have any monsters');
             } else {
                 console.log(res.monsterList);
@@ -69,11 +73,7 @@ function MonsterList() {
                     res.monsterList.some((o2) => o1.id === o2._id)
                 );
                 console.log(result);
-                if (result.length < 4) {
-                    setNumList(result.length);
-                } else {
-                    setNumList(3);
-                }
+
                 setMonsterList(result);
             }
         } catch (e) {
@@ -110,7 +110,7 @@ function MonsterList() {
             <div>
                 <Slider
                     dots={true}
-                    slidesToShow={numList}
+                    slidesToShow={3}
                     slidesToScroll={1}
                     autoplay={false}
                 >

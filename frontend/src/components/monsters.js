@@ -2,12 +2,13 @@ import citronaut from '../assets/citronaut.png';
 import pegasus from '../assets/pegasus.png';
 import knightro from '../assets/knightro.png';
 import girl from '../assets/girl_character.png';
+import plant_monster from '../assets/plant_monster.png';
 
 export const monsters = [
     {
         id: 1,
-        title: 'Memory Leech',
-        picture: girl,
+        title: 'Arboretum Monster',
+        picture: plant_monster,
         description:
             'A creature that feeds on the memories of students who study late at night in the John C. Hitt Library.',
     },
