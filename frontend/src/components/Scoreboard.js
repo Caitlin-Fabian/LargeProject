@@ -37,35 +37,29 @@ function Scoreboard() {
 
     return (
         <Container className="scoreboard-container justify-content-center">
-            <Row>
+            <Row className="position-relative d-flex align-items-center">
                 <Col className="d-flex justify-content-center">
-                    <div>
-                        <img
-                            style={{ width: '30vw' }}
-                            src={one}
-                            alt="Ranking Decoration"
-                        ></img>
-                        <div
-                            style={{
-                                width: '30px',
-                                height: '50px',
-                                backgroundColor: 'black',
-                            }}
-                        ></div>
-                    </div>
+                    <img
+                        style={{ width: '60%' }}
+                        src={one}
+                        alt="Ranking Decoration"
+                    ></img>
+                </Col>
+                <Col className="position-absolute d-flex justify-content-center align-items-center">
+                    <div className="placement"></div>
                 </Col>
             </Row>
             <Row>
                 <Col className="d-flex justify-content-center">
                     <img
-                        style={{ height: '20vw' }}
+                        style={{ width: '100%' }}
                         src={two}
                         alt="Ranking Decoration"
                     ></img>
                 </Col>
                 <Col className="d-flex justify-content-center my-auto">
                     <img
-                        style={{ height: '15vw' }}
+                        style={{ width: '90%' }}
                         src={three}
                         alt="Ranking Decoration"
                     ></img>

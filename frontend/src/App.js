@@ -15,7 +15,7 @@ import './css/login.scss';
 import './css/Navbar.scss';
 import './css/Modal.scss';
 import './css/inventory.scss';
-import './css/scoreboard-container.scss';
+import './css/scoreboard.scss';
 import './App.css';
 
 function App() {
