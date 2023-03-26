@@ -9,7 +9,6 @@ const ScoreBoardPage = () => {
         <>
             <div>
                 <NavBar />
-                <PageTitle />
                 <Scoreboard />
             </div>
         </>
