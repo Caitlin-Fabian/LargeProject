@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useJwt } from 'react-jwt';
+import axios from 'axios';
+import { isExpired, decodeToken } from 'react-jwt';
+
 import pokeball from '../assets/Balls.svg';
 
 function Login() {
@@ -11,6 +15,8 @@ function Login() {
     let loginName;
     let loginPassword;
     let bp = require('./Path.js');
+    var storage = require('../tokenStorage.js');
+
     const [message, setMessage] = useState('');
     const [isLogin, setIsLogin] = useState(true);
 
@@ -18,41 +24,43 @@ function Login() {
         event.preventDefault();
         var obj = { login: loginName.value, password: loginPassword.value };
         var js = JSON.stringify(obj);
-        // console.log(js);
+        console.log(js);
         try {
-            const response = await fetch(bp.buildPath('api/login'), {
-                method: 'POST',
-                body: js,
-                headers: { 'Content-Type': 'application/json' },
-            });
-            var res = JSON.parse(await response.text());
-            console.log(res);
+            var config = {
+                method: 'post',
+                url: bp.buildPath('api/login'),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: js,
+            };
 
-            if (res.id <= 0) {
-                setMessage('User/Password combination incorrect');
-            } else {
-                var user = {
-                    Name: res.Name,
-                    score: res.score,
-                    id: res.id,
-                };
-                console.log(user);
-                localStorage.setItem('user_data', JSON.stringify(user));
-                setMessage('');
-                window.location.href = '/inventory';
-            }
+            axios(config).then(function (response) {
+                var res = response.data;
+                if (res.error) {
+                    setMessage('User/Password combination incorrect');
+                } else {
+                    console.log(res);
+                    storage.storeToken(res);
+                    var ud = decodeToken(storage.retrieveToken());
+                    console.log(ud);
+                    var id = ud.UserID;
+                    var Name = ud.Name;
+                    var score = ud.Score;
+
+                    var user = {
+                        Name: Name,
+                        score: score,
+                        id: id,
+                    };
+                    localStorage.setItem('user_data', JSON.stringify(user));
+                    window.location.href = '/inventory';
+                }
+            });
         } catch (e) {
             alert(e.toString());
             return;
         }
-    };
-
-    const registerForm = () => {
-        setIsLogin(false);
-    };
-
-    const loginForm = () => {
-        setIsLogin(true);
     };
 
     const doRegister = async (event) => {
@@ -92,6 +100,15 @@ function Login() {
             return;
         }
     };
+
+    const registerForm = () => {
+        setIsLogin(false);
+    };
+
+    const loginForm = () => {
+        setIsLogin(true);
+    };
+
     return (
         <>
             <div className="d-flex justify-content-center align-content-center">

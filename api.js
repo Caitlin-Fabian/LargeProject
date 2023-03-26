@@ -30,8 +30,17 @@ exports.setApp = function (app, client) {
             id = results[0]._id;
             Name = results[0].Name;
             score = results[0].Score;
+            try {
+                const token = require('./createJWT.js');
+                ret = token.createToken(id, Name, score);
+                console.log(ret);
+            } catch (e) {
+                ret = { error: e.message };
+            }
+        } else {
+            ret = { error: 'Login/Password incorrect' };
         }
-        var ret = { id: id, Name: Name, score: score, error: '' };
+
         res.status(200).json(ret);
     });
     // app.post('/api/searchcards', async (req, res, next) => {
