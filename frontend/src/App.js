@@ -16,6 +16,7 @@ import './css/Navbar.scss';
 import './css/Modal.scss';
 import './css/inventory.scss';
 import './css/scoreboard.scss';
+import './css/profile.scss';
 import './App.css';
 
 function App() {
