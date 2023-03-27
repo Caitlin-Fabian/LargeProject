@@ -18,7 +18,7 @@ function Login() {
     var storage = require('../tokenStorage.js');
 
     const [message, setMessage] = useState('');
-    const [isLogin, setIsLogin] = useState(true);
+    const [isLogin, setIsLogin] = useState(false);
 
     const doLogin = async (event) => {
         event.preventDefault();
@@ -225,60 +225,6 @@ function Login() {
                         </div>
                     </div>
                 </div>
-                {/* <div className="text-center login p-4 rounded">
-                    <form onSubmit={doLogin}>
-                        <h2>LOG IN</h2>
-                        <label>
-                            Username:
-                            <br />
-                            <input
-                                type="text"
-                                id="loginName"
-                                className="rounded mb-3 text-left"
-                                placeholder="Username"
-                                ref={(c) => (loginName = c)}
-                            />
-                        </label>
-
-                        <br />
-                        <label>
-                            Password:
-                            <br />
-                            <input
-                                type="password"
-                                className="rounded mb-3"
-                                id="loginPassword"
-                                placeholder="Password"
-                                ref={(c) => (loginPassword = c)}
-                            />
-                        </label>
-                        <br />
-                        <span>
-                            <button
-                                type="button"
-                                className="btn btn-link"
-                            >
-                                <Link to="/registration">Register</Link>
-                            </button>
-                            or
-                            <button
-                                type="button"
-                                className="btn btn-link"
-                            >
-                                Forgot Password
-                            </button>
-                        </span>
-                        <br />
-                        <input
-                            type="submit"
-                            id="loginButton"
-                            className="buttons"
-                            value="Log In"
-                            onClick={doLogin}
-                        />
-                    </form>
-                    <span id="loginResult">{message}</span>{' '}
-                </div> */}
                 <div className="pokeball-outline"></div>
                 <img
                     src={pokeball}

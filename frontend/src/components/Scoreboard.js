@@ -49,20 +49,25 @@ function Scoreboard() {
                     <div className="placement"></div>
                 </Col>
             </Row>
-            <Row>
-                <Col className="d-flex justify-content-center">
+            <Row className="position-relative d-flex align-items-center">
+                <Col className="position-relative d-flex justify-content-center my-auto">
                     <img
                         style={{ width: '100%' }}
                         src={two}
                         alt="Ranking Decoration"
                     ></img>
+                    <div
+                        style={{ top: '10%' }}
+                        className="position-absolute my-auto d-flex align-items-center placement"
+                    ></div>
                 </Col>
-                <Col className="d-flex justify-content-center my-auto">
+                <Col className="position-relative d-flex justify-content-center my-auto">
                     <img
                         style={{ width: '90%' }}
                         src={three}
                         alt="Ranking Decoration"
                     ></img>
+                    <div className="position-absolute d-flex align-items-center placement"></div>
                 </Col>
             </Row>
         </Container>
