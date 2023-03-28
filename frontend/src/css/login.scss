@@ -51,10 +51,10 @@ label{
 #Register .login{
     position: absolute;
     font-family: 'Mako', sans-serif;
-    top: 25%;
+    top: 35vh;
+    height: 50vh;
     z-index:5;
     background-color: $transparent-white;
-    min-height: 43vh;
     width: -moz-fit-content;
     width: fit-content;
 

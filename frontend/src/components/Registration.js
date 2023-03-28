@@ -28,19 +28,18 @@ function Login() {
                 headers: { 'Content-Type': 'application/json' },
             });
             var res = JSON.parse(await response.text());
-            if (res.id <= 0) {
-                console.log(res);
-                console.log('res is 1');
+            if (res.error != 'N/A') {
+                console.log(res.error);
                 // setMessage('User/Password combination incorrect');
             } else {
                 console.log(res);
-                console.log('res id < 0');
-                // var user = {
-                //     firstName: res.firstName,
-                //     lastName: res.lastName,
-                //     id: res.id,
-                // };
-                // localStorage.setItem('user_data', JSON.stringify(user));
+                var user = {
+                    Name: res.Name,
+                    score: res.score,
+                    id: res.id,
+                };
+                console.log(user);
+                localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
                 window.location.href = '/inventory';
             }
