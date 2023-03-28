@@ -3,25 +3,16 @@ require('express');
 require('mongodb');
 
 exports.setApp = function (app, client) {
-    // app.post('/api/addcard', async (req, res, next) => {
-    //     // incoming: userId, color
-    //     // outgoing: error
-    //     var error = '';
-    //     const { userId, card } = req.body;
-    //     // TEMP FOR LOCAL TESTING.
-    //     cardList.push(card);
-    //     var ret = { error: error };
-    //     res.status(200).json(ret);
-    // });
+    //login api
     app.post('/api/login', async (req, res, next) => {
-        // incoming: login, password
+        // incoming: username, password
         // outgoing: id, firstName, lastName, error
         var error = '';
-        const { login, password } = req.body;
+        const { username, password } = req.body;
         const db = client.db('UCFGO');
         const results = await db
             .collection('Users')
-            .find({ Username: login, Password: password })
+            .find({ Username: username, Password: password })
             .toArray();
         var id = -1;
         var Name = '';
@@ -43,25 +34,8 @@ exports.setApp = function (app, client) {
 
         res.status(200).json(ret);
     });
-    // app.post('/api/searchcards', async (req, res, next) => {
-    //     // incoming: userId, search
-    //     // outgoing: results[], error
-    //     var error = '';
-    //     const { userId, search } = req.body;
-    //     var _search = search.toLowerCase().trim();
-    //     var _ret = [];
-    //     for (var i = 0; i < cardList.length; i++) {
-    //         var lowerFromList = cardList[i].toLocaleLowerCase();
-    //         if (lowerFromList.indexOf(_search) >= 0) {
-    //             _ret.push(cardList[i]);
-    //         }
-    //     }
-    //     var ret = { results: _ret, error: '' };
-    //     res.status(200).json(ret);
-    // });
 
-    //register API
-
+    //register api
     app.post('/api/register', async (req, res, next) => {
         // incoming: name, username, password, email
         // outgoing: err
@@ -73,6 +47,7 @@ exports.setApp = function (app, client) {
             .collection('Users')
             .find({ Username: username })
             .toArray();
+
         console.log(results);
 
         var score = '';
@@ -104,7 +79,6 @@ exports.setApp = function (app, client) {
     });
 
     //giveMonster api
-
     app.post('/api/giveMonster', async (req, res, next) => {
         // incoming: userID, monsterID, monsterScore
         // outgoing: err
@@ -131,8 +105,33 @@ exports.setApp = function (app, client) {
         res.status(200).json(ret);
     });
 
-    //listInventory API
+    app.post('/api/getUserInfo', async (req, res, next) => {
+        //incoming: userId
+        //outgoing: email, name, score
+        var error = '';
+        const { userId } = req.body;
+        const db = client.db('UCFGO');
+        const results = await db
+            .collection('Users')
+            .find({ _id: userId })
+            .toArray();
+        var id = -1;
+        var fn = '';
+        var email = '';
+        if (results.length > 0) {
+            id = results[0]._id;
+            fn = results[0].Name;
+            email = results[0].Email;
 
+            var ret = { id: id, Email: email, Name: fn, error: '' };
+            res.status(200).json(ret);
+        } else {
+            var ret = { error: 'Invalid ID' };
+            res.status(200).json(ret);
+        }
+    });
+
+    //listInventory API
     app.post('/api/listInventory', async (req, res, next) => {
         // incoming: userId
         // outgoing: list of Monsters
@@ -160,7 +159,6 @@ exports.setApp = function (app, client) {
     });
 
     //leaderboard API:
-
     app.post('/api/leaderboard', async (req, res, next) => {
         // incoming:
         // outgoing: top 3 users information
