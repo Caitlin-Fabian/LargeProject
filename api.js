@@ -50,8 +50,9 @@ exports.setApp = function (app, client) {
 
         console.log(results);
 
-        var score = '';
-        var id = -1;
+        let id = -1;
+        let Name = '';
+        let score = '';
 
         if (results.length == 0) {
             db.collection('Users').insertOne({
@@ -60,14 +61,12 @@ exports.setApp = function (app, client) {
                 Password: password,
                 Email: email,
                 Score: 0,
+                Character: 0,
+                TimeCaught: [],
+                MonsterID: [],
+                EmailToken: 'email',
+                IsVerified: false,
             });
-
-            const res = await db
-                .collection('Users')
-                .find({ Username: username })
-                .toArray();
-            id = res[0]._id;
-            score = res[0].Score;
 
             error = 'N/A';
         } else {
@@ -109,21 +108,52 @@ exports.setApp = function (app, client) {
         //incoming: userId
         //outgoing: email, name, score
         var error = '';
-        const { userId } = req.body;
+
+        const { userId, jwtToken } = req.body;
+        console.log('userId:' + userId);
+        try {
+            if (token.isExpired(jwtToken)) {
+                var r = { error: 'The JWT is no longer valid', jwtToken: '' };
+                res.status(200).json(r);
+                return;
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
         const db = client.db('UCFGO');
         const results = await db
             .collection('Users')
-            .find({ _id: userId })
+            .find({ _id: new BSON.ObjectId(userId) })
             .toArray();
+
+        console.log(results);
         var id = -1;
         var fn = '';
         var email = '';
+        var score = 0;
+        var monsters = [];
+
+        var refreshedToken = null;
+        try {
+            refreshedToken = token.refresh(jwtToken);
+        } catch (e) {
+            console.log(e.message);
+        }
         if (results.length > 0) {
             id = results[0]._id;
             fn = results[0].Name;
             email = results[0].Email;
+            score = results[0].Score;
 
-            var ret = { id: id, Email: email, Name: fn, error: '' };
+            var ret = {
+                id: id,
+                Email: email,
+                Name: fn,
+                error: '',
+                score: score,
+                monsters: monsters,
+                jwtToken: refreshedToken,
+            };
             res.status(200).json(ret);
         } else {
             var ret = { error: 'Invalid ID' };

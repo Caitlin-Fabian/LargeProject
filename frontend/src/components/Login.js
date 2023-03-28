@@ -37,6 +37,7 @@ function Login() {
 
             axios(config).then(function (response) {
                 var res = response.data;
+                console.log(res);
                 if (res.error) {
                     setMessage('User/Password combination incorrect');
                 } else {
@@ -44,7 +45,7 @@ function Login() {
                     storage.storeToken(res);
                     var ud = decodeToken(storage.retrieveToken());
                     console.log(ud);
-                    var id = ud.UserID;
+                    var id = ud.userID;
                     var Name = ud.Name;
                     var score = ud.Score;
 
@@ -72,7 +73,7 @@ function Login() {
             email: newEmail.value,
         };
         var js = JSON.stringify(obj);
-        console.log(js);
+        // console.log(js);
         try {
             const response = await fetch(bp.buildPath('api/register'), {
                 method: 'POST',
@@ -80,11 +81,13 @@ function Login() {
                 headers: { 'Content-Type': 'application/json' },
             });
             var res = JSON.parse(await response.text());
+            console.log(res);
             if (res.error != 'N/A') {
                 console.log(res.error);
                 // setMessage('User/Password combination incorrect');
             } else {
                 console.log(res);
+                storage.storeToken(res);
                 var user = {
                     Name: res.Name,
                     score: res.score,
@@ -93,7 +96,7 @@ function Login() {
                 console.log(user);
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
-                window.location.href = '/inventory';
+                setIsLogin(true);
             }
         } catch (e) {
             alert(e.toString());

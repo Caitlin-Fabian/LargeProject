@@ -49,6 +49,7 @@ function MonsterList() {
                 <h3>{monster.title}</h3>
             </div>
         ));
+
     const showMonsters = async (userID) => {
         var obj = {
             userID: userID,
