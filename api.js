@@ -1,6 +1,9 @@
 const { BSON, EJSON, ObjectId } = require('bson');
 require('express');
 require('mongodb');
+const crypto = require('crypto');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.setApp = function (app, client) {
     // app.post('/api/addcard', async (req, res, next) => {
@@ -75,6 +78,8 @@ exports.setApp = function (app, client) {
                 Username: username,
                 Password: password,
                 Email: email,
+                EmailToken: crypto.randomBytes(64).toString('hex'),
+                IsVerfied: false,
                 Score: 0,
             });
 
@@ -85,12 +90,58 @@ exports.setApp = function (app, client) {
             id = res[0]._id;
             score = res[0].Score;
 
+            const msg = {
+                from: 'ucfgoteams@gmail.com',
+                to: 'ucfgoteams@gmail.com',//make this email
+                subject: 'UCFGO Action Required - Verify Your Email!',
+                text: `
+                    Hello, thanks for registering with UCFGO!
+                    Please copy and paste the address below to verify your account.
+                    https://${req.headers.host}/verify-email?token=${results[4]}`,
+                html: `
+                    <h1>Hello,</h1>
+                    <p>Thanks for registering on UCFGO!</p>
+                    <p>Please click the link below to verify your account.</p>
+                    <a href="https://${req.headers.host}/verify-email?token=${results[4]}">Verify your account</a>
+                `
+            }
+
+            //send email to new user
+            await sgMail.send(msg);
+            console.log('Thanks for registering! Please check your email to verify your account.')
+
             error = 'N/A';
         } else {
             error =
                 'A user with the same username already exists, Please try again';
         }
         var ret = { Name: name, id: id, score: score, error: error };
+        res.status(200).json(ret);
+    });
+
+    //email verification api
+    app.post('/api/verifyEmail', async (req, res, next) => {
+        var error = '';
+        const db = client.db('UCFGO');
+
+        const results = await db
+            .collection('Users')
+            .find({ EmailToken: req.query.token})//double check since this shouldn't require them to input anything
+            .toArray();
+        console.log(results);
+
+        if (results.length == 0) {
+            error = 'Invalid token'
+        }else{
+            db.collection('Inventory').insertOne({
+                EmailToken: null,
+                IsVerified: true,
+            });
+        }
+
+        error = 'N/A';
+
+        var ret = { error: error };
         res.status(200).json(ret);
     });
 
