@@ -14,7 +14,7 @@ const CharacterModal = ({ setScore, id, setMonsterModal }) => {
             monsterScore: score,
         };
         var js = JSON.stringify(obj);
-        // console.log(js);
+        console.log(js);
         try {
             const response = await fetch(bp.buildPath('api/giveMonster'), {
                 method: 'POST',

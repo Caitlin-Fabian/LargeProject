@@ -50,40 +50,35 @@ function MonsterList() {
             </div>
         ));
 
-    const showMonsters = async (userID) => {
+    const getUser = async (userId) => {
+        var storage = require('../tokenStorage.js');
         var obj = {
-            userID: userID,
-            search: '',
+            userId: userId,
+            jwtToken: storage.retrieveToken(),
         };
         var js = JSON.stringify(obj);
         console.log(js);
         try {
-            const response = await fetch(bp.buildPath('api/listInventory'), {
+            const response = await fetch(bp.buildPath('api/getUserInfo'), {
                 method: 'POST',
                 body: js,
                 headers: { 'Content-Type': 'application/json' },
             });
             var res = JSON.parse(await response.text());
             console.log(res);
-
-            if (res.monsterList <= 0) {
-                setMessage('You dont have any monsters');
-            } else {
-                console.log(res.monsterList);
-                let result = monsters.filter((o1) =>
-                    res.monsterList.some((o2) => o1.id === o2._id)
-                );
-                console.log(result);
-
-                setMonsterList(result);
-            }
+            console.log(ud.Name);
+            var user = {
+                Name: ud.Name,
+                score: res.Score,
+                id: ud.id,
+            };
+            localStorage.setItem('user_data', JSON.stringify(user));
         } catch (e) {
-            alert(e.toString());
-            return;
+            setMessage(e.toString());
         }
     };
     useEffect(() => {
-        showMonsters(userId);
+        getUser(userId);
     }, []);
 
     return (
