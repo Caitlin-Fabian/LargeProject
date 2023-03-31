@@ -1,9 +1,11 @@
 const { BSON, EJSON, ObjectId } = require('bson');
 require('express');
 require('mongodb');
-const crypto = require('crypto');
+require('dotenv').config()
 const sgMail = require('@sendgrid/mail');
+const apiKey = `${process.env.SENDGRID_API_KEY}`;
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+//console.log("SendGrid key ", apiKey);
 
 exports.setApp = function (app, client) {
     // app.post('/api/addcard', async (req, res, next) => {
@@ -78,7 +80,7 @@ exports.setApp = function (app, client) {
                 Username: username,
                 Password: password,
                 Email: email,
-                EmailToken: crypto.randomBytes(64).toString('hex'),
+                EmailToken: Math.random().toString(36).substring(2,7),//generates random 5 character string
                 IsVerfied: false,
                 Score: 0,
             });
@@ -92,22 +94,22 @@ exports.setApp = function (app, client) {
 
             const msg = {
                 from: 'ucfgoteams@gmail.com',
-                to: 'ucfgoteams@gmail.com',//make this email
+                to: email,
                 subject: 'UCFGO Action Required - Verify Your Email!',
                 text: `
                     Hello, thanks for registering with UCFGO!
-                    Please copy and paste the address below to verify your account.
-                    https://${req.headers.host}/verify-email?token=${results[4]}`,
+                    Please enter the following one-time token: ${results[4]}
+                    `,
                 html: `
                     <h1>Hello,</h1>
                     <p>Thanks for registering on UCFGO!</p>
-                    <p>Please click the link below to verify your account.</p>
-                    <a href="https://${req.headers.host}/verify-email?token=${results[4]}">Verify your account</a>
+                    <p>Please enter the following one-time token: ${results[4]}</p>
                 `
             }
 
             //send email to new user
-            await sgMail.send(msg);
+            //await sgMail.send(msg);
+            sgMail.send(msg);
             console.log('Thanks for registering! Please check your email to verify your account.')
 
             error = 'N/A';
@@ -122,21 +124,27 @@ exports.setApp = function (app, client) {
     //email verification api
     app.post('/api/verifyEmail', async (req, res, next) => {
         var error = '';
+        const { token } = req.body;//field to take in token
         const db = client.db('UCFGO');
 
         const results = await db
             .collection('Users')
-            .find({ EmailToken: req.query.token})//double check since this shouldn't require them to input anything
+            .find({ EmailToken: token })
             .toArray();
         console.log(results);
 
         if (results.length == 0) {
             error = 'Invalid token'
         }else{
-            db.collection('Inventory').insertOne({
-                EmailToken: null,
-                IsVerified: true,
-            });
+            db.collection('User').updateOne(
+                {Username: results[1]},
+                {$set:
+                    {
+                        EmailToken: null,
+                        IsVerified: true
+                    }
+                }
+            );
         }
 
         error = 'N/A';
