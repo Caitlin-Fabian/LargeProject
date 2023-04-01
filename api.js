@@ -1,14 +1,13 @@
 const { BSON, EJSON, ObjectId } = require('bson');
 require('express');
 require('mongodb');
-require('dotenv').config()
+require('dotenv').config();
 const sgMail = require('@sendgrid/mail');
 const apiKey = `${process.env.SENDGRID_API_KEY}`;
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 //console.log("SendGrid key ", apiKey);
 
 exports.setApp = function (app, client) {
-
     //login api
     app.post('/api/login', async (req, res, next) => {
         // incoming: username, password
@@ -34,7 +33,7 @@ exports.setApp = function (app, client) {
             } catch (e) {
                 ret = { error: e.message };
             }
-        else {
+        } else {
             var ret = { error: 'Invalid Login' };
         }
 
@@ -66,7 +65,7 @@ exports.setApp = function (app, client) {
                 Username: username,
                 Password: password,
                 Email: email,
-                EmailToken: Math.random().toString(36).substring(2, 7),//generates random 5 character string
+                EmailToken: Math.random().toString(36).substring(2, 7), //generates random 5 character string
                 IsVerfied: false,
                 Score: 0,
                 Character: 0,
@@ -95,13 +94,15 @@ exports.setApp = function (app, client) {
                     <h1>Hello,</h1>
                     <p>Thanks for registering on UCFGO!</p>
                     <p>Please enter the following one-time token: ${results[4]}</p>
-                `
-            }
+                `,
+            };
 
             //send email to new user
             //await sgMail.send(msg);
             sgMail.send(msg);
-            console.log('Thanks for registering! Please check your email to verify your account.')
+            console.log(
+                'Thanks for registering! Please check your email to verify your account.'
+            );
 
             error = 'N/A';
         } else {
@@ -117,7 +118,7 @@ exports.setApp = function (app, client) {
         //incoming: token
         //outgoing: err
         var error = '';
-        const { token } = req.body;//field to take in token
+        const { token } = req.body; //field to take in token
         const db = client.db('UCFGO');
 
         const results = await db
@@ -127,16 +128,15 @@ exports.setApp = function (app, client) {
         console.log(results);
 
         if (results.length == 0) {
-            error = 'Invalid token'
+            error = 'Invalid token';
         } else {
             db.collection('User').updateOne(
                 { Username: results[1] },
                 {
-                    $set:
-                    {
+                    $set: {
                         EmailToken: null,
-                        IsVerified: true
-                    }
+                        IsVerified: true,
+                    },
                 }
             );
         }
@@ -173,7 +173,7 @@ exports.setApp = function (app, client) {
         var ret = { error: error };
         res.status(200).json(ret);
     });
-    
+
     app.post('/api/getUserInfo', async (req, res, next) => {
         //incoming: userId
         //outgoing: email, name, score
@@ -296,25 +296,23 @@ exports.setApp = function (app, client) {
         var newPassword = password;
         var newEmail = email;
         var newCharacter = character;
-     
+
         if (results.length > 0) {
             db.collection('User').updateOne(
                 { _id: results[0] },
                 {
-                    $set:
-                    {   
+                    $set: {
                         Name: newName,
                         Username: newUserName,
                         Password: newPassword,
                         Email: newEmail,
-                        Character: newCharacter
-                    }
+                        Character: newCharacter,
+                    },
                 }
             );
             var ret = { error: error };
             res.status(200).json(ret);
-        }
-        else {
+        } else {
             var ret = { error: 'Unable to update user' };
             res.status(200).json(ret);
         }
