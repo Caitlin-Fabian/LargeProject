@@ -9,8 +9,8 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.setApp = function (app, client) {
 
-   //login api
-   app.post('/api/login', async (req, res, next) => {
+    //login api
+    app.post('/api/login', async (req, res, next) => {
         // incoming: username, password
         // outgoing: id, firstName, lastName, error
         var error = '';
@@ -27,15 +27,15 @@ exports.setApp = function (app, client) {
             id = results[0]._id;
             Name = results[0].Name;
             score = results[0].Score;
-           var ret = { id: id, name: name, score: score, error: '' };
-           res.status(200).json(ret);
+            var ret = { id: id, name: name, score: score, error: '' };
+            res.status(200).json(ret);
         }
-        else{
-          var ret = { error: 'Invalid Login' };
-           res.status(200).json(ret);
+        else {
+            var ret = { error: 'Invalid Login' };
+            res.status(200).json(ret);
         }
     });
-    
+
     //register api
     app.post('/api/register', async (req, res, next) => {
         // incoming: name, username, password, email
@@ -48,7 +48,7 @@ exports.setApp = function (app, client) {
             .collection('Users')
             .find({ Username: username })
             .toArray();
-            
+
         console.log(results);
 
         var score = '';
@@ -60,7 +60,7 @@ exports.setApp = function (app, client) {
                 Username: username,
                 Password: password,
                 Email: email,
-                EmailToken: Math.random().toString(36).substring(2,7),//generates random 5 character string
+                EmailToken: Math.random().toString(36).substring(2, 7),//generates random 5 character string
                 IsVerfied: false,
                 Score: 0,
             });
@@ -103,6 +103,8 @@ exports.setApp = function (app, client) {
 
     //email verification api
     app.post('/api/verifyEmail', async (req, res, next) => {
+        //incoming: token
+        //outgoing: err
         var error = '';
         const { token } = req.body;//field to take in token
         const db = client.db('UCFGO');
@@ -115,10 +117,11 @@ exports.setApp = function (app, client) {
 
         if (results.length == 0) {
             error = 'Invalid token'
-        }else{
+        } else {
             db.collection('User').updateOne(
-                {Username: results[1]},
-                {$set:
+                { Username: results[1] },
+                {
+                    $set:
                     {
                         EmailToken: null,
                         IsVerified: true
@@ -159,32 +162,32 @@ exports.setApp = function (app, client) {
         var ret = { error: error };
         res.status(200).json(ret);
     });
-    
-    app.post('/api/getUserInfo',async (req,res,next) => {
-	 //incoming: userId
-	 //outgoing: email, name, score
-	 var error = ''
-	 const {userId} = req.body;
-	 const db = client.db('UCFGO');
-	 const results = await db
-	    .collection('Users')
-	    .find({ _id: userId })
-	    .toArray();
-	  var id = -1;
-	  var fn = '';
-	  var email = '';
-	  if (results.length > 0) {
-	    id = results[0]._id;
-	    fn = results[0].Name;
-	    email = results[0].Email;
 
-	    var ret = { id:id, Email: email,Name: fn, error: '' };
-	    res.status(200).json(ret);
-	  }
-	  else{
-	     var ret = {error: 'Invalid ID' };
-	     res.status(200).json(ret);
-	  } 
+    app.post('/api/getUserInfo', async (req, res, next) => {
+        //incoming: userId
+        //outgoing: email, name, score
+        var error = ''
+        const { userId } = req.body;
+        const db = client.db('UCFGO');
+        const results = await db
+            .collection('Users')
+            .find({ _id: userId })
+            .toArray();
+        var id = -1;
+        var fn = '';
+        var email = '';
+        if (results.length > 0) {
+            id = results[0]._id;
+            fn = results[0].Name;
+            email = results[0].Email;
+
+            var ret = { id: id, Email: email, Name: fn, error: '' };
+            res.status(200).json(ret);
+        }
+        else {
+            var ret = { error: 'Invalid ID' };
+            res.status(200).json(ret);
+        }
     });
 
 
@@ -233,5 +236,47 @@ exports.setApp = function (app, client) {
         error = 'N/A';
         var ret = { userList: userList, error: error };
         res.status(200).json(ret);
+    });
+
+    //update user info
+    app.post('/api/updateUser', async (req, res, nest) => {
+        // incoming: userID, name, username, password, email, character
+        // outgoing: err
+        var error = '';
+        const { userId, name, username, password, email, character } = req.body;
+        const db = client.db('UCFGO');
+
+        const results = await db
+            .collection('Users')
+            .find({ _id: userId })
+            .toArray();
+
+        var newName = name;
+        var newUserName = username;
+        var newPassword = password;
+        var newEmail = email;
+        var newCharacter = character;
+     
+        if (results.length > 0) {
+            db.collection('User').updateOne(
+                { _id: results[0] },
+                {
+                    $set:
+                    {   
+                        Name: newName,
+                        Username: newUserName,
+                        Password: newPassword,
+                        Email: newEmail,
+                        Character: newCharacter
+                    }
+                }
+            );
+            var ret = { error: error };
+            res.status(200).json(ret);
+        }
+        else {
+            var ret = { error: 'Unable to update user' };
+            res.status(200).json(ret);
+        }
     });
 };
