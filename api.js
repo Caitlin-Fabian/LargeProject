@@ -1,8 +1,14 @@
 const { BSON, EJSON, ObjectId } = require('bson');
 require('express');
 require('mongodb');
+require('dotenv').config()
+const sgMail = require('@sendgrid/mail');
+const apiKey = `${process.env.SENDGRID_API_KEY}`;
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+//console.log("SendGrid key ", apiKey);
 
 exports.setApp = function (app, client) {
+
     //login api
     app.post('/api/login', async (req, res, next) => {
         // incoming: username, password
@@ -28,8 +34,8 @@ exports.setApp = function (app, client) {
             } catch (e) {
                 ret = { error: e.message };
             }
-        } else {
-            ret = { error: 'Login/Password incorrect' };
+        else {
+            var ret = { error: 'Invalid Login' };
         }
 
         res.status(200).json(ret);
@@ -60,6 +66,8 @@ exports.setApp = function (app, client) {
                 Username: username,
                 Password: password,
                 Email: email,
+                EmailToken: Math.random().toString(36).substring(2, 7),//generates random 5 character string
+                IsVerfied: false,
                 Score: 0,
                 Character: 0,
                 TimeCaught: [],
@@ -68,12 +76,74 @@ exports.setApp = function (app, client) {
                 IsVerified: false,
             });
 
+            const res = await db
+                .collection('Users')
+                .find({ Username: username })
+                .toArray();
+            id = res[0]._id;
+            score = res[0].Score;
+
+            const msg = {
+                from: 'ucfgoteams@gmail.com',
+                to: email,
+                subject: 'UCFGO Action Required - Verify Your Email!',
+                text: `
+                    Hello, thanks for registering with UCFGO!
+                    Please enter the following one-time token: ${results[4]}
+                    `,
+                html: `
+                    <h1>Hello,</h1>
+                    <p>Thanks for registering on UCFGO!</p>
+                    <p>Please enter the following one-time token: ${results[4]}</p>
+                `
+            }
+
+            //send email to new user
+            //await sgMail.send(msg);
+            sgMail.send(msg);
+            console.log('Thanks for registering! Please check your email to verify your account.')
+
             error = 'N/A';
         } else {
             error =
                 'A user with the same username already exists, Please try again';
         }
         var ret = { Name: name, id: id, score: score, error: error };
+        res.status(200).json(ret);
+    });
+
+    //email verification api
+    app.post('/api/verifyEmail', async (req, res, next) => {
+        //incoming: token
+        //outgoing: err
+        var error = '';
+        const { token } = req.body;//field to take in token
+        const db = client.db('UCFGO');
+
+        const results = await db
+            .collection('Users')
+            .find({ EmailToken: token })
+            .toArray();
+        console.log(results);
+
+        if (results.length == 0) {
+            error = 'Invalid token'
+        } else {
+            db.collection('User').updateOne(
+                { Username: results[1] },
+                {
+                    $set:
+                    {
+                        EmailToken: null,
+                        IsVerified: true
+                    }
+                }
+            );
+        }
+
+        error = 'N/A';
+
+        var ret = { error: error };
         res.status(200).json(ret);
     });
 
@@ -103,7 +173,7 @@ exports.setApp = function (app, client) {
         var ret = { error: error };
         res.status(200).json(ret);
     });
-
+    
     app.post('/api/getUserInfo', async (req, res, next) => {
         //incoming: userId
         //outgoing: email, name, score
@@ -206,5 +276,47 @@ exports.setApp = function (app, client) {
         error = 'N/A';
         var ret = { userList: userList, error: error };
         res.status(200).json(ret);
+    });
+
+    //update user info
+    app.post('/api/updateUser', async (req, res, nest) => {
+        // incoming: userID, name, username, password, email, character
+        // outgoing: err
+        var error = '';
+        const { userId, name, username, password, email, character } = req.body;
+        const db = client.db('UCFGO');
+
+        const results = await db
+            .collection('Users')
+            .find({ _id: userId })
+            .toArray();
+
+        var newName = name;
+        var newUserName = username;
+        var newPassword = password;
+        var newEmail = email;
+        var newCharacter = character;
+     
+        if (results.length > 0) {
+            db.collection('User').updateOne(
+                { _id: results[0] },
+                {
+                    $set:
+                    {   
+                        Name: newName,
+                        Username: newUserName,
+                        Password: newPassword,
+                        Email: newEmail,
+                        Character: newCharacter
+                    }
+                }
+            );
+            var ret = { error: error };
+            res.status(200).json(ret);
+        }
+        else {
+            var ret = { error: 'Unable to update user' };
+            res.status(200).json(ret);
+        }
     });
 };
