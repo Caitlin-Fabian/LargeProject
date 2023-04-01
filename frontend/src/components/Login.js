@@ -97,6 +97,7 @@ function Login() {
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
                 setIsLogin(true);
+                window.location.href = '/email';
             }
         } catch (e) {
             alert(e.toString());

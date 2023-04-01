@@ -9,6 +9,7 @@ import InventoryPage from './pages/InventoryPage';
 import ProfilePage from './pages/ProfilePage';
 import JourneyPage from './pages/JourneyPage';
 import ScoreBoardPage from './pages/ScoreBoardPage';
+import EmailPage from './pages/EmailPage';
 
 // CSS files
 import './css/login.scss';
@@ -47,6 +48,11 @@ function App() {
                     path="/profile"
                     index
                     element={<ProfilePage />}
+                />
+                <Route
+                    path="/email"
+                    index
+                    element={<EmailPage />}
                 />
             </Routes>
         </BrowserRouter>
