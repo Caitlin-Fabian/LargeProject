@@ -27,13 +27,18 @@ exports.setApp = function (app, client) {
             id = results[0]._id;
             Name = results[0].Name;
             score = results[0].Score;
-            var ret = { id: id, name: name, score: score, error: '' };
-            res.status(200).json(ret);
-        }
+            try {
+                const token = require('./createJWT.js');
+                ret = token.createToken(id, Name, score);
+                console.log(ret);
+            } catch (e) {
+                ret = { error: e.message };
+            }
         else {
             var ret = { error: 'Invalid Login' };
-            res.status(200).json(ret);
         }
+
+        res.status(200).json(ret);
     });
 
     //register api
@@ -51,8 +56,9 @@ exports.setApp = function (app, client) {
 
         console.log(results);
 
-        var score = '';
-        var id = -1;
+        let id = -1;
+        let Name = '';
+        let score = '';
 
         if (results.length == 0) {
             db.collection('Users').insertOne({
@@ -63,6 +69,11 @@ exports.setApp = function (app, client) {
                 EmailToken: Math.random().toString(36).substring(2, 7),//generates random 5 character string
                 IsVerfied: false,
                 Score: 0,
+                Character: 0,
+                TimeCaught: [],
+                MonsterID: [],
+                EmailToken: 'email',
+                IsVerified: false,
             });
 
             const res = await db
@@ -162,34 +173,63 @@ exports.setApp = function (app, client) {
         var ret = { error: error };
         res.status(200).json(ret);
     });
-
+    
     app.post('/api/getUserInfo', async (req, res, next) => {
         //incoming: userId
         //outgoing: email, name, score
-        var error = ''
-        const { userId } = req.body;
+        var error = '';
+
+        const { userId, jwtToken } = req.body;
+        console.log('userId:' + userId);
+        try {
+            if (token.isExpired(jwtToken)) {
+                var r = { error: 'The JWT is no longer valid', jwtToken: '' };
+                res.status(200).json(r);
+                return;
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
         const db = client.db('UCFGO');
         const results = await db
             .collection('Users')
-            .find({ _id: userId })
+            .find({ _id: new BSON.ObjectId(userId) })
             .toArray();
+
+        console.log(results);
         var id = -1;
         var fn = '';
         var email = '';
+        var score = 0;
+        var monsters = [];
+
+        var refreshedToken = null;
+        try {
+            refreshedToken = token.refresh(jwtToken);
+        } catch (e) {
+            console.log(e.message);
+        }
         if (results.length > 0) {
             id = results[0]._id;
             fn = results[0].Name;
             email = results[0].Email;
+            score = results[0].Score;
 
-            var ret = { id: id, Email: email, Name: fn, error: '' };
+            var ret = {
+                id: id,
+                Email: email,
+                Name: fn,
+                error: '',
+                score: score,
+                monsters: monsters,
+                jwtToken: refreshedToken,
+            };
             res.status(200).json(ret);
-        }
-        else {
+        } else {
             var ret = { error: 'Invalid ID' };
             res.status(200).json(ret);
         }
     });
-
 
     //listInventory API
     app.post('/api/listInventory', async (req, res, next) => {
