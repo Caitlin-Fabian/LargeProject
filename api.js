@@ -1,14 +1,13 @@
 const { BSON, EJSON, ObjectId } = require('bson');
 require('express');
 require('mongodb');
-require('dotenv').config()
+require('dotenv').config();
 const sgMail = require('@sendgrid/mail');
 const apiKey = `${process.env.SENDGRID_API_KEY}`;
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 //console.log("SendGrid key ", apiKey);
 
 exports.setApp = function (app, client) {
-
     //login api
     app.post('/api/login', async (req, res, next) => {
         // incoming: username, password
@@ -27,13 +26,18 @@ exports.setApp = function (app, client) {
             id = results[0]._id;
             Name = results[0].Name;
             score = results[0].Score;
-            var ret = { id: id, name: name, score: score, error: '' };
-            res.status(200).json(ret);
-        }
-        else {
+            try {
+                const token = require('./createJWT.js');
+                ret = token.createToken(id, Name, score);
+                console.log(ret);
+            } catch (e) {
+                ret = { error: e.message };
+            }
+        } else {
             var ret = { error: 'Invalid Login' };
-            res.status(200).json(ret);
         }
+
+        res.status(200).json(ret);
     });
 
     //register api
@@ -51,8 +55,9 @@ exports.setApp = function (app, client) {
 
         console.log(results);
 
-        var score = '';
-        var id = -1;
+        let id = -1;
+        let Name = '';
+        let score = '';
 
         if (results.length == 0) {
             db.collection('Users').insertOne({
@@ -60,9 +65,14 @@ exports.setApp = function (app, client) {
                 Username: username,
                 Password: password,
                 Email: email,
-                EmailToken: Math.random().toString(36).substring(2, 7),//generates random 5 character string
+                EmailToken: Math.random().toString(36).substring(2, 7), //generates random 5 character string
                 IsVerfied: false,
                 Score: 0,
+                Character: 0,
+                TimeCaught: [],
+                MonsterID: [],
+                EmailToken: 'email',
+                IsVerified: false,
             });
 
             const res = await db
@@ -84,13 +94,15 @@ exports.setApp = function (app, client) {
                     <h1>Hello,</h1>
                     <p>Thanks for registering on UCFGO!</p>
                     <p>Please enter the following one-time token: ${results[4]}</p>
-                `
-            }
+                `,
+            };
 
             //send email to new user
             //await sgMail.send(msg);
             sgMail.send(msg);
-            console.log('Thanks for registering! Please check your email to verify your account.')
+            console.log(
+                'Thanks for registering! Please check your email to verify your account.'
+            );
 
             error = 'N/A';
         } else {
@@ -106,7 +118,7 @@ exports.setApp = function (app, client) {
         //incoming: token
         //outgoing: err
         var error = '';
-        const { token } = req.body;//field to take in token
+        const { token } = req.body; //field to take in token
         const db = client.db('UCFGO');
 
         const results = await db
@@ -116,16 +128,15 @@ exports.setApp = function (app, client) {
         console.log(results);
 
         if (results.length == 0) {
-            error = 'Invalid token'
+            error = 'Invalid token';
         } else {
             db.collection('User').updateOne(
                 { Username: results[1] },
                 {
-                    $set:
-                    {
+                    $set: {
                         EmailToken: null,
-                        IsVerified: true
-                    }
+                        IsVerified: true,
+                    },
                 }
             );
         }
@@ -166,30 +177,59 @@ exports.setApp = function (app, client) {
     app.post('/api/getUserInfo', async (req, res, next) => {
         //incoming: userId
         //outgoing: email, name, score
-        var error = ''
-        const { userId } = req.body;
+        var error = '';
+
+        const { userId, jwtToken } = req.body;
+        console.log('userId:' + userId);
+        try {
+            if (token.isExpired(jwtToken)) {
+                var r = { error: 'The JWT is no longer valid', jwtToken: '' };
+                res.status(200).json(r);
+                return;
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
         const db = client.db('UCFGO');
         const results = await db
             .collection('Users')
-            .find({ _id: userId })
+            .find({ _id: new BSON.ObjectId(userId) })
             .toArray();
+
+        console.log(results);
         var id = -1;
         var fn = '';
         var email = '';
+        var score = 0;
+        var monsters = [];
+
+        var refreshedToken = null;
+        try {
+            refreshedToken = token.refresh(jwtToken);
+        } catch (e) {
+            console.log(e.message);
+        }
         if (results.length > 0) {
             id = results[0]._id;
             fn = results[0].Name;
             email = results[0].Email;
+            score = results[0].Score;
 
-            var ret = { id: id, Email: email, Name: fn, error: '' };
+            var ret = {
+                id: id,
+                Email: email,
+                Name: fn,
+                error: '',
+                score: score,
+                monsters: monsters,
+                jwtToken: refreshedToken,
+            };
             res.status(200).json(ret);
-        }
-        else {
+        } else {
             var ret = { error: 'Invalid ID' };
             res.status(200).json(ret);
         }
     });
-
 
     //listInventory API
     app.post('/api/listInventory', async (req, res, next) => {
@@ -218,23 +258,48 @@ exports.setApp = function (app, client) {
         res.status(200).json(ret);
     });
 
-    //leaderboard API:
-    app.post('/api/leaderboard', async (req, res, next) => {
-        // incoming:
-        // outgoing: top 3 users information
-        var error = '';
+    //getUserList API:
+    app.post('/api/getUserList', async (req, res, next) => {
+        // incoming: userId
+        // outgoing: top 20 users. If not in the array, add the user to the end with their place
+        const size = 20;
+        const { userId} = req.body;
         const db = client.db('UCFGO');
-
         var query = { Score: -1 };
         const userList = await db
             .collection('Users')
             .find()
             .sort(query)
-            .limit(3)
             .toArray();
-
-        error = 'N/A';
-        var ret = { userList: userList, error: error };
+        
+        const topTwenty = [];
+            let isInList = false;
+            for(let x=0;x<userList.length;x++){
+                console.log(userList[x]._id.toString()+" "+userId);
+                console.log(userList[x]._id.toString() == userId);
+                if(x<size){
+                    if(userList[x]._id.toString() === userId){
+                        isInList = true;
+                        console.log("ey thats true!!")
+                    }
+                    userList[x].place = x+1;
+                    topTwenty.push(userList[x]);
+                }
+                else{
+                    if(isInList){
+                        break;
+                    }
+                    else if(userList[x]._id.toString() === userId){
+                        console.log("fax :sunglasses:");
+                        userList[x].place = x+1;
+                        topTwenty.push(userList[x]);
+                        break;
+                    }
+                }
+                    
+            }
+       
+        var ret = { userList: topTwenty, error: ''};
         res.status(200).json(ret);
     });
 
@@ -256,25 +321,23 @@ exports.setApp = function (app, client) {
         var newPassword = password;
         var newEmail = email;
         var newCharacter = character;
-     
+
         if (results.length > 0) {
             db.collection('User').updateOne(
                 { _id: results[0] },
                 {
-                    $set:
-                    {   
+                    $set: {
                         Name: newName,
                         Username: newUserName,
                         Password: newPassword,
                         Email: newEmail,
-                        Character: newCharacter
-                    }
+                        Character: newCharacter,
+                    },
                 }
             );
             var ret = { error: error };
             res.status(200).json(ret);
-        }
-        else {
+        } else {
             var ret = { error: 'Unable to update user' };
             res.status(200).json(ret);
         }

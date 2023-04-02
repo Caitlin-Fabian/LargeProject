@@ -9,13 +9,14 @@ import InventoryPage from './pages/InventoryPage';
 import ProfilePage from './pages/ProfilePage';
 import JourneyPage from './pages/JourneyPage';
 import ScoreBoardPage from './pages/ScoreBoardPage';
-import RegistrationPage from './pages/RegistrationPage';
 
 // CSS files
 import './css/login.scss';
 import './css/Navbar.scss';
 import './css/Modal.scss';
 import './css/inventory.scss';
+import './css/scoreboard.scss';
+import './css/profile.scss';
 import './App.css';
 
 function App() {
@@ -26,11 +27,6 @@ function App() {
                     path="/"
                     index
                     element={<LoginPage />}
-                />
-                <Route
-                    path="/registration"
-                    index
-                    element={<RegistrationPage />}
                 />
                 <Route
                     path="/inventory"
