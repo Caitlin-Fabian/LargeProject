@@ -161,17 +161,19 @@ exports.setApp = function (app, client) {
         const user = await db.collection('Users').find(query).toArray();
 
         //adds the monster id to the array for the user
-        db.collection('Users').updateOne(query, { $push: { MonsterID: monsterId } })
+        db.collection('Users').updateOne(query, {
+            $push: { MonsterID: monsterId },
+        });
 
-        let score = user[0].Score + monsterScore;
+        let score = user.Score + monsterScore;
 
         //if for some reason something happens to the score we want to be able to pivot
 
-        if(isNaN(user[0].Score) || user[0].Score === null){
+        if (isNaN(user.Score) || user.Score === null) {
             score = monsterScore;
-            console.log("fixed score");
+            console.log('fixed score');
         }
-        db.collection('Users').updateOne(query, { $set: { Score: score} });
+        db.collection('Users').updateOne(query, { $set: { Score: score } });
 
         error = 'N/A';
 
@@ -268,7 +270,7 @@ exports.setApp = function (app, client) {
         // incoming: userId
         // outgoing: top 20 users. If not in the array, add the user to the end with their place
         const size = 20;
-        const { userId} = req.body;
+        const { userId } = req.body;
         const db = client.db('UCFGO');
         var query = { Score: -1 };
         const userList = await db
@@ -276,33 +278,30 @@ exports.setApp = function (app, client) {
             .find()
             .sort(query)
             .toArray();
-        
+
         const topTwenty = [];
-            let isInList = false;
-            for(let x=0;x<userList.length;x++){
-                console.log(userList[x]._id.toString()+" "+userId);
-                console.log(userList[x]._id.toString() == userId);
-                if(x<size){
-                    if(userList[x]._id.toString() === userId){
-                        isInList = true;
-                    }
-                    userList[x].place = x+1;
+        let isInList = false;
+        for (let x = 0; x < userList.length; x++) {
+            console.log(userList[x]._id.toString() + ' ' + userId);
+            console.log(userList[x]._id.toString() == userId);
+            if (x < size) {
+                if (userList[x]._id.toString() === userId) {
+                    isInList = true;
+                }
+                userList[x].place = x + 1;
+                topTwenty.push(userList[x]);
+            } else {
+                if (isInList) {
+                    break;
+                } else if (userList[x]._id.toString() === userId) {
+                    userList[x].place = x + 1;
                     topTwenty.push(userList[x]);
+                    break;
                 }
-                else{
-                    if(isInList){
-                        break;
-                    }
-                    else if(userList[x]._id.toString() === userId){
-                        userList[x].place = x+1;
-                        topTwenty.push(userList[x]);
-                        break;
-                    }
-                }
-                    
             }
-       
-        var ret = { userList: topTwenty, error: ''};
+        }
+
+        var ret = { userList: topTwenty, error: '' };
         res.status(200).json(ret);
     });
 

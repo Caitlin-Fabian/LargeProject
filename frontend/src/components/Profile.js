@@ -49,13 +49,18 @@ function Profile() {
         <Container className="profile">
             <Row>
                 <Col>
-                    <div>
-                        <p>{name}</p>
-                        <p>Score : {score}</p>
+                    <div className="d-flex name-tag">
+                        <h2 className="p-3">{name}</h2>
+                        <h3 className="p-3">Score : {score}</h3>
                     </div>
-                    <div>Picture</div>
+                    <div className="">Picture</div>
                 </Col>
-                <Col>HEllo</Col>
+                <Col>
+                    <div className="monsters">
+                        <h2 className="p-3">Monsters </h2>
+                        <div></div>
+                    </div>
+                </Col>
             </Row>
         </Container>
     );

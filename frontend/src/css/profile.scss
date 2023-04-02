@@ -1,7 +1,21 @@
+$bg-transparent-white: rgba(255,255,255,0.7);
+
 html, body{
     height:100%
 }
 .profile{
     height: 100vh;
     margin-top: 50px; 
+}
+
+
+.name-tag{
+    background-color: $bg-transparent-white;
+    border-radius: 10px;
+}
+
+.monsters{
+    background-color: $bg-transparent-white;
+    border-radius: 10px;
+
 }
