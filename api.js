@@ -149,24 +149,29 @@ exports.setApp = function (app, client) {
 
     //giveMonster api
     app.post('/api/giveMonster', async (req, res, next) => {
-        // incoming: userID, monsterID, monsterScore
+        // incoming: userID, monsterId, monsterScore
         // outgoing: err
         var error = '';
-        const { userID, monsterID, monsterScore } = req.body;
+        const { userId, monsterId, monsterScore } = req.body;
         const db = client.db('UCFGO');
-
-        db.collection('Inventory').insertOne({
-            UserID: userID,
-            MonsterID: monsterID,
-        });
         //updates user with the given monster score
 
-        var query = { _id: new BSON.ObjectId(userID) };
+        var query = { _id: new BSON.ObjectId(userId) };
         console.log(query);
         const user = await db.collection('Users').find(query).toArray();
-        console.log(user);
-        var upScore = user[0].Score + monsterScore;
-        db.collection('Users').updateOne(query, { $set: { Score: upScore } });
+
+        //adds the monster id to the array for the user
+        db.collection('Users').updateOne(query, { $push: { MonsterID: monsterId } })
+
+        let score = user[0].Score + monsterScore;
+
+        //if for some reason something happens to the score we want to be able to pivot
+
+        if(isNaN(user[0].Score) || user[0].Score === null){
+            score = monsterScore;
+            console.log("fixed score");
+        }
+        db.collection('Users').updateOne(query, { $set: { Score: score} });
 
         error = 'N/A';
 
@@ -236,10 +241,10 @@ exports.setApp = function (app, client) {
         // incoming: userId
         // outgoing: list of Monsters
         var error = '';
-        const { userID, search } = req.body;
+        const { userId, search } = req.body;
         const db = client.db('UCFGO');
 
-        var query = { UserID: userID };
+        var query = { UserID: userId };
         const invList = await db.collection('Inventory').find(query).toArray();
 
         var monsterList = [];
@@ -280,7 +285,6 @@ exports.setApp = function (app, client) {
                 if(x<size){
                     if(userList[x]._id.toString() === userId){
                         isInList = true;
-                        console.log("ey thats true!!")
                     }
                     userList[x].place = x+1;
                     topTwenty.push(userList[x]);
@@ -290,7 +294,6 @@ exports.setApp = function (app, client) {
                         break;
                     }
                     else if(userList[x]._id.toString() === userId){
-                        console.log("fax :sunglasses:");
                         userList[x].place = x+1;
                         topTwenty.push(userList[x]);
                         break;
