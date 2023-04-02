@@ -15,7 +15,7 @@ const client = new MongoClient(url);
 client.connect();
 
 var api = require('./api.js');
-api.setApp(app, client);
+api.setApp( app, client );
 
 //////////////////////////////////////////////////
 // For Heroku deployment

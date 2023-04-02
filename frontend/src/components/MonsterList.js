@@ -13,10 +13,9 @@ function MonsterList() {
     var ud = JSON.parse(_ud);
     console.log(ud);
     var userId = ud.id;
+
     console.log(userId);
     const [monsterList, setMonsterList] = useState([]);
-    const [numList, setNumList] = useState(0);
-
     const [chosenPicture, setChosenPicture] = useState('');
     const [chosenName, setChosenName] = useState('Choose A Monster');
     const [choseDescription, setChosenDescription] = useState('');
@@ -26,63 +25,60 @@ function MonsterList() {
     const handleSelect = (selectedIndex, e) => {
         console.log(selectedIndex);
         let result = monsterList.find((item) => item.id === selectedIndex);
-        console.log(result.picture);
         setChosenPicture(result.picture);
         setChosenName(result.title);
         setChosenDescription(result.description);
         setChosen(true);
     };
 
+    console.log(Object.keys(monsterList));
+
     const renderSlides = () =>
-        monsterList.map((monster) => (
+        monsters.map((monster) => (
             <div className="d-flex align-items-center flex-column">
                 <img
                     onClick={() => handleSelect(monster.id)}
                     src={monster.picture}
                     alt="character design"
-                    className={`mx-auto ${chosen ? 'w-25' : 'w-50'}`}
+                    className={`mx-auto ${chosen ? 'w-25' : 'w-50'} ${
+                        Object.keys(monsterList).includes(monster.id)
+                            ? ''
+                            : 'silhouette'
+                    }`}
                 ></img>
                 <h3>{monster.title}</h3>
             </div>
         ));
-    const showMonsters = async (userID) => {
+
+    const getUser = async (userId) => {
+        var storage = require('../tokenStorage.js');
         var obj = {
-            userID: userID,
-            search: '',
+            userId: userId,
+            jwtToken: storage.retrieveToken(),
         };
         var js = JSON.stringify(obj);
         console.log(js);
         try {
-            const response = await fetch(bp.buildPath('api/listInventory'), {
+            const response = await fetch(bp.buildPath('api/getUserInfo'), {
                 method: 'POST',
                 body: js,
                 headers: { 'Content-Type': 'application/json' },
             });
             var res = JSON.parse(await response.text());
             console.log(res);
-
-            if (res.MonsterList <= 0) {
-                setMessage('You dont have any monsters');
-            } else {
-                console.log(res.monsterList);
-                let result = monsters.filter((o1) =>
-                    res.monsterList.some((o2) => o1.id === o2._id)
-                );
-                console.log(result);
-                if (result.length < 4) {
-                    setNumList(result.length);
-                } else {
-                    setNumList(3);
-                }
-                setMonsterList(result);
-            }
+            console.log(ud.Name);
+            var user = {
+                Name: ud.Name,
+                score: res.Score,
+                id: ud.id,
+            };
+            localStorage.setItem('user_data', JSON.stringify(user));
         } catch (e) {
-            alert(e.toString());
-            return;
+            setMessage(e.toString());
         }
     };
     useEffect(() => {
-        showMonsters(userId);
+        getUser(userId);
     }, []);
 
     return (
@@ -110,7 +106,7 @@ function MonsterList() {
             <div>
                 <Slider
                     dots={true}
-                    slidesToShow={numList}
+                    slidesToShow={3}
                     slidesToScroll={1}
                     autoplay={false}
                 >
