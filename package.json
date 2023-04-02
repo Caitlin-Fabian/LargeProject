@@ -8,7 +8,9 @@
     },
     "scripts": {
         "start": "node server.js",
-        "heroku-postbuild": " NPM__PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+        "heroku-postbuild": " NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend",
+        "dev": "nodemon server.js",
+        "test": "cross-env NODE_ENV=test jest --testTimeout=5000"
     },
     "author": "",
     "license": "ISC",

@@ -258,23 +258,48 @@ exports.setApp = function (app, client) {
         res.status(200).json(ret);
     });
 
-    //leaderboard API:
-    app.post('/api/leaderboard', async (req, res, next) => {
-        // incoming:
-        // outgoing: top 3 users information
-        var error = '';
+    //getUserList API:
+    app.post('/api/getUserList', async (req, res, next) => {
+        // incoming: userId
+        // outgoing: top 20 users. If not in the array, add the user to the end with their place
+        const size = 20;
+        const { userId} = req.body;
         const db = client.db('UCFGO');
-
         var query = { Score: -1 };
         const userList = await db
             .collection('Users')
             .find()
             .sort(query)
-            .limit(3)
             .toArray();
-
-        error = 'N/A';
-        var ret = { userList: userList, error: error };
+        
+        const topTwenty = [];
+            let isInList = false;
+            for(let x=0;x<userList.length;x++){
+                console.log(userList[x]._id.toString()+" "+userId);
+                console.log(userList[x]._id.toString() == userId);
+                if(x<size){
+                    if(userList[x]._id.toString() === userId){
+                        isInList = true;
+                        console.log("ey thats true!!")
+                    }
+                    userList[x].place = x+1;
+                    topTwenty.push(userList[x]);
+                }
+                else{
+                    if(isInList){
+                        break;
+                    }
+                    else if(userList[x]._id.toString() === userId){
+                        console.log("fax :sunglasses:");
+                        userList[x].place = x+1;
+                        topTwenty.push(userList[x]);
+                        break;
+                    }
+                }
+                    
+            }
+       
+        var ret = { userList: topTwenty, error: ''};
         res.status(200).json(ret);
     });
 
