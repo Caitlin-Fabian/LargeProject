@@ -4,13 +4,13 @@ import { monsters } from './monsters';
 const CharacterModal = ({ setScore, id, setMonsterModal }) => {
     console.log('userid:' + id);
     const starters = monsters.slice(2);
-    const [selectedId, setSelectedId] = useState(null);
+    const [selectedId, setSelectedId] = useState(0);
 
     const addMonster = async (id, score) => {
         var bp = require('./Path.js');
         var obj = {
-            monsterID: selectedId,
-            userID: id,
+            monsterId: selectedId,
+            userId: id,
             monsterScore: score,
         };
         var js = JSON.stringify(obj);
@@ -23,19 +23,6 @@ const CharacterModal = ({ setScore, id, setMonsterModal }) => {
             });
             var res = JSON.parse(await response.text());
             console.log(res);
-
-            // if (res) {
-            //     // setMessage('User/Password combination incorrect');
-            // } else {
-            //     var user = {
-            //         name: res.name,
-            //         score: res.score,
-            //         id: res.id,
-            //     };
-            //     localStorage.setItem('user_data', JSON.stringify(user));
-            //     // setMessage('');
-            //     window.location.href = '/inventory';
-            // }
         } catch (e) {
             alert(e.toString());
             return;
