@@ -125,3 +125,14 @@ width: 50%;
     border: none;
     cursor: pointer;
 }
+
+.Email-container{
+    height: 60vh;
+    width: 60vh;
+    box-shadow: 8px 8px 20px rgb(128, 128, 128);
+    position: absolute;
+    z-index:5;
+    top: 34%;
+    overflow: hidden;
+    background-color: $transparent-white;
+}
