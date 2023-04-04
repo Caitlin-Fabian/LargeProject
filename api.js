@@ -88,12 +88,12 @@ exports.setApp = function (app, client) {
                 subject: 'UCFGO Action Required - Verify Your Email!',
                 text: `
                     Hello, thanks for registering with UCFGO!
-                    Please enter the following one-time token: ${results[4]}
+                    Please enter the following one-time token: ${res[4]}
                     `,
                 html: `
                     <h1>Hello,</h1>
                     <p>Thanks for registering on UCFGO!</p>
-                    <p>Please enter the following one-time token: ${results[4]}</p>
+                    <p>Please enter the following one-time token: ${res[4]}</p>
                 `,
             };
 
