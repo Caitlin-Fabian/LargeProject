@@ -221,6 +221,7 @@ exports.setApp = function (app, client) {
             fn = results[0].Name;
             email = results[0].Email;
             score = results[0].Score;
+            monsters = results[0].MonsterID;
 
             var ret = {
                 id: id,

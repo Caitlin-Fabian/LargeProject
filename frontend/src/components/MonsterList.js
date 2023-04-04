@@ -24,14 +24,26 @@ function MonsterList() {
 
     const handleSelect = (selectedIndex, e) => {
         console.log(selectedIndex);
-        let result = monsterList.find((item) => item.id === selectedIndex);
-        setChosenPicture(result.picture);
-        setChosenName(result.title);
-        setChosenDescription(result.description);
-        setChosen(true);
+        let monster = monsters.find((monster) => monster.id === selectedIndex);
+        if (monsterList.includes(selectedIndex)) {
+            console.log(monster);
+            let result = monster;
+            setChosenPicture(result.picture);
+            setChosenName(result.title);
+            setChosenDescription(result.description);
+            setChosen(true);
+        }
     };
 
-    console.log(Object.keys(monsterList));
+    const handleName = (id) => {
+        if (monsterList.includes(id)) {
+            let monster = monsters.find((monster) => monster.id === id);
+            console.log(monster);
+            return <h3> {monster.title}</h3>;
+        } else {
+            return <h3>?</h3>;
+        }
+    };
 
     const renderSlides = () =>
         monsters.map((monster) => (
@@ -41,12 +53,10 @@ function MonsterList() {
                     src={monster.picture}
                     alt="character design"
                     className={`mx-auto ${chosen ? 'w-25' : 'w-50'} ${
-                        Object.keys(monsterList).includes(monster.id)
-                            ? ''
-                            : 'silhouette'
+                        monsterList.includes(monster.id) ? '' : 'silhouette'
                     }`}
                 ></img>
-                <h3>{}</h3>
+                {handleName(monster.id)}
             </div>
         ));
 
@@ -66,7 +76,8 @@ function MonsterList() {
             });
             var res = JSON.parse(await response.text());
             console.log(res);
-            console.log(ud.MonsterID);
+            console.log(res.monsters);
+            setMonsterList(res.monsters);
             var user = {
                 Name: ud.Name,
                 score: res.Score,

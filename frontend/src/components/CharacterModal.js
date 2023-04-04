@@ -22,6 +22,11 @@ const CharacterModal = ({ setMonsterModal, setCharacterModal }) => {
 
     const handleSelectedCharacter = async (selectedId) => {
         const obj = {
+            userId: '',
+            name: '',
+            username: '',
+            password: '',
+            email: '',
             character: selectedId,
         };
 
