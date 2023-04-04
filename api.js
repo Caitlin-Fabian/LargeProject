@@ -88,12 +88,12 @@ exports.setApp = function (app, client) {
                 subject: 'UCFGO Action Required - Verify Your Email!',
                 text: `
                     Hello, thanks for registering with UCFGO!
-                    Please enter the following one-time token: ${results[4]}
+                    Please enter the following one-time token: ${res[4]}
                     `,
                 html: `
                     <h1>Hello,</h1>
                     <p>Thanks for registering on UCFGO!</p>
-                    <p>Please enter the following one-time token: ${results[4]}</p>
+                    <p>Please enter the following one-time token: ${res[4]}</p>
                 `,
             };
 
@@ -326,18 +326,52 @@ exports.setApp = function (app, client) {
         var newCharacter = character;
 
         if (results.length > 0) {
-            db.collection('User').updateOne(
-                { _id: results[0] },
-                {
-                    $set: {
-                        Name: newName,
-                        Username: newUserName,
-                        Password: newPassword,
-                        Email: newEmail,
-                        Character: newCharacter,
-                    },
-                }
-            );
+            if(newName != null){
+                db.collection('User').updateOne(
+                    { _id: results[0] },
+                    {
+                        $set: {
+                            Name: newName
+                        },
+                    }
+                );
+            }else if (newUserName != null){
+                db.collection('User').updateOne(
+                    { _id: results[0] },
+                    {
+                        $set: {
+                            Username: newUserName
+                        },
+                    }
+                );
+            }else if(newPassword != null){
+                db.collection('User').updateOne(
+                    { _id: results[0] },
+                    {
+                        $set: {
+                            Password: newPassword
+                        },
+                    }
+                );
+            }else if(newEmail != null){
+                db.collection('User').updateOne(
+                    { _id: results[0] },
+                    {
+                        $set: {
+                            Email: newEmail
+                        },
+                    }
+                );
+            }else if(newCharacter != null){
+                db.collection('User').updateOne(
+                    { _id: results[0] },
+                    {
+                        $set: {
+                            Character: newCharacter
+                        },
+                    }
+                );
+            }
             var ret = { error: error };
             res.status(200).json(ret);
         } else {
