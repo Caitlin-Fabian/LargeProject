@@ -4,6 +4,7 @@ import girl from '../assets/girl_character.png';
 import boy from '../assets/boy_character.png';
 
 const CharacterModal = ({ setMonsterModal, setCharacterModal }) => {
+    var bp = require('./Path.js');
     var teams = [
         {
             id: 1,
@@ -19,7 +20,30 @@ const CharacterModal = ({ setMonsterModal, setCharacterModal }) => {
 
     const [selectedId, setSelectedId] = useState(null);
 
+    const handleSelectedCharacter = async (selectedId) => {
+        const obj = {
+            character: selectedId,
+        };
+
+        const js = JSON.stringify(obj);
+
+        console.log(js);
+        try {
+            const response = await fetch(bp.buildPath('api/updateUser'), {
+                method: 'POST',
+                body: js,
+                headers: { 'Content-Type': 'application/json' },
+            });
+            var res = JSON.parse(await response.text());
+            console.log(res);
+        } catch (e) {
+            alert(e.toString());
+            return;
+        }
+    };
+
     const handleNext = () => {
+        handleSelectedCharacter();
         setCharacterModal(false);
         setMonsterModal(true);
     };

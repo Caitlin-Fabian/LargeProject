@@ -269,7 +269,7 @@ exports.setApp = function (app, client) {
     app.post('/api/getUserList', async (req, res, next) => {
         // incoming: userId
         // outgoing: top 20 users. If not in the array, add the user to the end with their place
-        const size = 20;
+        const size = 10;
         const { userId } = req.body;
         const db = client.db('UCFGO');
         var query = { Score: -1 };
@@ -277,8 +277,8 @@ exports.setApp = function (app, client) {
             .collection('Users')
             .find()
             .sort(query)
+            .limit(size)
             .toArray();
-
         const topTwenty = [];
         let isInList = false;
         for (let x = 0; x < userList.length; x++) {

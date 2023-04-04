@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -8,6 +8,9 @@ import two from '../assets/Leader2.svg';
 import three from '../assets/Leader3.svg';
 
 function TopPlayer(props) {
+    const players = props.players;
+    console.log(players);
+
     return (
         <Container className="scoreboard-container justify-content-center">
             <Row className="position-relative d-flex align-items-center">
@@ -55,6 +58,35 @@ function TopPlayer(props) {
                     </div>
                 </Col>
             </Row>
+            <Row className="d-flex text-center p-3 leaderboard-ele m-1 shadow-lg">
+                <Col className="text-start">
+                    <div>Place</div>
+                </Col>
+                <Col>
+                    <div>Username</div>
+                </Col>
+                <Col>
+                    <div>Score</div>
+                </Col>
+            </Row>
+            {players.map((player, i) => {
+                return (
+                    <Row
+                        key={i}
+                        className="d-flex text-center p-4 leaderboard-ele m-2 shadow-lg"
+                    >
+                        <Col className="text-start">
+                            <div>#{player.place}</div>
+                        </Col>
+                        <Col>
+                            <div>{player.Username}</div>
+                        </Col>
+                        <Col>
+                            <div>{player.Score}</div>
+                        </Col>
+                    </Row>
+                );
+            })}
         </Container>
     );
 }

@@ -46,7 +46,7 @@ function MonsterList() {
                             : 'silhouette'
                     }`}
                 ></img>
-                <h3>{monster.title}</h3>
+                <h3>{}</h3>
             </div>
         ));
 
@@ -66,7 +66,7 @@ function MonsterList() {
             });
             var res = JSON.parse(await response.text());
             console.log(res);
-            console.log(ud.Name);
+            console.log(ud.MonsterID);
             var user = {
                 Name: ud.Name,
                 score: res.Score,
