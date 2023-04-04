@@ -323,18 +323,52 @@ exports.setApp = function (app, client) {
         var newCharacter = character;
 
         if (results.length > 0) {
-            db.collection('User').updateOne(
-                { _id: results[0] },
-                {
-                    $set: {
-                        Name: newName,
-                        Username: newUserName,
-                        Password: newPassword,
-                        Email: newEmail,
-                        Character: newCharacter,
-                    },
-                }
-            );
+            if(newName != null){
+                db.collection('User').updateOne(
+                    { _id: results[0] },
+                    {
+                        $set: {
+                            Name: newName
+                        },
+                    }
+                );
+            }else if (newUserName != null){
+                db.collection('User').updateOne(
+                    { _id: results[0] },
+                    {
+                        $set: {
+                            Username: newUserName
+                        },
+                    }
+                );
+            }else if(newPassword != null){
+                db.collection('User').updateOne(
+                    { _id: results[0] },
+                    {
+                        $set: {
+                            Password: newPassword
+                        },
+                    }
+                );
+            }else if(newEmail != null){
+                db.collection('User').updateOne(
+                    { _id: results[0] },
+                    {
+                        $set: {
+                            Email: newEmail
+                        },
+                    }
+                );
+            }else if(newCharacter != null){
+                db.collection('User').updateOne(
+                    { _id: results[0] },
+                    {
+                        $set: {
+                            Character: newCharacter
+                        },
+                    }
+                );
+            }
             var ret = { error: error };
             res.status(200).json(ret);
         } else {
