@@ -328,7 +328,7 @@ exports.setApp = function (app, client) {
                     {
                         $set: {
                             Name: newName
-                        },
+                        }
                     }
                 );
             } else if (newUserName != null) {
@@ -337,7 +337,7 @@ exports.setApp = function (app, client) {
                     {
                         $set: {
                             Username: newUserName
-                        },
+                        }
                     }
                 );
             } else if (newEmail != null) {
@@ -346,7 +346,7 @@ exports.setApp = function (app, client) {
                     {
                         $set: {
                             Email: newEmail
-                        },
+                        }
                     }
                 );
             } else if (newCharacter != null) {
@@ -355,7 +355,7 @@ exports.setApp = function (app, client) {
                     {
                         $set: {
                             Character: newCharacter
-                        },
+                        }
                     }
                 );
             }
