@@ -71,7 +71,6 @@ exports.setApp = function (app, client) {
                 Character: 0,
                 TimeCaught: [],
                 MonsterID: [],
-                IsVerified: false,
             });
 
             const res = await db
@@ -125,13 +124,12 @@ exports.setApp = function (app, client) {
             .collection('Users')
             .find({ EmailToken: token })
             .toArray();
-        console.log(results);
 
         if (results.length == 0) {
             error = 'Invalid token';
         } else {
             db.collection('User').updateOne(
-                { Username: results[1] },
+                { Username: results[0].Username },
                 {
                     $set: {
                         EmailToken: null,
@@ -308,10 +306,10 @@ exports.setApp = function (app, client) {
 
     //update user info
     app.post('/api/updateUser', async (req, res, nest) => {
-        // incoming: userID, name, username, password, email, character
+        // incoming: userID, name, username, email, character
         // outgoing: err
         var error = '';
-        const { userId, name, username, password, email, character } = req.body;
+        const { userId, name, username, email, character } = req.body;
         const db = client.db('UCFGO');
 
         const results = await db
@@ -328,7 +326,7 @@ exports.setApp = function (app, client) {
         if (results.length > 0) {
             if (newName != null) {
                 db.collection('User').updateOne(
-                    { _id: results[0] },
+                    { _id: results[0]._id },
                     {
                         $set: {
                             Name: newName,
@@ -337,7 +335,7 @@ exports.setApp = function (app, client) {
                 );
             } else if (newUserName != null) {
                 db.collection('User').updateOne(
-                    { _id: results[0] },
+                    { _id: results[0]._id },
                     {
                         $set: {
                             Username: newUserName,
@@ -355,7 +353,7 @@ exports.setApp = function (app, client) {
                 );
             } else if (newEmail != null) {
                 db.collection('User').updateOne(
-                    { _id: results[0] },
+                    { _id: results[0]._id },
                     {
                         $set: {
                             Email: newEmail,
@@ -364,7 +362,7 @@ exports.setApp = function (app, client) {
                 );
             } else if (newCharacter != null) {
                 db.collection('User').updateOne(
-                    { _id: results[0] },
+                    { _id: results[0]._id },
                     {
                         $set: {
                             Character: newCharacter,
