@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/esm/Container';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
+import { monsters } from './monsters';
 
 function Profile() {
     var _ud = localStorage.getItem('user_data');
@@ -34,8 +35,8 @@ function Profile() {
             console.log(res);
 
             setName(res.Name);
-            console.log(res.Name);
             setScore(res.score);
+            setMonsterList(res.monsters);
         } catch (e) {
             setMessage(e.toString());
         }
@@ -60,6 +61,24 @@ function Profile() {
                         <h2 className="p-3">Monsters </h2>
                         <div></div>
                     </div>
+                    {monsterList.map((monster, i) => {
+                        return (
+                            <Row
+                                key={i}
+                                className="d-flex text-center p-4 leaderboard-ele m-2 shadow-lg"
+                            >
+                                <Col className="text-start">
+                                    <div>{monster}</div>
+                                </Col>
+                                <Col>
+                                    <div>{monster.Username}</div>
+                                </Col>
+                                <Col>
+                                    <div>{monster.Score}</div>
+                                </Col>
+                            </Row>
+                        );
+                    })}
                 </Col>
             </Row>
         </Container>

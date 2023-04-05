@@ -71,7 +71,6 @@ exports.setApp = function (app, client) {
                 Character: 0,
                 TimeCaught: [],
                 MonsterID: [],
-                EmailToken: 'email',
                 IsVerified: false,
             });
 
@@ -81,6 +80,7 @@ exports.setApp = function (app, client) {
                 .toArray();
             id = res[0]._id;
             score = res[0].Score;
+            console.log(res[0].EmailToken);
 
             const msg = {
                 from: 'ucfgoteams@gmail.com',
@@ -88,12 +88,12 @@ exports.setApp = function (app, client) {
                 subject: 'UCFGO Action Required - Verify Your Email!',
                 text: `
                     Hello, thanks for registering with UCFGO!
-                    Please enter the following one-time token: ${res[4]}
+                    Please enter the following one-time token: ${res[0].EmailToken}
                     `,
                 html: `
                     <h1>Hello,</h1>
                     <p>Thanks for registering on UCFGO!</p>
-                    <p>Please enter the following one-time token: ${res[4]}</p>
+                    <p>Please enter the following one-time token: ${res[0].EmailToken}</p>
                 `,
             };
 
@@ -326,48 +326,48 @@ exports.setApp = function (app, client) {
         var newCharacter = character;
 
         if (results.length > 0) {
-            if(newName != null){
+            if (newName != null) {
                 db.collection('User').updateOne(
                     { _id: results[0] },
                     {
                         $set: {
-                            Name: newName
+                            Name: newName,
                         },
                     }
                 );
-            }else if (newUserName != null){
+            } else if (newUserName != null) {
                 db.collection('User').updateOne(
                     { _id: results[0] },
                     {
                         $set: {
-                            Username: newUserName
+                            Username: newUserName,
                         },
                     }
                 );
-            }else if(newPassword != null){
+            } else if (newPassword != null) {
                 db.collection('User').updateOne(
                     { _id: results[0] },
                     {
                         $set: {
-                            Password: newPassword
+                            Password: newPassword,
                         },
                     }
                 );
-            }else if(newEmail != null){
+            } else if (newEmail != null) {
                 db.collection('User').updateOne(
                     { _id: results[0] },
                     {
                         $set: {
-                            Email: newEmail
+                            Email: newEmail,
                         },
                     }
                 );
-            }else if(newCharacter != null){
+            } else if (newCharacter != null) {
                 db.collection('User').updateOne(
                     { _id: results[0] },
                     {
                         $set: {
-                            Character: newCharacter
+                            Character: newCharacter,
                         },
                     }
                 );

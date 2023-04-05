@@ -9,6 +9,7 @@ import three from '../assets/Leader3.svg';
 
 function TopPlayer(props) {
     const players = props.players;
+    const Rest_of_players = players.slice(3);
     console.log(players);
 
     return (
@@ -24,7 +25,7 @@ function TopPlayer(props) {
                 <Col className="position-absolute d-flex justify-content-center align-items-center text-center">
                     <div className="placement">
                         <h1>#1</h1>
-                        <h2>{props.topPlayers['0'].Name}</h2>
+                        <h2>{props.topPlayers['0'].Username}</h2>
                         <h3>{props.topPlayers['0'].Score}</h3>
                     </div>
                 </Col>
@@ -41,7 +42,7 @@ function TopPlayer(props) {
                         className="position-absolute my-auto d-flex align-items-center placement flex-column"
                     >
                         <h1>#2</h1>
-                        <h2>{props.topPlayers['1'].Name}</h2>
+                        <h2>{props.topPlayers['1'].Username}</h2>
                         <h3>{props.topPlayers['1'].Score}</h3>
                     </div>
                 </Col>
@@ -53,7 +54,7 @@ function TopPlayer(props) {
                     ></img>
                     <div className="position-absolute d-flex align-items-center placement flex-column">
                         <h1>#3</h1>
-                        <h2>{props.topPlayers['2'].Name}</h2>
+                        <h2>{props.topPlayers['2'].Username}</h2>
                         <h3>{props.topPlayers['2'].Score}</h3>
                     </div>
                 </Col>
@@ -69,7 +70,7 @@ function TopPlayer(props) {
                     <div>Score</div>
                 </Col>
             </Row>
-            {players.map((player, i) => {
+            {Rest_of_players.map((player, i) => {
                 return (
                     <Row
                         key={i}
