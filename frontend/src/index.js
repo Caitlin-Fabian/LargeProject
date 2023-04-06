@@ -7,9 +7,10 @@ import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
+    //turned app off of strict mode so the markers always render properly, error without doing this 
+    //<React.StrictMode>
         <App />
-    </React.StrictMode>
+    //</React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
