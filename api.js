@@ -129,17 +129,99 @@ exports.setApp = function (app, client) {
         } else {
             db.collection('User').updateOne(
                 { Username: results[0].Username },
-                {
-                    $set: {
+                {$set: {
                         EmailToken: null,
                         IsVerified: true,
-                    },
+                    }
                 }
             );
         }
 
         error = 'N/A';
 
+        var ret = { error: error };
+        res.status(200).json(ret);
+    });
+
+    //forgot password api
+    app.post('/api/forgotPassword', async (req, res, nest) => {
+        // incoming: username, email
+        // outgoing: err
+        var error = '';
+        const { username, email } = req.body;
+        const db = client.db('UCFGO');
+
+        var passwordToken = Math.random().toString(36).substring(2, 7);
+
+        const results = await db
+            .collection('Users')
+            .find({ Username: username })
+            .toArray();
+
+        if (results.length != 0) {
+            if (results[0].email == email) {//email matches what the user inputted
+                db.collection('User').updateOne(
+                    { Username: results[0].Username },
+                    { $set: {
+                            EmailToken: passwordToken //update user email token 
+                        }
+                    }
+                );
+                const msg = {
+                    from: 'ucfgoteams@gmail.com',
+                    to: email,
+                    subject: 'UCFGO Action Required - Password Reset Request',
+                    text: `
+                            Password Reset,
+                            Please enter the following one-time token to reset password: ${results[0].EmailToken}
+                            http://${req.headers.host}/email?token=${results[0].EmailToken}
+                            `,
+                    html: `
+                            <h1>Password Reset,</h1>
+                            <p>Please enter the following one-time token to reset password: ${results[0].EmailToken}</p>
+                            <a href="https//${req.headers.host}/email?=token=${results[0].EmailToken}">Verify your account</a>
+                        `,
+                };
+
+                sgMail.send(msg);
+            } else {
+                error = 'Incorrect email for username';
+            }
+        } else {
+            error = 'Invalid username';
+        }
+
+        error = 'N/A';
+
+        var ret = { error: error };
+        res.status(200).json(ret);
+    });
+
+    //update password api
+    app.post('/api/updatePassword', async (req, res, nest) => {
+        // incoming: token, newPassword 
+        // outgoing: err
+        var error = '';
+        const { token, newPassword } = req.body;
+        const db = client.db('UCFGO');
+
+        const results = await db
+            .collection('Users')
+            .find({ EmailToken: token })
+            .toArray();
+
+        if (results.length != 0) {
+            db.collection('User').updateOne(
+                { Username: results[0].Username },
+                { $set: {
+                        Password: newPassword
+                    }
+                }
+            );
+        } else {
+            error = 'Invalid token';
+        }
+        error = 'N/A';
         var ret = { error: error };
         res.status(200).json(ret);
     });
@@ -325,8 +407,7 @@ exports.setApp = function (app, client) {
             if (newName != null) {
                 db.collection('User').updateOne(
                     { _id: results[0]._id },
-                    {
-                        $set: {
+                    {$set: {
                             Name: newName
                         }
                     }
@@ -334,8 +415,7 @@ exports.setApp = function (app, client) {
             } else if (newUserName != null) {
                 db.collection('User').updateOne(
                     { _id: results[0]._id },
-                    {
-                        $set: {
+                    {$set: {
                             Username: newUserName
                         }
                     }
@@ -343,8 +423,7 @@ exports.setApp = function (app, client) {
             } else if (newEmail != null) {
                 db.collection('User').updateOne(
                     { _id: results[0]._id },
-                    {
-                        $set: {
+                    {$set: {
                             Email: newEmail
                         }
                     }
@@ -352,8 +431,7 @@ exports.setApp = function (app, client) {
             } else if (newCharacter != null) {
                 db.collection('User').updateOne(
                     { _id: results[0]._id },
-                    {
-                        $set: {
+                    {$set: {
                             Character: newCharacter
                         }
                     }
