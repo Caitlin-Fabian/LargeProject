@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import girl from '../assets/girl_character.png';
 import boy from '../assets/boy_character.png';
+import * as Mdicons from 'react-icons/md';
 
 const CharacterModal = ({ setMonsterModal, setCharacterModal }) => {
     var bp = require('./Path.js');
@@ -18,16 +19,17 @@ const CharacterModal = ({ setMonsterModal, setCharacterModal }) => {
         },
     ];
 
-    const [selectedId, setSelectedId] = useState(null);
+    const [selectedId, setSelectedId] = useState(0);
 
-    const handleSelectedCharacter = async (selectedId) => {
+    const handleSelectedCharacter = async () => {
+        console.log(selectedId);
         const obj = {
+            character: selectedId,
             userId: '',
             name: '',
             username: '',
             password: '',
             email: '',
-            character: selectedId,
         };
 
         const js = JSON.stringify(obj);
@@ -49,19 +51,21 @@ const CharacterModal = ({ setMonsterModal, setCharacterModal }) => {
 
     const handleNext = () => {
         handleSelectedCharacter();
-        setCharacterModal(false);
-        setMonsterModal(true);
+        // setCharacterModal(false);
+        // setMonsterModal(true);
     };
 
     return (
-        <div className="CharModal d-flex flex-column">
-            <div className=" d-flex justify-content-center flex-column container">
+        <div className="CharModal d-flex flex-column justify-content-around ">
+            <div className=" d-flex justify-content-around flex-column container">
                 <h1>Choose Your Character!</h1>
                 <div className="d-flex flex-row justify-content-around">
                     {teams.map((card) => (
                         <div
                             key={card.id}
-                            onClick={() => setSelectedId(card.id)}
+                            onClick={() => {
+                                handleID(card.id);
+                            }}
                             className={`card column 
                             ${
                                 selectedId && selectedId !== card.id
@@ -71,7 +75,7 @@ const CharacterModal = ({ setMonsterModal, setCharacterModal }) => {
                         `}
                         >
                             <img
-                                className="card-img-top w-75 mx-auto"
+                                className="card-img-top character mx-auto"
                                 src={card.picture}
                                 alt="Character Drawing"
                             />
@@ -82,10 +86,11 @@ const CharacterModal = ({ setMonsterModal, setCharacterModal }) => {
                 </div>
             </div>
             <button
-                value="Choose"
                 onClick={handleNext}
+                className="back-button text-end"
             >
                 Next
+                <Mdicons.MdKeyboardArrowRight />
             </button>
         </div>
     );

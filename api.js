@@ -319,7 +319,6 @@ exports.setApp = function (app, client) {
 
         var newName = name;
         var newUserName = username;
-        var newPassword = password;
         var newEmail = email;
         var newCharacter = character;
 
@@ -339,15 +338,6 @@ exports.setApp = function (app, client) {
                     {
                         $set: {
                             Username: newUserName,
-                        },
-                    }
-                );
-            } else if (newPassword != null) {
-                db.collection('User').updateOne(
-                    { _id: results[0] },
-                    {
-                        $set: {
-                            Password: newPassword,
                         },
                     }
                 );
@@ -376,5 +366,15 @@ exports.setApp = function (app, client) {
             var ret = { error: 'Unable to update user' };
             res.status(200).json(ret);
         }
+    });
+
+    //Returns all of the moneters
+
+    app.post('/api/getMonsterList', async (req, res, next) => {
+        const db = client.db('UCFGO');
+        const monsterList = await db.collection('Monsters').find().toArray();
+
+        var ret = { monsterList: monsterList, error: '' };
+        res.status(200).json(ret);
     });
 };
