@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Slider from 'react-slick';
-import { monsters } from './monsters';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -15,8 +14,9 @@ function MonsterList() {
     var userId = ud.id;
 
     console.log(userId);
+    const [monsters, setMonsters] = useState([]);
     const [monsterList, setMonsterList] = useState([]);
-    const [chosenPicture, setChosenPicture] = useState('');
+    const [chosenPicture, setChosenPicture] = useState(0);
     const [chosenName, setChosenName] = useState('Choose A Monster');
     const [choseDescription, setChosenDescription] = useState('');
     const [chosen, setChosen] = useState(false);
@@ -24,29 +24,39 @@ function MonsterList() {
 
     const handleSelect = (selectedIndex, e) => {
         console.log(selectedIndex);
-        let result = monsterList.find((item) => item.id === selectedIndex);
-        setChosenPicture(result.picture);
-        setChosenName(result.title);
-        setChosenDescription(result.description);
-        setChosen(true);
+
+        let monster = monsters.find((monster) => monster._id === selectedIndex);
+        console.log(monster);
+        if (monsterList.includes(selectedIndex)) {
+            setChosenPicture(monster._id);
+            setChosenName(monster.Name);
+            setChosenDescription(monster.Description);
+            setChosen(true);
+        }
     };
 
-    console.log(Object.keys(monsterList));
+    const handleName = (id) => {
+        if (monsterList.includes(id)) {
+            let monster = monsters.find((monster) => monster._id === id);
+            console.log(monster);
+            return <h3> {monster.Name}</h3>;
+        } else {
+            return <h3>?</h3>;
+        }
+    };
 
     const renderSlides = () =>
         monsters.map((monster) => (
             <div className="d-flex align-items-center flex-column">
                 <img
-                    onClick={() => handleSelect(monster.id)}
-                    src={monster.picture}
+                    onClick={() => handleSelect(monster._id)}
+                    src={require(`../assets/${monster._id}.png`)}
                     alt="character design"
                     className={`mx-auto ${chosen ? 'w-25' : 'w-50'} ${
-                        Object.keys(monsterList).includes(monster.id)
-                            ? ''
-                            : 'silhouette'
+                        monsterList.includes(monster._id) ? '' : 'silhouette'
                     }`}
                 ></img>
-                <h3>{monster.title}</h3>
+                {handleName(monster._id)}
             </div>
         ));
 
@@ -66,7 +76,9 @@ function MonsterList() {
             });
             var res = JSON.parse(await response.text());
             console.log(res);
-            console.log(ud.Name);
+            console.log(res.monsters);
+            setMonsterList(res.monsters);
+
             var user = {
                 Name: ud.Name,
                 score: res.Score,
@@ -77,9 +89,25 @@ function MonsterList() {
             setMessage(e.toString());
         }
     };
+
+    const getMonsters = async () => {
+        try {
+            const response = await fetch(bp.buildPath('api/getMonsterList'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            var res = JSON.parse(await response.text());
+            console.log(res.monsterList);
+            setMonsters(res.monsterList);
+        } catch (e) {
+            setMessage(e.toString());
+        }
+    };
     useEffect(() => {
         getUser(userId);
-    }, []);
+        getMonsters();
+    }, [chosenPicture]);
 
     return (
         <div className="container d-flex flex-column">
@@ -88,11 +116,13 @@ function MonsterList() {
                     className="shadow"
                     style={{ width: '18rem' }}
                 >
-                    <Card.Img
-                        variant="top"
-                        src={chosenPicture}
-                        className="w-50 mx-auto"
-                    />
+                    {chosenPicture > 0 && (
+                        <Card.Img
+                            variant="top"
+                            src={require(`../assets/${chosenPicture}.png`)}
+                            className="w-50 mx-auto"
+                        />
+                    )}
                     <Card.Body>
                         <Card.Title className="text-center">
                             {chosenName}

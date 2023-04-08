@@ -10,7 +10,7 @@ function Inventory() {
     var ud = JSON.parse(_ud);
     console.log(ud);
     var userId = ud.id;
-    var Name = ud.Name;
+    // var Name = ud.Name;
     var monster;
     const [characterModal, setCharacterModal] = useState(false);
     const [monsterModal, setMonsterModal] = useState(false);
@@ -55,6 +55,7 @@ function Inventory() {
                 </div>
                 {characterModal && (
                     <CharacterModal
+                        id={userId}
                         setMonsterModal={setMonsterModal}
                         setCharacterModal={setCharacterModal}
                     />

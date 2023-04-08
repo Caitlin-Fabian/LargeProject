@@ -79,6 +79,7 @@ exports.setApp = function (app, client) {
                 .toArray();
             id = res[0]._id;
             score = res[0].Score;
+            console.log(res[0].EmailToken);
 
             const msg = {
                 from: 'ucfgoteams@gmail.com',
@@ -206,6 +207,7 @@ exports.setApp = function (app, client) {
         var email = '';
         var score = 0;
         var monsters = [];
+        var character = 0;
 
         var refreshedToken = null;
         try {
@@ -218,6 +220,8 @@ exports.setApp = function (app, client) {
             fn = results[0].Name;
             email = results[0].Email;
             score = results[0].Score;
+            monsters = results[0].MonsterID;
+            character = results[0].Character;
 
             var ret = {
                 id: id,
@@ -226,6 +230,7 @@ exports.setApp = function (app, client) {
                 error: '',
                 score: score,
                 monsters: monsters,
+                character: character,
                 jwtToken: refreshedToken,
             };
             res.status(200).json(ret);
@@ -266,7 +271,7 @@ exports.setApp = function (app, client) {
     app.post('/api/getUserList', async (req, res, next) => {
         // incoming: userId
         // outgoing: top 20 users. If not in the array, add the user to the end with their place
-        const size = 20;
+        const size = 10;
         const { userId } = req.body;
         const db = client.db('UCFGO');
         var query = { Score: -1 };
@@ -274,8 +279,8 @@ exports.setApp = function (app, client) {
             .collection('Users')
             .find()
             .sort(query)
+            .limit(size)
             .toArray();
-
         const topTwenty = [];
         let isInList = false;
         for (let x = 0; x < userList.length; x++) {
@@ -312,50 +317,56 @@ exports.setApp = function (app, client) {
 
         const results = await db
             .collection('Users')
-            .find({ _id: userId })
+            .find({ _id: new BSON.ObjectId(userId) })
             .toArray();
 
+        console.log(results[0].id);
         var newName = name;
         var newUserName = username;
-        var newPassword = password;
         var newEmail = email;
         var newCharacter = character;
+        console.log(newCharacter);
 
         if (results.length > 0) {
+            console.log('cool');
             if (newName != null) {
-                db.collection('User').updateOne(
-                    { _id: results[0]._id },
+                db.collection('Users').updateOne(
+                    { _id: new BSON.ObjectId(results[0]._id) },
                     {
                         $set: {
-                            Name: newName
-                        }
+                            Name: newName,
+                        },
                     }
                 );
-            } else if (newUserName != null) {
-                db.collection('User').updateOne(
-                    { _id: results[0]._id },
+            }
+            if (newUserName != null) {
+                db.collection('Users').updateOne(
+                    { _id: new BSON.ObjectId(results[0]._id) },
                     {
                         $set: {
-                            Username: newUserName
-                        }
+                            Username: newUserName,
+                        },
                     }
                 );
-            } else if (newEmail != null) {
-                db.collection('User').updateOne(
-                    { _id: results[0]._id },
+            }
+            if (newEmail != null) {
+                db.collection('Users').updateOne(
+                    { _id: new BSON.ObjectId(results[0]._id) },
                     {
                         $set: {
-                            Email: newEmail
-                        }
+                            Email: newEmail,
+                        },
                     }
                 );
-            } else if (newCharacter != null) {
-                db.collection('User').updateOne(
-                    { _id: results[0]._id },
+            }
+            if (newCharacter != null) {
+                console.log('hello');
+                db.collection('Users').updateOne(
+                    { _id: new BSON.ObjectId(results[0]._id) },
                     {
                         $set: {
-                            Character: newCharacter
-                        }
+                            Character: newCharacter,
+                        },
                     }
                 );
             }
@@ -365,5 +376,15 @@ exports.setApp = function (app, client) {
             var ret = { error: 'Unable to update user' };
             res.status(200).json(ret);
         }
+    });
+
+    //Returns all of the moneters
+
+    app.post('/api/getMonsterList', async (req, res, next) => {
+        const db = client.db('UCFGO');
+        const monsterList = await db.collection('Monsters').find().toArray();
+
+        var ret = { monsterList: monsterList, error: '' };
+        res.status(200).json(ret);
     });
 };

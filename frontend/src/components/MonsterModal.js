@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { monsters } from './monsters';
+import * as Mdicons from 'react-icons/md';
 
 const CharacterModal = ({ setScore, id, setMonsterModal }) => {
     console.log('userid:' + id);
-    const starters = monsters.slice(2);
     const [selectedId, setSelectedId] = useState(0);
 
     const addMonster = async (id, score) => {
@@ -36,11 +36,11 @@ const CharacterModal = ({ setScore, id, setMonsterModal }) => {
     };
 
     return (
-        <div className="CharModal d-flex flex-column">
-            <div className=" d-flex justify-content-center flex-column container">
+        <div className="CharModal d-flex flex-column justify-content-around">
+            <div className=" d-flex justify-content-center flex-column container text-center">
                 <h1>Choose Your Monster!</h1>
                 <div className="d-flex flex-row justify-content-around">
-                    {starters.map((card) => (
+                    {monsters.map((card) => (
                         <div
                             key={card.id}
                             onClick={() => setSelectedId(card.id)}
@@ -64,10 +64,11 @@ const CharacterModal = ({ setScore, id, setMonsterModal }) => {
                 </div>
             </div>
             <button
-                value="Choose"
                 onClick={handleNext}
+                className="back-button text-end"
             >
-                Next
+                Sumbit
+                <Mdicons.MdKeyboardArrowRight />
             </button>
         </div>
     );

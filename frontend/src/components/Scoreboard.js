@@ -12,12 +12,27 @@ function Scoreboard() {
     const [message, setMessage] = useState('');
     const [showPlayers, setShowPlayers] = useState(false);
     const [topPlayers, setTopPlayers] = useState([]);
+    const [players, setPlayers] = useState([]);
     var bp = require('./Path.js');
+
+    var _ud = localStorage.getItem('user_data');
+    console.log(_ud);
+    var ud = JSON.parse(_ud);
+    console.log(ud);
+    var userId = ud.id;
+
     var Topscores;
     const showleaderBoard = async () => {
         try {
-            const response = await fetch(bp.buildPath('api/leaderboard'), {
+            var obj = {
+                userId: userId,
+            };
+
+            var js = JSON.stringify(obj);
+
+            const response = await fetch(bp.buildPath('api/getUserList'), {
                 method: 'POST',
+                body: js,
                 headers: { 'Content-Type': 'application/json' },
             });
             var res = JSON.parse(await response.text());
@@ -27,8 +42,11 @@ function Scoreboard() {
                 setMessage('This are no players');
             } else {
                 console.log(res.userList);
+                var topThree = res.userList.slice(0, 3);
+                console.log(topThree);
                 setShowPlayers(true);
-                setTopPlayers(res.userList);
+                setTopPlayers(topThree);
+                setPlayers(res.userList);
             }
         } catch (e) {
             alert(e.toString());
@@ -37,7 +55,12 @@ function Scoreboard() {
     };
 
     if (showPlayers) {
-        Topscores = <TopPlayer topPlayers={topPlayers} />;
+        Topscores = (
+            <TopPlayer
+                players={players}
+                topPlayers={topPlayers}
+            />
+        );
     }
 
     useEffect(() => {
