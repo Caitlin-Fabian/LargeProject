@@ -207,6 +207,7 @@ exports.setApp = function (app, client) {
         var email = '';
         var score = 0;
         var monsters = [];
+        var character = 0;
 
         var refreshedToken = null;
         try {
@@ -220,6 +221,7 @@ exports.setApp = function (app, client) {
             email = results[0].Email;
             score = results[0].Score;
             monsters = results[0].MonsterID;
+            character = results[0].Character;
 
             var ret = {
                 id: id,
@@ -228,6 +230,7 @@ exports.setApp = function (app, client) {
                 error: '',
                 score: score,
                 monsters: monsters,
+                character: character,
                 jwtToken: refreshedToken,
             };
             res.status(200).json(ret);
@@ -314,45 +317,52 @@ exports.setApp = function (app, client) {
 
         const results = await db
             .collection('Users')
-            .find({ _id: userId })
+            .find({ _id: new BSON.ObjectId(userId) })
             .toArray();
 
+        console.log(results[0].id);
         var newName = name;
         var newUserName = username;
         var newEmail = email;
         var newCharacter = character;
+        console.log(newCharacter);
 
         if (results.length > 0) {
+            console.log('cool');
             if (newName != null) {
-                db.collection('User').updateOne(
-                    { _id: results[0]._id },
+                db.collection('Users').updateOne(
+                    { _id: new BSON.ObjectId(results[0]._id) },
                     {
                         $set: {
                             Name: newName,
                         },
                     }
                 );
-            } else if (newUserName != null) {
-                db.collection('User').updateOne(
-                    { _id: results[0]._id },
+            }
+            if (newUserName != null) {
+                db.collection('Users').updateOne(
+                    { _id: new BSON.ObjectId(results[0]._id) },
                     {
                         $set: {
                             Username: newUserName,
                         },
                     }
                 );
-            } else if (newEmail != null) {
-                db.collection('User').updateOne(
-                    { _id: results[0]._id },
+            }
+            if (newEmail != null) {
+                db.collection('Users').updateOne(
+                    { _id: new BSON.ObjectId(results[0]._id) },
                     {
                         $set: {
                             Email: newEmail,
                         },
                     }
                 );
-            } else if (newCharacter != null) {
-                db.collection('User').updateOne(
-                    { _id: results[0]._id },
+            }
+            if (newCharacter != null) {
+                console.log('hello');
+                db.collection('Users').updateOne(
+                    { _id: new BSON.ObjectId(results[0]._id) },
                     {
                         $set: {
                             Character: newCharacter,

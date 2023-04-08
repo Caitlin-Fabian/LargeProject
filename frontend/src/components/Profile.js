@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/esm/Container';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
+
 import { monsters } from './monsters';
 
 function Profile() {
@@ -15,7 +16,21 @@ function Profile() {
     const [name, setName] = useState('');
     const [score, setScore] = useState(ud.score);
     const [monsterList, setMonsterList] = useState([]);
+    const [character, setCharacter] = useState('boy');
     var bp = require('./Path.js');
+
+    var teams = [
+        {
+            id: 1,
+            title: 'Male',
+            picture: 'boy',
+        },
+        {
+            id: 2,
+            title: 'Female',
+            picture: 'girl',
+        },
+    ];
 
     const getUser = async (userId) => {
         var storage = require('../tokenStorage.js');
@@ -37,6 +52,9 @@ function Profile() {
             setName(res.Name);
             setScore(res.score);
             setMonsterList(res.monsters);
+            let obj = teams.find((o) => o.character === res.character).picture;
+            setCharacter(obj);
+            console.log(character);
         } catch (e) {
             setMessage(e.toString());
         }
@@ -54,7 +72,13 @@ function Profile() {
                         <h2 className="p-3">{name}</h2>
                         <h3 className="p-3">Score : {score}</h3>
                     </div>
-                    <div className="">Picture</div>
+                    <div className="d-flex justify-content-center">
+                        <img
+                            src={require(`../assets/${character}.png`)}
+                            className="w-50 mx-auto"
+                            alt="Character choice"
+                        />
+                    </div>
                 </Col>
                 <Col>
                     <div className="monsters">

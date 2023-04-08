@@ -55,6 +55,7 @@ function Inventory() {
                 </div>
                 {characterModal && (
                     <CharacterModal
+                        id={userId}
                         setMonsterModal={setMonsterModal}
                         setCharacterModal={setCharacterModal}
                     />
