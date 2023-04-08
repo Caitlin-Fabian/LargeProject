@@ -6,3 +6,7 @@ body {
 html {
     height: 100%;
 }
+.map-container {
+    width: 95%;
+    height: 90vh;
+}
