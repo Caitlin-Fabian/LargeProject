@@ -19,10 +19,9 @@ const CharacterModal = ({ setMonsterModal, setCharacterModal }) => {
         },
     ];
 
-    const [selectedId, setSelectedId] = useState(0);
+    const [selectedId, setSelectedId] = useState(null);
 
-    const handleSelectedCharacter = async () => {
-        console.log(selectedId);
+    const handleSelectedCharacter = async (selectedId) => {
         const obj = {
             character: selectedId,
             userId: '',
@@ -63,9 +62,7 @@ const CharacterModal = ({ setMonsterModal, setCharacterModal }) => {
                     {teams.map((card) => (
                         <div
                             key={card.id}
-                            onClick={() => {
-                                handleID(card.id);
-                            }}
+                            onClick={() => setSelectedId(card.id)}
                             className={`card column 
                             ${
                                 selectedId && selectedId !== card.id
