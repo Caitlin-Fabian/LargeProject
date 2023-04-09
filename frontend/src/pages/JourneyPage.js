@@ -38,7 +38,6 @@ export default function App() {
     var userId = ud.id;
     console.log(userId);
     await getUserMonsters(userId);
-    if(userMonsterList)
     for(let x=0;x<monsters.length;x++){
       let icon = markerIcon(userMonsterList.includes(monsters[x].id));
       console.log(icon.url);

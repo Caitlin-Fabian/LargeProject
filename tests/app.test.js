@@ -29,22 +29,163 @@ afterAll(async () => {
 });
 
 describe("POST /api/login", () => {
-  it("should return 200 status code", async () => {
-    //can but different tokens based on what is in the DB or not. A good new test would be to test if a user in the db is working right
-    const token = await request(app).post("/api/login").send({
-      username: "rickL",
-      password: "COP4331",
-    });
+  it("should return 200 status code, as user exists", async () => {
+    const user = {
+      username: "Cait",
+      password: "password",
+    };
+    
+    const loginResponse = await request(app)
+      .post("/api/login")
+      .send(user);
+    
+    expect(loginResponse.statusCode).toBe(200);
+    expect(loginResponse.body.accessToken).toBeDefined();
 
-    //gets the token from what was sent to the DB and formats it like a response
-    const response = await request(app).post("/api/login")
-      .set({
-        Authorization: "bearer " + token.body.token,
-        "Content-Type": "application/json",
-      });
-    //from there, you are able to expect different responses from the DB
-    expect(response.statusCode).toBe(200);
+  });
+  
+  it("should return 406 status code, as user does not exist", async () => {
+    const user = {
+      username: "nonexistentUser",
+      password: "invalidPassword",
+    };
+    
+    const loginResponse = await request(app)
+      .post("/api/login")
+      .send(user);
+    
+    expect(loginResponse.statusCode).toBe(406);
+    expect(loginResponse.body.error).toBe("Wrong Credentials");
+    
+  });
+
+  it("should return 406 status code, no username or password passed", async () => {
+    const user = {
+    };
+    
+    const loginResponse = await request(app)
+      .post("/api/login")
+      .send(user);
+    
+    expect(loginResponse.statusCode).toBe(406);
+    expect(loginResponse.body.error).toBe("Invalid Login");
 
   });
 
+  it("should return 406 status code, no password passed", async () => {
+    const user = {
+      username: "nonexistentUser",
+    };
+    
+    const loginResponse = await request(app)
+      .post("/api/login")
+      .send(user);
+    
+    expect(loginResponse.statusCode).toBe(406);
+    expect(loginResponse.body.error).toBe("Invalid Login");
+
+  });
+
+  it("should return 406 status code, no username passed", async () => {
+    const user = {
+      password: "invalidPassword",
+    };
+    
+    const loginResponse = await request(app)
+      .post("/api/login")
+      .send(user);
+    
+    expect(loginResponse.statusCode).toBe(406);
+    expect(loginResponse.body.error).toBe("Invalid Login");
+
+  });
+});
+
+describe("POST /api/getUserList", () => {
+
+  it("should return 200 status code, and return 20 to 21 users all having a lesser or equal score to the person behind", async () => {
+      
+      //gets the token from what was sent to the DB and formats it like a response
+      const response = await request(app).post("/api/getUserList")
+          .send({userId: "642381512c80d6309009a352"})
+      //from there, you are able to expect different responses from the DB
+      expect(response.statusCode).toBe(200);
+      expect(response.body.userList).toBeDefined();
+      for(let x=0;x<response.body.userList.length-1;x++){
+          expect(response.body.userList[x].Score).toBeGreaterThanOrEqual(response.body.userList[x+1].Score);
+      }
+
+  });
+  it("should return 406 status code,no user id ", async () => {
+      
+    //gets the token from what was sent to the DB and formats it like a response
+    const response = await request(app).post("/api/getUserList")
+        .send()
+    //from there, you are able to expect different responses from the DB
+    expect(response.statusCode).toBe(406);
+    expect(response.body.error).toBe("No User ID passed");
+
+  });
+});
+describe("POST /api/getUserInfo", () => {
+  it("should return 200 status code ", async () => {
+       const response = await request(app).post("/api/getUserInfo")
+          .send({userId: "642381512c80d6309009a352"})
+      //from there, you are able to expect different responses from the DB
+      expect(response.statusCode).toBe(200);
+      expect(response.body.Email).toBeDefined();
+      expect(response.body.Name).toBeDefined();
+      expect(response.body.id).toBeDefined();
+      expect(response.body.character).toBeDefined();
+      expect(response.body.monsters).toBeDefined();
+
+  });
+  it("should return 406 status code ", async () => {
+    const response = await request(app).post("/api/getUserInfo")
+       .send()
+    //from there, you are able to expect different responses from the DB
+    expect(response.statusCode).toBe(406);
+    expect(response.body.error).toBe("No User ID passed");
+
+  });
+      
+});
+//need a test for when it works fine, none of the properties added and what happens if a user already has that monster
+describe("POST /api/giveMonster", () => {
+  it("should return 200 status code ", async () => {
+       const inc = 5;
+       const mid = 1;
+       const beforeResponse = await request(app).post("/api/getUserInfo")
+          .send({
+            userId: "642381512c80d6309009a352"
+          })
+        const actual = await request(app).post("/api/giveMonster")
+        .send({
+          userId: "642381512c80d6309009a352",
+          monsterId: mid,
+          monsterScore: 5
+        })
+        const afterResponse = await request(app).post("/api/getUserInfo")
+          .send({
+            userId: "642381512c80d6309009a352"
+          })
+      //from there, you are able to expect different responses from the DB
+      expect(actual.statusCode).toBe(200);
+      expect(actual.body.error).toBe("N/A");
+      expect(afterResponse.statusCode).toBe(200);
+      expect(beforeResponse.statusCode).toBe(200);
+      expect(afterResponse.body.monsters).toContainEqual(mid);
+      //expect(afterResponse.body.score).toBe(beforeResponse.body.score+inc);
+     
+
+  });
+  // it("should return 406 status code ", async () => {
+  //   const response = await request(app).post("/api/getUserInfo")
+  //      .send()
+  //   //from there, you are able to expect different responses from the DB
+  //   expect(response.statusCode).toBe(406);
+  //   expect(response.body.error).toBe("No User ID passed");
+
+  // });
+      
 });
