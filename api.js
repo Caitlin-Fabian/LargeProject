@@ -155,30 +155,40 @@ exports.setApp = function (app, client) {
         res.status(200).json(ret);
     });
 
-    //giveMonster api
+    //giveMonster api tested
     app.post('/api/giveMonster', async (req, res, next) => {
         // incoming: userID, monsterId, monsterScore
         // outgoing: err
         var error = '';
         const { userId, monsterId, monsterScore } = req.body;
+        if(userId == undefined){
+            res.status(406).json({error:"No User ID passed"});
+            return;
+        }
         const db = client.db('UCFGO');
         //updates user with the given monster score
 
         var query = { _id: new BSON.ObjectId(userId) };
+
         console.log(query);
-        const user = await db.collection('Users').find(query).toArray();
+        const user = await db
+        .collection('Users')
+        .find(query)
+        .toArray();
 
-        //adds the monster id to the array for the user
-        db.collection('Users').updateOne(query, {
-            $push: { MonsterID: monsterId },
-        });
+        if(!user[0].MonsterID.includes(monsterId)){
+        // //adds the monster id to the array for the user
+            db.collection('Users').updateOne(query, {
+                $push: { MonsterID: monsterId },
+            });
+        }
 
-        let score = user.Score + monsterScore;
+        let score = user[0].Score + monsterScore;
 
-        console.log("Score"+user.Score);
+        console.log("Score"+score);
         //if for some reason something happens to the score we want to be able to pivot
 
-        if (isNaN(user.Score) || user.Score == null) {
+        if (isNaN(user[0].Score) || user[0].Score == null) {
             score = monsterScore;
             console.log('fixed score');
         }
@@ -326,20 +336,23 @@ exports.setApp = function (app, client) {
         res.status(200).json(ret);
     });
 
-    //update user info
+    //update user info tested
     app.post('/api/updateUser', async (req, res, nest) => {
         // incoming: userID, name, username, email, character
         // outgoing: err
         var error = '';
         const { userId, name, username, email, character } = req.body;
         const db = client.db('UCFGO');
-
+        if(userId == undefined){
+            res.status(406).json({error:"No User ID passed"});
+            return;
+        }
         const results = await db
             .collection('Users')
             .find({ _id: new BSON.ObjectId(userId) })
             .toArray();
 
-        console.log(results[0].id);
+        //console.log(results[0]._id);
         var newName = name;
         var newUserName = username;
         var newEmail = email;
@@ -393,12 +406,11 @@ exports.setApp = function (app, client) {
             res.status(200).json(ret);
         } else {
             var ret = { error: 'Unable to update user' };
-            res.status(200).json(ret);
+            res.status(500).json(ret);
         }
     });
 
     //Returns all of the moneters
-
     app.post('/api/getMonsterList', async (req, res, next) => {
         const db = client.db('UCFGO');
         const monsterList = await db.collection('Monsters').find().toArray();

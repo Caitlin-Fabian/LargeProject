@@ -160,11 +160,11 @@ describe("POST /api/giveMonster", () => {
             userId: "642381512c80d6309009a352"
           })
         const actual = await request(app).post("/api/giveMonster")
-        .send({
-          userId: "642381512c80d6309009a352",
-          monsterId: mid,
-          monsterScore: 5
-        })
+          .send({
+            userId: "642381512c80d6309009a352",
+            monsterId: mid,
+            monsterScore: inc
+          })
         const afterResponse = await request(app).post("/api/getUserInfo")
           .send({
             userId: "642381512c80d6309009a352"
@@ -175,17 +175,89 @@ describe("POST /api/giveMonster", () => {
       expect(afterResponse.statusCode).toBe(200);
       expect(beforeResponse.statusCode).toBe(200);
       expect(afterResponse.body.monsters).toContainEqual(mid);
-      //expect(afterResponse.body.score).toBe(beforeResponse.body.score+inc);
-     
+      expect(afterResponse.body.score).toBe(beforeResponse.body.score+inc);
+  });
+  it("should return 406 status code ", async () => {
+    const response = await request(app).post("/api/giveMonster")
+       .send()
+    //from there, you are able to expect different responses from the DB
+    expect(response.statusCode).toBe(406);
+    expect(response.body.error).toBe("No User ID passed");
 
   });
-  // it("should return 406 status code ", async () => {
-  //   const response = await request(app).post("/api/getUserInfo")
-  //      .send()
-  //   //from there, you are able to expect different responses from the DB
-  //   expect(response.statusCode).toBe(406);
-  //   expect(response.body.error).toBe("No User ID passed");
-
-  // });
       
+});
+
+describe("POST /api/updateUser", () => {
+  it("should return 200 status code ", async () => {
+      const before = await request(app).post("/api/getUserInfo")
+      .send({
+        userId: "642381512c80d6309009a352"
+      })
+      const response = await request(app).post("/api/updateUser")
+        .send({
+          userId: "642381512c80d6309009a352",
+          name:before.body.Name+"1",
+          email:null,
+          character:null,
+      })
+      const after = await request(app).post("/api/getUserInfo")
+        .send({
+          userId: "642381512c80d6309009a352"
+      })
+    //from there, you are able to expect different responses from the DB
+    expect(response.statusCode).toBe(200);
+    expect(after.statusCode).toBe(200);
+    expect(before.statusCode).toBe(200);
+    expect(after.body.Name).toBe(before.body.Name+"1");
+    expect(after.body.Email).toBe(before.body.Email);
+    expect(after.body.character).toBe(before.body.character);
+
+    
+    //change it back
+    await request(app).post("/api/updateUser")
+        .send({
+          userId: "642381512c80d6309009a352",
+          name:before.body.Name,
+          username:null,
+          email:null,
+          character:null,
+      })
+
+  });
+
+  it("should return 406 status code, no userId ", async () => {
+  const response = await request(app).post("/api/updateUser")
+      .send()
+  //from there, you are able to expect different responses from the DB
+  expect(response.statusCode).toBe(406);
+  expect(response.body.error).toBe("No User ID passed");
+
+  });
+
+  it("should return 500 status code, userId has no user associated ", async () => {
+    const response = await request(app).post("/api/updateUser")
+      .send({
+        userId: "542331512c80d63d9009a352",
+        name:null,
+        username:null,
+        email:null,
+        character:null,
+    })
+    //from there, you are able to expect different responses from the DB
+    expect(response.statusCode).toBe(500);
+    expect(response.body.error).toBe("Unable to update user");
+  
+    });
+});
+
+describe("POST /api/getMonsterList", () => {
+  it("should return 200 status code and monsters ", async () => {
+      const response = await request(app).post("/api/getMonsterList")
+        .send()
+    //from there, you are able to expect different responses from the DB
+    expect(response.statusCode).toBe(200);
+    expect(response.body.monsterList).toBeDefined();
+  });
+ 
 });
