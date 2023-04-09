@@ -1,54 +1,92 @@
-import React,{ useMemo } from 'react';
+import React,{ useMemo, useState } from 'react';
 import PageTitle from '../components/PageTitle';
 import Login from '../components/Login';
 import NavBar from '../components/NavBar';
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import "../App.css";
+import monsters from "../components/monsters";
 
 const ucf = { lat: 28.60117044744501, lng: -81.20031305970772 }
-
-require('react-dom');
-window.React2 = require('react');
-console.log(window.React1 === window.React2);
 
 const redIcon = `https://maps.google.com/mapfiles/ms/icons/red-dot.png`;
 const greenIcon = `https://maps.google.com/mapfiles/ms/icons/green-dot.png`;
 
-const markerIcon = (visited) => {
-  let ret = { url: greenIcon, // URL of the custom icon
-  scaledSize: new window.google.maps.Size(40, 40), // size of the icon
-  origin: new window.google.maps.Point(0, 0), // origin of the icon
-  anchor: new window.google.maps.Point(20, 40) // anchor point of the icon
-  };  
-
-  if(!visited){
-    ret.url =  redIcon;
-  }
-  return ret;
-}; 
 
 export default function App() {
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAkCmoZ_FJ_ra6gJ-lJ2VToeO3mZNmqTJM",
-  });
+  const [userMonsterList, setMonsterList] = useState([]);
+  const [ran, setRan] = useState(false);
+  const [icons, setIcons] = useState ([]);
 
-  if (!isLoaded) return <div>Loading...</div>
-  return (
-    <Map />
-  );
-}
-//console.log(locations[0][0].lat);
-function Map() {
-  let locations = [
-    [/*arboretum*/{ lat: 28.600904362555667, lng: -81.19679500000177 }, true],
-    [/*library*/{ lat: 28.600582998057156, lng: -81.20146960470308 }, false],
-    [/*gym*/{ lat:28.59617335594502, lng: -81.19928468705896 }, true],
-    [/*cb1*/{ lat: 28.603733242308454, lng: -81.20054998037958 }, true],
-    [/*student union*/{ lat: 28.60160681694149, lng: -81.20044675481425 }, false],
-    [/*eng II*/{ lat: 28.601418424934305, lng: -81.19848337782615 }, true],
-  ]
+  const markerIcon = (visited) => {
+    let ret = { url: redIcon, // URL of the custom icon
+    scaledSize: new window.google.maps.Size(40, 40), // size of the icon
+    origin: new window.google.maps.Point(0, 0), // origin of the icon
+    anchor: new window.google.maps.Point(20, 40) // anchor point of the icon
+    };  
+  
+    if(visited){
+      ret.url =  greenIcon;
+    }
+    return ret;
+  }; 
+  
+  const createIcons = async () => {
+  
+    let locations = [];
+    var _ud = localStorage.getItem('user_data');
+    var ud = JSON.parse(_ud);
+    var userId = ud.id;
+    console.log(userId);
+    await getUserMonsters(userId);
+    if(userMonsterList)
+    for(let x=0;x<monsters.length;x++){
+      let icon = markerIcon(userMonsterList.includes(monsters[x].id));
+      console.log(icon.url);
+      locations.push({
+        key:monsters[x].id,
+        position: monsters[x].pos,
+        icon : icon
+      });
+      
+    }
+    setIcons(locations);
+  }
+  
+  const getUserMonsters = async (userId) => {
+    if(userMonsterList.length === 0 && !ran){
+      setRan(true);
+      console.log("hi!")
+      var bp = require('../components/Path.js');
+      var storage = require('../tokenStorage.js');
+      var obj = {
+          userId: userId,
+          jwtToken: storage.retrieveToken(),
+      };
+      var js = JSON.stringify(obj);
+      try {
+          const response = await fetch(bp.buildPath('api/getUserInfo'), {
+              method: 'POST',
+              body: js,
+              headers: { 'Content-Type': 'application/json' },
+          });
+          var res = JSON.parse(await response.text());
+          //console.log(res.monsters);
+          setMonsterList(res.monsters);
+      } catch(e){
+        return -1;
+      }
+    }
+  }
+
+  if(icons.length === 0){
+    createIcons();
+  }
   const ucf = useMemo(() => ({ lat: 28.60117044744501, lng: -81.20031305970772 }), []);
 
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY ,
+  });
+  if (!isLoaded) return <div>Loading...</div>
   return(
     <>
       <div>
@@ -59,17 +97,14 @@ function Map() {
       <GoogleMap
         zoom={17}
         center={ucf}
-        options={{ mapId: "6a034a94ab148b12", disableDefaultUI: true, draggable: false }}
+        options={{ mapId: process.env.REACT_APP_MAPS_ID_KEY, disableDefaultUI: true, draggable: false }}
         clickableIcons={false}
         mapContainerClassName="map-container" >
-          <Marker position={locations[0][0]} icon={markerIcon(locations[0][1])} />
-          <Marker position={locations[1][0]} icon={markerIcon(locations[1][1])}/>
-          <Marker position={locations[2][0]} icon={markerIcon(locations[2][1])}/>
-          <Marker position={locations[3][0]} icon={markerIcon(locations[3][1])}/>
-          <Marker position={locations[4][0]} icon={markerIcon(locations[4][1])}/>
-          <Marker position = {locations[5][0]} icon={markerIcon(locations[5][1])}/>      
+          {icons.map(marker => (
+              <Marker key={marker.key} position={marker.position} icon={marker.icon} />
+          ))}    
     </GoogleMap>
   </>
   );
-};
+}
 

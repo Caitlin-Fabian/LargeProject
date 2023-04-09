@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import RICIBs from 'react-individual-character-input-boxes';
 import { buildPath } from './Path';
+import * as Mdicons from 'react-icons/md';
 
 const Email = () => {
     const [token, setToken] = useState('');
@@ -33,32 +34,47 @@ const Email = () => {
             console.log(e.toString());
         }
     };
+
+    const handleBack = () => {
+        window.location.href = '/';
+    };
     return (
         <div className="d-flex justify-content-center ">
-            <div className="Email-container d-flex justify-content-center flex-column text-center">
-                <h1
-                    className="mt-2"
-                    style={{ fontSize: '2rem' }}
-                >
-                    EMAIL VERIFICATION
-                </h1>
-                <p>Please enter the code from your email</p>
-                <div>
-                    <RICIBs
-                        amount={5}
-                        autoFocus
-                        handleOutputString={handleOutput}
-                        inputProps={[{ className: 'first-box' }]}
-                        inputRegExp={/^[0-9]$/}
-                    />
-                </div>
-                <div>
+            <div className="Email-container d-flex justify-content-center flex-column justify-content-around">
+                <div className="col-1">
                     <button
-                        className="clkbtn"
-                        onClick={verifyEmail}
+                        onClick={handleBack}
+                        className="back-button"
                     >
-                        Verify Email
+                        <Mdicons.MdKeyboardArrowLeft />
+                        Login
                     </button>
+                </div>
+                <div className="col d-flex justify-content-center flex-column text-center">
+                    <h1
+                        className="mt-2"
+                        style={{ fontSize: '2rem' }}
+                    >
+                        EMAIL VERIFICATION
+                    </h1>
+                    <p>Please enter the code from your email</p>
+                    <div>
+                        <RICIBs
+                            amount={5}
+                            autoFocus
+                            handleOutputString={handleOutput}
+                            inputProps={[{ className: 'first-box' }]}
+                            inputRegExp={/^[0-9]$/}
+                        />
+                    </div>
+                    <div>
+                        <button
+                            className="clkbtn"
+                            onClick={verifyEmail}
+                        >
+                            Verify Email
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
