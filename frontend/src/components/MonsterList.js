@@ -47,7 +47,7 @@ function MonsterList() {
 
     const renderSlides = () =>
         monsters.map((monster) => (
-            <div className="d-flex align-items-center flex-column bg-white w-75 mx-auto m-4 rounded shadow">
+            <div className="d-flex align-items-center flex-column bg-white w-75 mx-auto m-4 rounded shadow-lg">
                 <img
                     onClick={() => handleSelect(monster._id)}
                     src={require(`../assets/${monster._id}.png`)}

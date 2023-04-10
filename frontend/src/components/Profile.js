@@ -147,7 +147,7 @@ function Profile() {
                         return (
                             <Row
                                 key={i}
-                                className="d-flex text-center leaderboard-ele m-2 shadow-lg"
+                                className="d-flex text-center leaderboard-ele m-2 shadow-lg rounded"
                             >
                                 <Col className="position-relative ball-background m-2">
                                     <img
