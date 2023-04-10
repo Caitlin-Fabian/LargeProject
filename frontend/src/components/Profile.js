@@ -10,7 +10,6 @@ import Form from 'react-bootstrap/Form';
 import * as Mdicons from 'react-icons/md';
 
 import { monsters } from './monsters';
-import SettingsModal from './SettingsModal';
 
 function Profile() {
     var _ud = localStorage.getItem('user_data');
