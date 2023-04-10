@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import CharacterModal from './CharacterModal';
 import MonsterModal from './MonsterModal';
 import MonsterList from './MonsterList';
+import Container from 'react-bootstrap/esm/Container';
 
 function Inventory() {
     var _ud = localStorage.getItem('user_data');
@@ -15,12 +16,6 @@ function Inventory() {
     const [characterModal, setCharacterModal] = useState(false);
     const [monsterModal, setMonsterModal] = useState(false);
     const [score, setScore] = useState(ud.score);
-
-    const doLogout = (event) => {
-        event.preventDefault();
-        localStorage.removeItem('user_data');
-        window.location.href = '/';
-    };
 
     /* This renders monsterlist if the modals are hidden.
        This means that the player has chosen their character and monster */
@@ -36,23 +31,10 @@ function Inventory() {
 
     return (
         <>
-            <div className="inventory">
-                <div>
-                    {/* <span id="userName">
-                        Logged In As {name} <br />
-                        score: {score}
-                    </span>
-                    <br /> */}
-                    <button
-                        type="button"
-                        id="logoutButton"
-                        className="buttons"
-                        onClick={doLogout}
-                    >
-                        {' '}
-                        Log Out{' '}
-                    </button>
-                </div>
+            <Container
+                fluid
+                className="inventory"
+            >
                 {characterModal && (
                     <CharacterModal
                         id={userId}
@@ -68,7 +50,7 @@ function Inventory() {
                     />
                 )}
                 {monster}
-            </div>
+            </Container>
         </>
     );
 }

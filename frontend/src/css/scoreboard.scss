@@ -17,3 +17,13 @@ $transparent-white: rgba(255,255,255,0.9);
     background-color: $transparent-white ; 
     border: solid black;
 }
+
+.scoreboard{
+    background-image: url('../assets/pokemon-background.jpg');
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    overflow-x: hidden;
+}
