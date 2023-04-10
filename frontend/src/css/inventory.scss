@@ -3,9 +3,14 @@ $bg-transparent-white: rgba(255,255,255,0.7);
 
 
 .inventory{
-    width: 100wv;
-    height: 100vh;
     background-color: $bg-secondary;
+    background-image: url('../assets/pokemon-background.jpg');
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    overflow-x: hidden;
 }
 body{
     background-color: $bg-secondary;

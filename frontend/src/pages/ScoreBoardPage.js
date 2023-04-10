@@ -7,7 +7,7 @@ import Scoreboard from '../components/Scoreboard';
 const ScoreBoardPage = () => {
     return (
         <>
-            <div>
+            <div className="scoreboard">
                 <NavBar />
                 <Scoreboard />
             </div>

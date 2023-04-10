@@ -15,9 +15,13 @@ function Profile() {
     const [message, setMessage] = useState('');
     const [name, setName] = useState('');
     const [score, setScore] = useState(ud.score);
+    const [usersMonsters, setUsersMonsters] = useState([]);
     const [monsterList, setMonsterList] = useState([]);
     const [character, setCharacter] = useState('boy');
+    const [monsterDisplay, setMonsterDisplay] = useState([]);
     var bp = require('./Path.js');
+    var firstResponse = false;
+    var secondResponse = false;
 
     var teams = [
         {
@@ -31,6 +35,23 @@ function Profile() {
             picture: 'girl',
         },
     ];
+
+    const getMonsters = async () => {
+        try {
+            const response = await fetch(bp.buildPath('api/getMonsterList'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            var res = JSON.parse(await response.text());
+            console.log(res.monsterList);
+            setMonsterList(res.monsterList);
+            this.firstResponse = true;
+            displayMonsters();
+        } catch (e) {
+            setMessage(e.toString());
+        }
+    };
 
     const getUser = async (userId) => {
         var storage = require('../tokenStorage.js');
@@ -51,21 +72,58 @@ function Profile() {
 
             setName(res.Name);
             setScore(res.score);
-            setMonsterList(res.monsters);
+            setUsersMonsters(res.monsters);
             let obj = teams.find((o) => o.character === res.character).picture;
             setCharacter(obj);
-            console.log(character);
+            this.secondResponse = true;
+            displayMonsters();
         } catch (e) {
             setMessage(e.toString());
         }
     };
 
+    const displayMonsters = () => {
+        console.log(usersMonsters);
+        for (let i = 0; i < usersMonsters.length; i++) {
+            console.log(usersMonsters[i]);
+            let monster = monsterList.filter(
+                (mon) => mon._id === usersMonsters[i]
+            );
+            console.log(monster[0]);
+            setMonsterDisplay((monsterDisplay) => [
+                ...monsterDisplay,
+                monster[0],
+            ]);
+        }
+    };
+    const doLogout = (event) => {
+        event.preventDefault();
+        localStorage.removeItem('user_data');
+        window.location.href = '/';
+    };
+
     useEffect(() => {
         getUser(userId);
+        getMonsters();
     }, []);
+
+    useEffect(() => {
+        if (usersMonsters.length > 0) {
+            displayMonsters();
+        }
+    }, [monsterList]);
 
     return (
         <Container className="profile">
+            <button
+                type="button"
+                id="logoutButton"
+                className="buttons"
+                onClick={doLogout}
+            >
+                {' '}
+                Log Out{' '}
+            </button>
             <Row>
                 <Col>
                     <div className="d-flex name-tag">
@@ -85,20 +143,22 @@ function Profile() {
                         <h2 className="p-3">Monsters </h2>
                         <div></div>
                     </div>
-                    {monsterList.map((monster, i) => {
+                    {monsterDisplay.map((monster, i) => {
                         return (
                             <Row
                                 key={i}
-                                className="d-flex text-center p-4 leaderboard-ele m-2 shadow-lg"
+                                className="d-flex text-center leaderboard-ele m-2 shadow-lg rounded"
                             >
-                                <Col className="text-start">
-                                    <div>{monster}</div>
+                                <Col className="position-relative ball-background m-2">
+                                    <img
+                                        src={require(`../assets/${monster._id}.png`)}
+                                        className="position-relative z-5 monster"
+                                        alt="Monster Caught"
+                                    />
                                 </Col>
-                                <Col>
-                                    <div>{monster.Username}</div>
-                                </Col>
-                                <Col>
-                                    <div>{monster.Score}</div>
+
+                                <Col className="d-flex justify-content-center align-items-center">
+                                    <div>{monster.Name}</div>
                                 </Col>
                             </Row>
                         );
