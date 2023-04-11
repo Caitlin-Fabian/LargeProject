@@ -38,13 +38,12 @@ exports.setApp = function (app, client) {
                 console.log(ret);
                 res.status(200).json(ret);
             } catch (e) {
-                //issue with JWT
                 ret = { error: e.message };
-                res.status(500).json();
+                res.status(500).json(ret);
             }
         } else {
             //invalid login...
-            res.status(406).json({ error: 'Wrong Credentials' });
+            res.status(200).json({ error: 'Wrong Credentials' });
         }
     });
 
