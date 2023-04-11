@@ -82,7 +82,7 @@ export default function App() {
 
   useEffect(() => {
     createIcons();
-  }, [userMonsterList || icons]);
+  }, [userMonsterList || icons|| ran]);
   
 
   const ucf = useMemo(() => ({ lat: 28.60117044744501, lng: -81.20031305970772 }), []);

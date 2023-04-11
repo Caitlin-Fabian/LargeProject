@@ -122,12 +122,12 @@ exports.setApp = function (app, client) {
         res.status(200).json(ret);
     });
 
-    //email verification api
-    app.post('/api/verifyEmail', async (req, res, next) => {
+    //verify code sent to email api
+    app.post('/api/verify', async (req, res, next) => {
         //incoming: token
         //outgoing: err
         var error = '';
-        const { token } = req.body; //field to take in token
+        const { token, password } = req.body; //field to take in token
         const db = client.db('UCFGO');
 
         const results = await db
@@ -138,15 +138,29 @@ exports.setApp = function (app, client) {
         if (results.length == 0) {
             error = 'Invalid token';
         } else {
-            db.collection('User').updateOne(
-                { Username: results[0].Username },
-                {
-                    $set: {
-                        EmailToken: null,
-                        IsVerified: true,
-                    },
-                }
-            );
+            if(results[0].isVerified){
+                db.collection('User').updateOne(
+                    { Username: results[0].Username },
+                    {
+                        $set: {
+                            EmailToken: null,
+                            Password: password,
+                        },
+                    }
+                );
+            }
+            else{
+                db.collection('User').updateOne(
+                    { Username: results[0].Username },
+                    {
+                        $set: {
+                            EmailToken: null,
+                            IsVerified: true,
+                        },
+                    }
+                );
+            }
+           
         }
 
         error = 'N/A';
@@ -200,6 +214,48 @@ exports.setApp = function (app, client) {
         res.status(200).json(ret);
     });
 
+    //TODO: make it update the email token
+    app.post('/api/sendForgotPassword', async (req, res, next) => {
+        const db = client.db('UCFGO');
+        console.log("SANITY");
+        var { email } = req.body; //field to take in token
+        const user = await db
+        .collection('Users')
+        .find({Email: email.trim()})
+        .toArray();
+        
+        if(user.length >= 1 && user.IsVerfied){
+            const msg = {
+                from: 'ucfgoteams@gmail.com',
+                to: email,
+                subject: 'UCFGO Action Required - Password Change ',
+                text: `
+                    You have requested to reset your password.
+                    Please enter the following one-time token: ${user[0].EmailToken}
+                    `,
+                html: `
+                    <h1>Hello,</h1>
+                    <p>You have requested to reset your password.</p>
+                    <p>Please enter the following one-time token: ${user[0].EmailToken}</p>
+                `,
+            };//TODO: please change this 
+
+            //send email to new user
+            //await sgMail.send(msg);
+            sgMail.send(msg);
+            console.log(
+                'A verification code was sent to '+email
+            );
+
+        }
+        else if(!user[0].isVerified)
+        {
+             res.status(200).json({error: "Please verify email"});
+        }
+        else{
+            res.status(200).json({error: "Email does not exist. Please try again"});
+        }
+    });
     //tested
     app.post('/api/getUserInfo', async (req, res, next) => {
         //incoming: userId
