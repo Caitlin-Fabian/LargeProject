@@ -125,7 +125,7 @@ exports.setApp = function (app, client) {
     app.post('/api/verify', async (req, res, next) => {
         //incoming: token
         //outgoing: err
-        var error = '';
+        var error = 'N/A';
         const { token, password } = req.body; //field to take in token
         const db = client.db('UCFGO');
         console.log(token);

@@ -11,6 +11,8 @@ const Email = () => {
     const [enterEmail, setEnterEmail] = useState(true);
     const [verifyEmail, setVerifyEmail] = useState(false);
     const [changePassword, setChangePassword] = useState(false);
+    const [password, setPassword] = useState('');
+    const [success, setSuccess] = useState(false);
     var bp = require('./Path.js');
 
     const handleOutput = (string) => {
@@ -48,12 +50,13 @@ const Email = () => {
     const verify = async () => {
         var obj = {
             token: token,
+            password: password,
         };
 
         var js = JSON.stringify(obj);
         console.log(js);
         try {
-            const response = await fetch(bp.buildPath('api/verifyEmail'), {
+            const response = await fetch(bp.buildPath('api/verify'), {
                 method: 'POST',
                 body: js,
                 headers: { 'Content-Type': 'application/json' },
@@ -61,7 +64,8 @@ const Email = () => {
             var res = JSON.parse(await response.text());
             console.log(res);
             if (res.error === 'N/A') {
-                window.location.href = '/';
+                setSuccess(true);
+                setVerifyEmail(false);
             } else {
                 setMessage(res.error);
             }
@@ -77,6 +81,11 @@ const Email = () => {
     const handleChange = (e) => {
         e.preventDefault();
         setEmail(e.target.value);
+    };
+
+    const handlePassword = (e) => {
+        e.preventDefault();
+        setPassword(e.target.value);
     };
     return (
         <div className="d-flex justify-content-center ">
@@ -132,36 +141,29 @@ const Email = () => {
                                     inputProps={[{ className: 'first-box' }]}
                                     inputRegExp={/^[a-zA-Z0-9_.-]*$/}
                                 />
+                                <Form>
+                                    <Form.Label>New Password</Form.Label>
+                                    <Form.Control
+                                        className="w-75 d-flex justify-content-center"
+                                        type="Password"
+                                        placeholder="password"
+                                        onChange={handlePassword}
+                                    />
+                                </Form>
                             </div>
                             <button
                                 className="clkbtn"
                                 onClick={verify}
                             >
-                                Verify Email
+                                Change Password
                             </button>
                         </>
                     )}
 
-                    {changePassword && (
+                    {success && (
                         <>
-                            <Form>
-                                <Form.Label>New Password</Form.Label>
-                                <Form.Control
-                                    className="w-75 d-flex justify-content-center"
-                                    type="Password"
-                                    placeholder="password"
-                                    onChange={handleChange}
-                                />
-                            </Form>
                             <div>
-                                <button
-                                    className="clkbtn"
-                                    onClick={sendEmail}
-                                >
-                                    Send Email
-                                </button>
-                                <br />
-                                <span id="loginResult">{message}</span>{' '}
+                                <p>Your Password was successfully changed</p>
                             </div>
                         </>
                     )}
