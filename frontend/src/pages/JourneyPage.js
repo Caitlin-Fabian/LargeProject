@@ -1,4 +1,4 @@
-import React,{ useMemo, useState } from 'react';
+import React,{ useEffect, useMemo, useState } from 'react';
 import PageTitle from '../components/PageTitle';
 import Login from '../components/Login';
 import NavBar from '../components/NavBar';
@@ -17,7 +17,7 @@ export default function App() {
   const [ran, setRan] = useState(false);
   const [icons, setIcons] = useState ([]);
 
-  const markerIcon = (visited) => {
+  const markerIcon = async (visited) => {
     let ret = { url: redIcon, // URL of the custom icon
     scaledSize: new window.google.maps.Size(40, 40), // size of the icon
     origin: new window.google.maps.Point(0, 0), // origin of the icon
@@ -36,11 +36,12 @@ export default function App() {
     var _ud = localStorage.getItem('user_data');
     var ud = JSON.parse(_ud);
     var userId = ud.id;
-    console.log(userId);
+
     await getUserMonsters(userId);
+    //console.log(userMonsterList);
     for(let x=0;x<monsters.length;x++){
-      let icon = markerIcon(userMonsterList.includes(monsters[x].id));
-      console.log(icon.url);
+      let icon = await markerIcon(userMonsterList.includes(monsters[x].id));
+      
       locations.push({
         key:monsters[x].id,
         position: monsters[x].pos,
@@ -52,9 +53,10 @@ export default function App() {
   }
   
   const getUserMonsters = async (userId) => {
-    if(userMonsterList.length === 0 && !ran){
-      setRan(true);
-      console.log("hi!")
+    
+     if(!ran){
+      console.log("user id: "+userId);
+      setRan(true)
       var bp = require('../components/Path.js');
       var storage = require('../tokenStorage.js');
       var obj = {
@@ -69,17 +71,20 @@ export default function App() {
               headers: { 'Content-Type': 'application/json' },
           });
           var res = JSON.parse(await response.text());
-          //console.log(res.monsters);
-          setMonsterList(res.monsters);
+          setMonsterList(await res.monsters);
+          console.logI(res.monsters);
       } catch(e){
         return -1;
       }
     }
   }
 
-  if(icons.length === 0){
+
+  useEffect(() => {
     createIcons();
-  }
+  }, [userMonsterList || icons]);
+  
+
   const ucf = useMemo(() => ({ lat: 28.60117044744501, lng: -81.20031305970772 }), []);
 
   const { isLoaded } = useLoadScript({
