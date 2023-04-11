@@ -73,7 +73,7 @@ exports.setApp = function (app, client) {
                 Password: password,
                 Email: email,
                 EmailToken: Math.random().toString(36).substring(2, 7), //generates random 5 character string
-                IsVerfied: false,
+                IsVerified: false,
                 Score: 0,
                 Character: 0,
                 TimeCaught: [],
@@ -128,16 +128,18 @@ exports.setApp = function (app, client) {
         var error = '';
         const { token } = req.body; //field to take in token
         const db = client.db('UCFGO');
+        console.log(token);
 
         const results = await db
             .collection('Users')
             .find({ EmailToken: token })
             .toArray();
 
-        if (results.length == 0) {
-            error = 'Invalid token';
+        console.log(results);
+        if (results.length === 0) {
+            error = 'Invalid Email Token';
         } else {
-            db.collection('User').updateOne(
+            db.collection('Users').update(
                 { Username: results[0].Username },
                 {
                     $set: {
@@ -146,9 +148,8 @@ exports.setApp = function (app, client) {
                     },
                 }
             );
+            error = 'N/A';
         }
-
-        error = 'N/A';
 
         var ret = { error: error };
         res.status(200).json(ret);

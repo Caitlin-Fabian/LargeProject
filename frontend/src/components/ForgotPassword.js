@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import RICIBs from 'react-individual-character-input-boxes';
 import { buildPath } from './Path';
 import * as Mdicons from 'react-icons/md';
+import Form from 'react-bootstrap/Form';
 
 const Email = () => {
     const [token, setToken] = useState('');
@@ -57,24 +58,22 @@ const Email = () => {
                         className="mt-2"
                         style={{ fontSize: '2rem' }}
                     >
-                        EMAIL VERIFICATION
+                        Password Recovery
                     </h1>
-                    <p>Please enter the code from your email</p>
-                    <div>
-                        <RICIBs
-                            amount={5}
-                            autoFocus
-                            handleOutputString={handleOutput}
-                            inputProps={[{ className: 'first-box' }]}
-                            inputRegExp={/^[a-zA-Z0-9_.-]*$/}
+                    <p>Please enter your email</p>
+                    <Form>
+                        <Form.Control
+                            className="w-75 d-flex justify-content-center"
+                            type="Name"
+                            placeholder="Email@email.com"
                         />
-                    </div>
+                    </Form>
                     <div>
                         <button
                             className="clkbtn"
                             onClick={verifyEmail}
                         >
-                            Verify Email
+                            Send Email
                         </button>
                         <br />
                         <span id="loginResult">{message}</span>{' '}

@@ -10,6 +10,7 @@ import ProfilePage from './pages/ProfilePage';
 import JourneyPage from './pages/JourneyPage';
 import ScoreBoardPage from './pages/ScoreBoardPage';
 import EmailPage from './pages/EmailPage';
+import PasswordRecovery from './pages/PasswordRecovery';
 
 // CSS files
 import './css/login.scss';
@@ -53,6 +54,11 @@ function App() {
                     path="/email"
                     index
                     element={<EmailPage />}
+                />
+                <Route
+                    path="/PasswordRecovery"
+                    index
+                    element={<PasswordRecovery />}
                 />
             </Routes>
         </BrowserRouter>
