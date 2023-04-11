@@ -135,32 +135,42 @@ exports.setApp = function (app, client) {
             .find({ EmailToken: token })
             .toArray();
 
-        console.log(results);
-        if (results.length === 0) {
-            error = 'Invalid Email Token';
+        if (results.length == 0) {
+            error = 'Invalid token';
+        } else if (results[0].isVerified) {
+            console.log('pass change');
+            db.collection('Users').updateOne(
+                { EmailToken: token },
+                {
+                    $set: {
+                        EmailToken: null,
+                        Password: password,
+                    },
+                }
+            );
         } else {
-            if (results[0].isVerified) {
-                db.collection('Users').updateOne(
-                    { Username: results[0].Username },
-                    {
-                        $set: {
-                            EmailToken: null,
-                            Password: password,
-                        },
-                    }
-                );
-            } else {
-                db.collection('Users').updateOne(
-                    { Username: results[0].Username },
-                    {
-                        $set: {
-                            EmailToken: null,
-                            IsVerified: true,
-                        },
-                    }
-                );
-            }
+            console.log('verified');
+            db.collection('Users').updateOne(
+                { EmailToken: token },
+                {
+                    $set: {
+                        EmailToken: null,
+                        IsVerified: true,
+                    },
+                }
+            );
         }
+
+        const r = await db
+            .collection('Users')
+            .find({ EmailToken: token })
+            .toArray();
+
+        if (r.length == 0) {
+            console.log('cngratulations post malone');
+        }
+
+        //error = 'N/A';
 
         var ret = { error: error };
         res.status(200).json(ret);
@@ -218,19 +228,31 @@ exports.setApp = function (app, client) {
             .find({ Email: email.trim() })
             .toArray();
 
-        if (user.length >= 1 && user.IsVerfied) {
+        console.log(user[0].IsVerified + ' ' + user[0].IsVerfied);
+        const et = Math.random().toString(36).substring(2, 7);
+
+        if (user.length >= 1 && user[0].IsVerified) {
+            db.collection('Users').updateOne(
+                { Email: user[0].Email },
+                {
+                    $set: {
+                        EmailToken: et,
+                    },
+                }
+            );
+
             const msg = {
                 from: 'ucfgoteams@gmail.com',
                 to: email,
                 subject: 'UCFGO Action Required - Password Change ',
                 text: `
                     You have requested to reset your password.
-                    Please enter the following one-time token: ${user[0].EmailToken}
+                    Please enter the following one-time token: ${et}
                     `,
                 html: `
                     <h1>Hello,</h1>
                     <p>You have requested to reset your password.</p>
-                    <p>Please enter the following one-time token: ${user[0].EmailToken}</p>
+                    <p>Please enter the following one-time token: ${et}</p>
                 `,
             }; //TODO: please change this
 
@@ -238,6 +260,8 @@ exports.setApp = function (app, client) {
             //await sgMail.send(msg);
             sgMail.send(msg);
             console.log('A verification code was sent to ' + email);
+
+            res.status(200).json({ error: 'N/A' });
         } else if (!user[0].isVerified) {
             res.status(200).json({ error: 'Please verify email' });
         } else {
@@ -313,33 +337,6 @@ exports.setApp = function (app, client) {
             res.status(200).json(ret);
         }
     });
-
-    // //listInventory API
-    // app.post('/api/listInventory', async (req, res, next) => {
-    //     // incoming: userId
-    //     // outgoing: list of Monsters
-    //     var error = '';
-    //     const { userId, search } = req.body;
-    //     const db = client.db('UCFGO');
-
-    //     var query = { UserID: userId };
-    //     const invList = await db.collection('Inventory').find(query).toArray();
-
-    //     var monsterList = [];
-    //     var sCheck = search === '';
-
-    //     for (let x = 0; x < invList.length; x++) {
-    //         var nq = { _id: invList[x].MonsterID };
-    //         console.log(nq);
-    //         var monster = await db.collection('Monsters').find(nq).toArray();
-
-    //         if (sCheck || monster[0].Name.includes(search))
-    //             monsterList.push(monster[0]);
-    //     }
-    //     error = 'N/A';
-    //     var ret = { monsterList: monsterList, error: error };
-    //     res.status(200).json(ret);
-    // });
 
     //getUserList API: tested
     app.post('/api/getUserList', async (req, res, next) => {

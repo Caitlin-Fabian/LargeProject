@@ -16,17 +16,20 @@ export default function App() {
   const [userMonsterList, setMonsterList] = useState([]);
   const [ran, setRan] = useState(false);
   const [icons, setIcons] = useState ([]);
+  const [mapReady, setMapReady] = useState(false);
+
+  const handleMapReady = () => {
+    setMapReady(true);
+  };
 
   const markerIcon = async (visited) => {
-    let ret = { url: redIcon, // URL of the custom icon
+    let ret = {
     scaledSize: new window.google.maps.Size(40, 40), // size of the icon
     origin: new window.google.maps.Point(0, 0), // origin of the icon
-    anchor: new window.google.maps.Point(20, 40) // anchor point of the icon
-    };  
-  
-    if(visited){
-      ret.url =  greenIcon;
-    }
+    anchor: new window.google.maps.Point(20, 40), // anchor point of the icon
+    url: visited ? greenIcon : redIcon
+    };
+    console.log(ret.pinColor);  
     return ret;
   }; 
   
@@ -103,10 +106,11 @@ export default function App() {
         center={ucf}
         options={{ mapId: process.env.REACT_APP_MAPS_ID_KEY, disableDefaultUI: true, draggable: false }}
         clickableIcons={false}
+        onLoad={handleMapReady}
         mapContainerClassName="map-container" >
-          {icons.map(marker => (
+          {mapReady && (icons.map(marker => (
               <Marker key={marker.key} position={marker.position} icon={marker.icon} />
-          ))}    
+          )))}    
     </GoogleMap>
   </>
   );
