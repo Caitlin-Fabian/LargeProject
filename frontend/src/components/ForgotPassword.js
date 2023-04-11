@@ -157,6 +157,7 @@ const Email = () => {
                             >
                                 Change Password
                             </button>
+                            <span id="loginResult">{message}</span>{' '}
                         </>
                     )}
 
