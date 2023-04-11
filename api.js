@@ -55,18 +55,21 @@ exports.setApp = function (app, client) {
         const { name, username, password, email } = req.body;
         const db = client.db('UCFGO');
 
-        const results = await db
+        const usernameRes = await db
             .collection('Users')
             .find({ Username: username })
             .toArray();
-
-        console.log(results);
+        
+        const emailRes = await db
+        .collection('Users')
+        .find({ Email: email })
+        .toArray();
 
         let id = -1;
         let Name = '';
         let score = '';
 
-        if (results.length == 0) {
+        if (usernameRes.length == 0 && emailRes.length == 0) {
             db.collection('Users').insertOne({
                 Name: name,
                 Username: username,
@@ -115,7 +118,7 @@ exports.setApp = function (app, client) {
             error = 'N/A';
         } else {
             error =
-                'A user with the same username already exists, Please try again';
+                'A user with the same username or email already exists, Please try again';
         }
         var ret = { Name: name, id: id, score: score, error: error };
         res.status(200).json(ret);
