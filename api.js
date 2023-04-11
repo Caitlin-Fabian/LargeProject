@@ -59,11 +59,11 @@ exports.setApp = function (app, client) {
             .collection('Users')
             .find({ Username: username })
             .toArray();
-        
+
         const emailRes = await db
-        .collection('Users')
-        .find({ Email: email })
-        .toArray();
+            .collection('Users')
+            .find({ Email: email })
+            .toArray();
 
         let id = -1;
         let Name = '';
@@ -278,6 +278,7 @@ exports.setApp = function (app, client) {
         //incoming: userId
         //outgoing: email, name, score
         var error = '';
+        var token = require('./createJWT.js');
 
         const { userId, jwtToken } = req.body;
         console.log('userId:' + userId);
