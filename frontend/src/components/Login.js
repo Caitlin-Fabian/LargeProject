@@ -84,7 +84,7 @@ function Login() {
             console.log(res);
             if (res.error !== 'N/A') {
                 console.log(res.error);
-                setMessage('This username already exists');
+                setMessage('This username or email already exists');
             } else {
                 console.log(res);
                 storage.storeToken(res);
@@ -103,6 +103,10 @@ function Login() {
             setMessage(e);
             return;
         }
+    };
+
+    const goForgotPassword = () => {
+        window.location.href = '/PasswordRecovery';
     };
 
     const registerForm = () => {
@@ -168,6 +172,12 @@ function Login() {
                                     ref={(c) => (loginPassword = c)}
                                 ></input>
                             </label>
+                            <button
+                                onClick={goForgotPassword}
+                                className="btn-link bg-transparent border-0"
+                            >
+                                Forgot Password?
+                            </button>
                             <button
                                 onClick={doLogin}
                                 className="clkbtn"
