@@ -41,7 +41,7 @@ export default function App() {
     var userId = ud.id;
 
     await getUserMonsters(userId);
-    //console.log(userMonsterList);
+    console.log(userMonsterList);
     for(let x=0;x<monsters.length;x++){
       let icon = await markerIcon(userMonsterList.includes(monsters[x].id));
       
@@ -85,7 +85,7 @@ export default function App() {
 
   useEffect(() => {
     createIcons();
-  }, [userMonsterList || icons|| ran]);
+  }, [userMonsterList]);
   
 
   const ucf = useMemo(() => ({ lat: 28.60117044744501, lng: -81.20031305970772 }), []);
