@@ -84,7 +84,7 @@ function Login() {
             console.log(res);
             if (res.error !== 'N/A') {
                 console.log(res.error);
-                setMessage('This username already exists');
+                setMessage('This username or email already exists');
             } else {
                 console.log(res);
                 storage.storeToken(res);
