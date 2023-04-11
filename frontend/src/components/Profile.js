@@ -2,6 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/esm/Container';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+
+import Form from 'react-bootstrap/Form';
+
+import * as Mdicons from 'react-icons/md';
 
 import { monsters } from './monsters';
 
@@ -14,14 +20,16 @@ function Profile() {
     console.log(userId);
     const [message, setMessage] = useState('');
     const [name, setName] = useState('');
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [score, setScore] = useState(ud.score);
     const [usersMonsters, setUsersMonsters] = useState([]);
     const [monsterList, setMonsterList] = useState([]);
     const [character, setCharacter] = useState('boy');
     const [monsterDisplay, setMonsterDisplay] = useState([]);
+    const [settingsModal, setSettingsModal] = useState(false);
+
     var bp = require('./Path.js');
-    var firstResponse = false;
-    var secondResponse = false;
 
     var teams = [
         {
@@ -46,7 +54,6 @@ function Profile() {
             var res = JSON.parse(await response.text());
             console.log(res.monsterList);
             setMonsterList(res.monsterList);
-            this.firstResponse = true;
             displayMonsters();
         } catch (e) {
             setMessage(e.toString());
@@ -73,9 +80,10 @@ function Profile() {
             setName(res.Name);
             setScore(res.score);
             setUsersMonsters(res.monsters);
+            setUsername(res.username);
+            setEmail(res.Email);
             let obj = teams.find((o) => o.character === res.character).picture;
             setCharacter(obj);
-            this.secondResponse = true;
             displayMonsters();
         } catch (e) {
             setMessage(e.toString());
@@ -102,6 +110,12 @@ function Profile() {
         window.location.href = '/';
     };
 
+    const handleClose = () => setSettingsModal(false);
+    const handleShow = () => {
+        setSettingsModal(true);
+        console.log('Hello');
+    };
+
     useEffect(() => {
         getUser(userId);
         getMonsters();
@@ -115,20 +129,60 @@ function Profile() {
 
     return (
         <Container className="profile">
-            <button
-                type="button"
-                id="logoutButton"
-                className="buttons"
-                onClick={doLogout}
-            >
-                {' '}
-                Log Out{' '}
-            </button>
             <Row>
                 <Col>
                     <div className="d-flex name-tag">
                         <h2 className="p-3">{name}</h2>
                         <h3 className="p-3">Score : {score}</h3>
+                        <button
+                            class="settings-button"
+                            onClick={handleShow}
+                        >
+                            <Mdicons.MdSettingsSuggest />
+                        </button>
+                        <Modal
+                            show={settingsModal}
+                            onHide={handleClose}
+                        >
+                            <Modal.Header closeButton>
+                                <Modal.Title>Change Your Settings</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <Form>
+                                    <Form.Label>Name</Form.Label>
+                                    <Form.Control
+                                        type="Name"
+                                        placeholder={name}
+                                    />
+                                    <Form.Label>Username</Form.Label>
+                                    <Form.Control
+                                        type="Name"
+                                        placeholder={username}
+                                    />
+                                    <Form.Label>Email</Form.Label>
+                                    <Form.Control
+                                        type="Name"
+                                        placeholder={email}
+                                    />
+                                </Form>
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button
+                                    variant="primary"
+                                    className="text-black"
+                                    onClick={handleClose}
+                                >
+                                    Save Changes
+                                </Button>
+                                <Button
+                                    variant="secondary"
+                                    className="text-black"
+                                    onClick={doLogout}
+                                >
+                                    Log Out
+                                </Button>
+                            </Modal.Footer>
+                        </Modal>
                     </div>
                     <div className="d-flex justify-content-center">
                         <img
