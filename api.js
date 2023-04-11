@@ -15,11 +15,11 @@ exports.setApp = function (app, client) {
         var error = '';
         const { username, password } = req.body;
 
-        if(username == undefined || password == undefined){
-            res.status(406).json({error:"Invalid Login"});
+        if (username == undefined || password == undefined) {
+            res.status(406).json({ error: 'Invalid Login' });
             return;
         }
-        
+
         const db = client.db('UCFGO');
         const results = await db
             .collection('Users')
@@ -38,16 +38,13 @@ exports.setApp = function (app, client) {
                 console.log(ret);
                 res.status(200).json(ret);
             } catch (e) {
-                //issue with JWT
                 ret = { error: e.message };
-                res.status(500).json();
+                res.status(500).json(ret);
             }
         } else {
             //invalid login...
-            res.status(406).json({error:"Wrong Credentials"});
+            res.status(200).json({ error: 'Wrong Credentials' });
         }
-
-        
     });
 
     //register api
@@ -87,6 +84,8 @@ exports.setApp = function (app, client) {
                 .collection('Users')
                 .find({ Username: username })
                 .toArray();
+
+            console.log(res);
             id = res[0]._id;
             score = res[0].Score;
             console.log(res[0].EmailToken);
@@ -175,8 +174,8 @@ exports.setApp = function (app, client) {
         // outgoing: err
         var error = '';
         const { userId, monsterId, monsterScore } = req.body;
-        if(userId == undefined){
-            res.status(406).json({error:"No User ID passed"});
+        if (userId == undefined) {
+            res.status(406).json({ error: 'No User ID passed' });
             return;
         }
         const db = client.db('UCFGO');
@@ -185,13 +184,10 @@ exports.setApp = function (app, client) {
         var query = { _id: new BSON.ObjectId(userId) };
 
         console.log(query);
-        const user = await db
-        .collection('Users')
-        .find(query)
-        .toArray();
+        const user = await db.collection('Users').find(query).toArray();
 
-        if(!user[0].MonsterID.includes(monsterId)){
-        // //adds the monster id to the array for the user
+        if (!user[0].MonsterID.includes(monsterId)) {
+            // //adds the monster id to the array for the user
             db.collection('Users').updateOne(query, {
                 $push: { MonsterID: monsterId },
             });
@@ -199,7 +195,7 @@ exports.setApp = function (app, client) {
 
         let score = user[0].Score + monsterScore;
 
-        console.log("Score"+score);
+        console.log('Score' + score);
         //if for some reason something happens to the score we want to be able to pivot
 
         if (isNaN(user[0].Score) || user[0].Score == null) {
@@ -264,8 +260,8 @@ exports.setApp = function (app, client) {
 
         const { userId, jwtToken } = req.body;
         console.log('userId:' + userId);
-        if(userId == undefined){
-            res.status(406).json({error:"No User ID passed"});
+        if (userId == undefined) {
+            res.status(406).json({ error: 'No User ID passed' });
             return;
         }
         try {
@@ -289,6 +285,7 @@ exports.setApp = function (app, client) {
         var score = 0;
         var monsters = [];
         var character = 0;
+        var username = '';
 
         var refreshedToken = null;
         try {
@@ -303,6 +300,7 @@ exports.setApp = function (app, client) {
             score = results[0].Score;
             monsters = results[0].MonsterID;
             character = results[0].Character;
+            username = results[0].Username;
 
             var ret = {
                 id: id,
@@ -312,6 +310,7 @@ exports.setApp = function (app, client) {
                 score: score,
                 monsters: monsters,
                 character: character,
+                username: username,
                 jwtToken: refreshedToken,
             };
             res.status(200).json(ret);
@@ -354,8 +353,8 @@ exports.setApp = function (app, client) {
         // outgoing: top 20 users. If not in the array, add the user to the end with their place
         const size = 10;
         const { userId } = req.body;
-        if(userId == undefined){
-            res.status(406).json({error:"No User ID passed"});
+        if (userId == undefined) {
+            res.status(406).json({ error: 'No User ID passed' });
             return;
         }
         const db = client.db('UCFGO');
@@ -399,8 +398,8 @@ exports.setApp = function (app, client) {
         var error = '';
         const { userId, name, username, email, character } = req.body;
         const db = client.db('UCFGO');
-        if(userId == undefined){
-            res.status(406).json({error:"No User ID passed"});
+        if (userId == undefined) {
+            res.status(406).json({ error: 'No User ID passed' });
             return;
         }
         const results = await db

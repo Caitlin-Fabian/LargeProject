@@ -59,7 +59,7 @@ function Login() {
                 }
             });
         } catch (e) {
-            alert(e.toString());
+            setMessage(e);
             return;
         }
     };
@@ -82,9 +82,9 @@ function Login() {
             });
             var res = JSON.parse(await response.text());
             console.log(res);
-            if (res.error != 'N/A') {
+            if (res.error !== 'N/A') {
                 console.log(res.error);
-                // setMessage('User/Password combination incorrect');
+                setMessage('This username already exists');
             } else {
                 console.log(res);
                 storage.storeToken(res);
@@ -100,17 +100,19 @@ function Login() {
                 window.location.href = '/email';
             }
         } catch (e) {
-            alert(e.toString());
+            setMessage(e);
             return;
         }
     };
 
     const registerForm = () => {
         setIsLogin(false);
+        setMessage('');
     };
 
     const loginForm = () => {
         setIsLogin(true);
+        setMessage('');
     };
 
     return (
@@ -226,6 +228,7 @@ function Login() {
                             >
                                 Register
                             </button>
+                            <span id="loginResult">{message}</span>{' '}
                         </div>
                     </div>
                 </div>
