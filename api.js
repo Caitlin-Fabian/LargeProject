@@ -136,7 +136,7 @@ exports.setApp = function (app, client) {
 
         if (results.length == 0) {
             error = 'Invalid token';
-        } else if(results[0].isVerified) {
+        } else if(results[0].IsVerified) {
             console.log("pass change")
                 db.collection('Users').updateOne(
                     { EmailToken: token},
@@ -309,6 +309,7 @@ exports.setApp = function (app, client) {
         var monsters = [];
         var character = 0;
         var username = '';
+        var isVerified = '';
 
         var refreshedToken = null;
         try {
@@ -324,6 +325,7 @@ exports.setApp = function (app, client) {
             monsters = results[0].MonsterID;
             character = results[0].Character;
             username = results[0].Username;
+            isVerified = results[0].isVerified;
 
             var ret = {
                 id: id,
@@ -335,6 +337,7 @@ exports.setApp = function (app, client) {
                 character: character,
                 username: username,
                 jwtToken: refreshedToken,
+                isVerified: isVerified
             };
             res.status(200).json(ret);
         } else {
