@@ -138,14 +138,14 @@ function Profile() {
         <Container className="profile">
             <Row>
                 <Col>
-                    <div className="d-flex name-tag">
+                    <div className="d-flex name-tag justify-content-between">
                         <h2 className="p-3">{name}</h2>
                         <h3 className="p-3">Score : {score}</h3>
                         <button
                             class="settings-button"
                             onClick={handleShow}
                         >
-                            <Mdicons.MdSettingsSuggest />
+                            <Mdicons.MdSettingsSuggest size={50} />
                         </button>
                         <Modal
                             show={settingsModal}

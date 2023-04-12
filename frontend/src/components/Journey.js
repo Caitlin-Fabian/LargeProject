@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import PageTitle from '../components/PageTitle';
 import Login from '../components/Login';
 import NavBar from '../components/NavBar';
+import Container from 'react-bootstrap/Container';
+
 import {
     GoogleMap,
     useLoadScript,
@@ -26,12 +28,7 @@ const Journey = () => {
     const [userMonsterList, setMonsterList] = useState([]);
     const [icons, setIcons] = useState([]);
     const [message, setMessage] = useState('');
-    const [mapReady, setMapReady] = useState(false);
     const [activeMarker, setActiveMarker] = useState(null);
-
-    const handleMapReady = () => {
-        setMapReady(true);
-    };
 
     const handleActiveMarker = (marker) => {
         console.log(marker);
@@ -62,6 +59,7 @@ const Journey = () => {
             locations.push({
                 key: monsters[x].id,
                 position: monsters[x].pos,
+                name: monsters[x].title,
                 icon: icon,
             });
         }
@@ -101,6 +99,14 @@ const Journey = () => {
         }
     };
 
+    const handleName = (marker) => {
+        if (userMonsterList.includes(marker.key)) {
+            return <p className="infoText"> {marker.name}</p>;
+        } else {
+            return <h3>?</h3>;
+        }
+    };
+
     useEffect(() => {
         getUserMonsters(userId);
     }, []);
@@ -122,41 +128,51 @@ const Journey = () => {
     if (!isLoaded) return <div>Loading...</div>;
     return (
         <>
-            <div>
-                <NavBar />
-                <PageTitle />
-                Journey
-            </div>
-            <GoogleMap
-                onClick={() => setActiveMarker(null)}
-                zoom={17}
-                center={ucf}
-                options={{
-                    mapId: process.env.REACT_APP_MAPS_ID_KEY,
-                    disableDefaultUI: true,
-                    draggable: false,
-                }}
-                clickableIcons={false}
-                onLoad={handleMapReady}
-                mapContainerClassName="map-container"
-            >
-                {mapReady &&
-                    icons.map((marker) => (
+            <div className="d-flex justify-content-center m-4 ">
+                <GoogleMap
+                    onClick={() => setActiveMarker(null)}
+                    zoom={16.5}
+                    center={ucf}
+                    options={{
+                        mapId: process.env.REACT_APP_MAPS_ID_KEY,
+                        disableDefaultUI: true,
+                        draggable: true,
+                    }}
+                    clickableIcons={false}
+                    mapContainerClassName="map-container"
+                >
+                    {icons.map((marker) => (
                         <Marker
                             key={marker.key}
                             position={marker.position}
                             icon={marker.icon}
-                            onClick={() => handleActiveMarker(marker)}
-                            {...(activeMarker === marker.key ? (
+                            onClick={() => handleActiveMarker(marker.key)}
+                        >
+                            {activeMarker === marker.key ? (
                                 <InfoWindow
+                                    className="infoWindow"
                                     onCloseClick={() => setActiveMarker(null)}
                                 >
-                                    <div>{marker.key}</div>
+                                    <div className="infoWindow d-flex flex-column text-center">
+                                        <img
+                                            src={require(`../assets/${marker.key}.png`)}
+                                            alt="character design"
+                                            className={`mx-auto w-50 ${
+                                                userMonsterList.includes(
+                                                    marker.key
+                                                )
+                                                    ? ''
+                                                    : 'silhouette'
+                                            }`}
+                                        ></img>
+                                        {handleName(marker)}
+                                    </div>
                                 </InfoWindow>
-                            ) : null)}
-                        />
+                            ) : null}
+                        </Marker>
                     ))}
-            </GoogleMap>
+                </GoogleMap>
+            </div>
         </>
     );
 };

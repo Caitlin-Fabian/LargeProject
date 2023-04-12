@@ -20,7 +20,7 @@ const Email = () => {
         var js = JSON.stringify(obj);
         console.log(js);
         try {
-            const response = await fetch(bp.buildPath('api/verifyEmail'), {
+            const response = await fetch(bp.buildPath('api/verify'), {
                 method: 'POST',
                 body: js,
                 headers: { 'Content-Type': 'application/json' },
