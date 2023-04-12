@@ -18,7 +18,7 @@ exports.setApp = function (app, client) {
         if (username == undefined || password == undefined) {
             res.status(406).json({ error: 'Invalid Login' });
             return;
-        }
+        } 
 
         const db = client.db('UCFGO');
         const results = await db
@@ -32,14 +32,18 @@ exports.setApp = function (app, client) {
             id = results[0]._id;
             Name = results[0].Name;
             score = results[0].Score;
-            try {
-                const token = require('./createJWT.js');
-                ret = token.createToken(id, Name, score);
-                console.log(ret);
-                res.status(200).json(ret);
-            } catch (e) {
-                ret = { error: e.message };
-                res.status(500).json(ret);
+            if(results[0].IsVerified){
+                try {
+                    const token = require('./createJWT.js');
+                    ret = token.createToken(id, Name, score);
+                    console.log(ret);
+                    res.status(200).json(ret);
+                } catch (e) {
+                    ret = { error: e.message };
+                    res.status(500).json(ret);
+                }
+            }else{
+                res.status(406).json({ error: 'User has not verified their email'});
             }
         } else {
             //invalid login...
