@@ -217,6 +217,7 @@ function Login() {
                                     type="email"
                                     className="email ele"
                                     placeholder="email@email.com"
+                                    {...register("email", { required: true, pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i })}
                                     id="newEmail"
                                     ref={(c) => (newEmail = c)}
                                 ></input>

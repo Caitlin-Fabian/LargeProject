@@ -115,6 +115,7 @@ const Email = () => {
                                     className="w-75 d-flex justify-content-center"
                                     type="Email"
                                     placeholder="Email@email.com"
+                                    {...register("email", { required: true, pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i })}
                                     onChange={handleChange}
                                 />
                             </Form>
