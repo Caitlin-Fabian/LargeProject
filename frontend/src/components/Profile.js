@@ -77,14 +77,21 @@ function Profile() {
             var res = JSON.parse(await response.text());
             console.log(res);
 
-            setName(res.Name);
-            setScore(res.score);
-            setUsersMonsters(res.monsters);
-            setUsername(res.username);
-            setEmail(res.Email);
-            let obj = teams.find((o) => o.character === res.character).picture;
-            setCharacter(obj);
-            displayMonsters();
+            if (res.error) {
+                setMessage('API ERROR:' + res.error);
+            } else {
+                storage.storeToken(res.jwtToken);
+                setName(res.Name);
+                setScore(res.score);
+                setUsersMonsters(res.monsters);
+                setUsername(res.username);
+                setEmail(res.Email);
+                let obj = teams.find(
+                    (o) => o.character === res.character
+                ).picture;
+                setCharacter(obj);
+                displayMonsters();
+            }
         } catch (e) {
             setMessage(e.toString());
         }

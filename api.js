@@ -281,7 +281,7 @@ exports.setApp = function (app, client) {
         var token = require('./createJWT.js');
 
         const { userId, jwtToken } = req.body;
-        console.log('userId:' + userId);
+
         if (userId == undefined) {
             res.status(406).json({ error: 'No User ID passed' });
             return;
@@ -350,11 +350,25 @@ exports.setApp = function (app, client) {
         // incoming: userId
         // outgoing: top 20 users. If not in the array, add the user to the end with their place
         const size = 10;
-        const { userId } = req.body;
+        var token = require('./createJWT.js');
+
+        const { userId, jwtToken } = req.body;
+
         if (userId == undefined) {
             res.status(406).json({ error: 'No User ID passed' });
             return;
         }
+
+        try {
+            if (token.isExpired(jwtToken)) {
+                var r = { error: 'The JWT is no longer valid', jwtToken: '' };
+                res.status(500).json(r);
+                return;
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+
         const db = client.db('UCFGO');
         var query = { Score: -1 };
         const userList = await db
@@ -363,6 +377,14 @@ exports.setApp = function (app, client) {
             .sort(query)
             .limit(size)
             .toArray();
+
+        let refreshedToken = null;
+        try {
+            refreshedToken = token.refresh(jwtToken);
+        } catch (e) {
+            console.log(e.message);
+        }
+
         const topTwenty = [];
         let isInList = false;
         for (let x = 0; x < userList.length; x++) {
@@ -385,7 +407,7 @@ exports.setApp = function (app, client) {
             }
         }
 
-        var ret = { userList: topTwenty, error: '' };
+        var ret = { userList: topTwenty, error: '', jwtToken: refreshedToken };
         res.status(200).json(ret);
     });
 
