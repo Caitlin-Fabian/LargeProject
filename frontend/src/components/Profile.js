@@ -86,9 +86,7 @@ function Profile() {
                 setUsersMonsters(res.monsters);
                 setUsername(res.username);
                 setEmail(res.Email);
-                let obj = teams.find(
-                    (o) => o.character === res.character
-                ).picture;
+                let obj = teams.find((o) => o.id === res.character).picture;
                 setCharacter(obj);
                 displayMonsters();
             }
