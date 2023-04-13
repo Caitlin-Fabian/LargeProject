@@ -10,7 +10,6 @@ const Email = () => {
     const [token, setToken] = useState('');
     const [enterEmail, setEnterEmail] = useState(true);
     const [verifyEmail, setVerifyEmail] = useState(false);
-    const [changePassword, setChangePassword] = useState(false);
     const [password, setPassword] = useState('');
     const [success, setSuccess] = useState(false);
     var bp = require('./Path.js');

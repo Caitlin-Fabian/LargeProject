@@ -77,14 +77,19 @@ function MonsterList() {
             var res = JSON.parse(await response.text());
             console.log(res);
             console.log(res.monsters);
-            setMonsterList(res.monsters);
 
-            var user = {
-                Name: ud.Name,
-                score: res.Score,
-                id: ud.id,
-            };
-            localStorage.setItem('user_data', JSON.stringify(user));
+            if (res.error) {
+                setMessage('API Error:' + res.error);
+            } else {
+                storage.storeToken(res.jwtToken);
+                setMonsterList(res.monsters);
+                var user = {
+                    Name: ud.Name,
+                    score: res.Score,
+                    id: ud.id,
+                };
+                localStorage.setItem('user_data', JSON.stringify(user));
+            }
         } catch (e) {
             setMessage(e.toString());
         }

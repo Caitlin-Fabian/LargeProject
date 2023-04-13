@@ -77,14 +77,19 @@ function Profile() {
             var res = JSON.parse(await response.text());
             console.log(res);
 
-            setName(res.Name);
-            setScore(res.score);
-            setUsersMonsters(res.monsters);
-            setUsername(res.username);
-            setEmail(res.Email);
-            let obj = teams.find((o) => o.character === res.character).picture;
-            setCharacter(obj);
-            displayMonsters();
+            if (res.error) {
+                setMessage('API ERROR:' + res.error);
+            } else {
+                storage.storeToken(res.jwtToken);
+                setName(res.Name);
+                setScore(res.score);
+                setUsersMonsters(res.monsters);
+                setUsername(res.username);
+                setEmail(res.Email);
+                let obj = teams.find((o) => o.id === res.character).picture;
+                setCharacter(obj);
+                displayMonsters();
+            }
         } catch (e) {
             setMessage(e.toString());
         }
@@ -131,14 +136,14 @@ function Profile() {
         <Container className="profile">
             <Row>
                 <Col>
-                    <div className="d-flex name-tag">
+                    <div className="d-flex name-tag justify-content-between">
                         <h2 className="p-3">{name}</h2>
                         <h3 className="p-3">Score : {score}</h3>
                         <button
                             class="settings-button"
                             onClick={handleShow}
                         >
-                            <Mdicons.MdSettingsSuggest />
+                            <Mdicons.MdSettingsSuggest size={50} />
                         </button>
                         <Modal
                             show={settingsModal}
