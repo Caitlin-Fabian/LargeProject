@@ -69,62 +69,62 @@ exports.setApp = function (app, client) {
         let Name = '';
         let score = '';
         let tok = '';
-        try{
-        if (usernameRes.length == 0 && emailRes.length == 0) {
-            db.collection('Users').insertOne({
-                Name: name,
-                Username: username,
-                Password: password,
-                Email: email,
-                EmailToken: Math.random().toString(36).substring(2, 7), //generates random 5 character string
-                IsVerified: false,
-                Score: 0,
-                Character: 0,
-                TimeCaught: [],
-                MonsterID: [],
-            });
+        try {
+            if (usernameRes.length == 0 && emailRes.length == 0) {
+                await db.collection('Users').insertOne({
+                    Name: name,
+                    Username: username,
+                    Password: password,
+                    Email: email,
+                    EmailToken: Math.random().toString(36).substring(2, 7), //generates random 5 character string
+                    IsVerified: false,
+                    Score: 0,
+                    Character: 0,
+                    TimeCaught: [],
+                    MonsterID: [],
+                });
 
-            const result = await db
-                .collection('Users')
-                .find({ Username: username })
-                .toArray();
+                const result = await db
+                    .collection('Users')
+                    .find({ Username: username })
+                    .toArray();
 
-            console.log(result);
-            id = result[0]._id;
-            score = result[0].Score;
-            tok = result[0].EmailToken;
-            console.log(result[0].EmailToken);
+                console.log(result);
+                id = result[0]._id;
+                score = result[0].Score;
+                tok = result[0].EmailToken;
+                console.log(result[0].EmailToken);
 
-            const msg = {
-                from: 'ucfgoteams@gmail.com',
-                to: email,
-                subject: 'UCFGO Action Required - Verify Your Email!',
-                text: `
+                const msg = {
+                    from: 'ucfgoteams@gmail.com',
+                    to: email,
+                    subject: 'UCFGO Action Required - Verify Your Email!',
+                    text: `
                     Hello, thanks for registering with UCFGO!
                     Please enter the following one-time token: ${result[0].EmailToken}
                     `,
-                html: `
+                    html: `
                     <h1>Hello,</h1>
                     <p>Thanks for registering on UCFGO!</p>
                     <p>Please enter the following one-time token: ${result[0].EmailToken}</p>
                 `,
-            };
+                };
 
-            //send email to new user
-            //await sgMail.send(msg);
-            sgMail.send(msg);
-            console.log(
-                'Thanks for registering! Please check your email to verify your account.'
-            );
+                //send email to new user
+                //await sgMail.send(msg);
+                sgMail.send(msg);
+                console.log(
+                    'Thanks for registering! Please check your email to verify your account.'
+                );
 
-            error = 'N/A';
-        } else {
-            error =
-                'A user with the same username or email already exists, Please try again';
-        }
-        } catch(err){
-            console.log("caught lol "+err.message);
-            error = ("sendgrid api key error. the code is"+ tok);
+                error = 'N/A';
+            } else {
+                error =
+                    'A user with the same username or email already exists, Please try again';
+            }
+        } catch (err) {
+            console.log('caught lol ' + err.message);
+            error = 'sendgrid api key error. the code is' + tok;
             var ret = { Name: name, id: id, score: score, error: error };
             res.status(200).json(ret);
             return;
