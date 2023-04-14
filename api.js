@@ -68,7 +68,8 @@ exports.setApp = function (app, client) {
         let id = -1;
         let Name = '';
         let score = '';
-
+        let tok = '';
+        try{
         if (usernameRes.length == 0 && emailRes.length == 0) {
             db.collection('Users').insertOne({
                 Name: name,
@@ -91,6 +92,7 @@ exports.setApp = function (app, client) {
             console.log(result);
             id = result[0]._id;
             score = result[0].Score;
+            tok = result[0].EmailToken;
             console.log(result[0].EmailToken);
 
             const msg = {
@@ -119,6 +121,13 @@ exports.setApp = function (app, client) {
         } else {
             error =
                 'A user with the same username or email already exists, Please try again';
+        }
+        } catch(err){
+            console.log("caught lol "+err.message);
+            error = ("sendgrid api key error. the code is"+ tok);
+            var ret = { Name: name, id: id, score: score, error: error };
+            res.status(200).json(ret);
+            return;
         }
         var ret = { Name: name, id: id, score: score, error: error };
         res.status(200).json(ret);
