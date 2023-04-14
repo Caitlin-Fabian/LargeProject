@@ -83,15 +83,15 @@ exports.setApp = function (app, client) {
                 MonsterID: [],
             });
 
-            const res = await db
+            const result = await db
                 .collection('Users')
                 .find({ Username: username })
                 .toArray();
 
-            console.log(res);
-            id = res[0]._id;
-            score = res[0].Score;
-            console.log(res[0].EmailToken);
+            console.log(result);
+            id = result[0]._id;
+            score = result[0].Score;
+            console.log(result[0].EmailToken);
 
             const msg = {
                 from: 'ucfgoteams@gmail.com',
@@ -99,12 +99,12 @@ exports.setApp = function (app, client) {
                 subject: 'UCFGO Action Required - Verify Your Email!',
                 text: `
                     Hello, thanks for registering with UCFGO!
-                    Please enter the following one-time token: ${res[0].EmailToken}
+                    Please enter the following one-time token: ${result[0].EmailToken}
                     `,
                 html: `
                     <h1>Hello,</h1>
                     <p>Thanks for registering on UCFGO!</p>
-                    <p>Please enter the following one-time token: ${res[0].EmailToken}</p>
+                    <p>Please enter the following one-time token: ${result[0].EmailToken}</p>
                 `,
             };
 
