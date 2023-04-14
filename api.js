@@ -59,11 +59,11 @@ exports.setApp = function (app, client) {
             .collection('Users')
             .find({ Username: username })
             .toArray();
-        
+
         const emailRes = await db
-        .collection('Users')
-        .find({ Email: email })
-        .toArray();
+            .collection('Users')
+            .find({ Email: email })
+            .toArray();
 
         let id = -1;
         let Name = '';
@@ -128,9 +128,10 @@ exports.setApp = function (app, client) {
     app.post('/api/verify', async (req, res, next) => {
         //incoming: token
         //outgoing: err
-        var error = '';
+        var error = 'N/A';
         const { token, password } = req.body; //field to take in token
         const db = client.db('UCFGO');
+        console.log(token);
 
         const results = await db
             .collection('Users')
@@ -139,19 +140,19 @@ exports.setApp = function (app, client) {
 
         if (results.length == 0) {
             error = 'Invalid token';
-        } else if(results[0].IsVerified) {
-            console.log("pass change")
-                db.collection('Users').updateOne(
-                    { EmailToken: token},
-                    {
-                        $set: {
-                            EmailToken: null,
-                            Password: password,
-                        },
-                    }
-                );
-        } else{
-            console.log("verified")
+        } else if (results[0].IsVerified) {
+            console.log('pass change');
+            db.collection('Users').updateOne(
+                { EmailToken: token },
+                {
+                    $set: {
+                        EmailToken: null,
+                        Password: password,
+                    },
+                }
+            );
+        } else {
+            console.log('verified');
             db.collection('Users').updateOne(
                 { EmailToken: token },
                 {
@@ -162,15 +163,14 @@ exports.setApp = function (app, client) {
                 }
             );
         }
-        
-        
+
         const r = await db
             .collection('Users')
             .find({ EmailToken: token })
             .toArray();
 
-        if(r.length == 0){
-            console.log("cngratulations post malone")
+        if (r.length == 0) {
+            console.log('cngratulations post malone');
         }
 
         //error = 'N/A';
@@ -224,18 +224,17 @@ exports.setApp = function (app, client) {
     //TODO: make it update the email token
     app.post('/api/sendForgotPassword', async (req, res, next) => {
         const db = client.db('UCFGO');
-        console.log("SANITY");
+        console.log('SANITY');
         var { email } = req.body; //field to take in token
         const user = await db
-        .collection('Users')
-        .find({Email: email.trim()})
-        .toArray();
-        
-        console.log(user[0].IsVerified + " "+ user[0].IsVerfied)
+            .collection('Users')
+            .find({ Email: email.trim() })
+            .toArray();
+
+        console.log(user[0].IsVerified + ' ' + user[0].IsVerfied);
         const et = Math.random().toString(36).substring(2, 7);
 
-        if(user.length >= 1 && user[0].IsVerified){
-
+        if (user.length >= 1 && user[0].IsVerified) {
             db.collection('Users').updateOne(
                 { Email: user[0].Email },
                 {
@@ -258,24 +257,20 @@ exports.setApp = function (app, client) {
                     <p>You have requested to reset your password.</p>
                     <p>Please enter the following one-time token: ${et}</p>
                 `,
-            };//TODO: please change this 
+            }; //TODO: please change this
 
             //send email to new user
             //await sgMail.send(msg);
             sgMail.send(msg);
-            console.log(
-                'A verification code was sent to '+email
-            );
-        
-            res.status(200).json({error: "N/A"});
+            console.log('A verification code was sent to ' + email);
 
-        }
-        else if(!user[0].isVerified)
-        {
-             res.status(200).json({error: "Please verify email"});
-        }
-        else{
-            res.status(200).json({error: "Email does not exist. Please try again"});
+            res.status(200).json({ error: 'N/A' });
+        } else if (!user[0].isVerified) {
+            res.status(200).json({ error: 'Please verify email' });
+        } else {
+            res.status(200).json({
+                error: 'Email does not exist. Please try again',
+            });
         }
     });
     //tested
@@ -283,9 +278,10 @@ exports.setApp = function (app, client) {
         //incoming: userId
         //outgoing: email, name, score
         var error = '';
+        var token = require('./createJWT.js');
 
         const { userId, jwtToken } = req.body;
-        console.log('userId:' + userId);
+
         if (userId == undefined) {
             res.status(406).json({ error: 'No User ID passed' });
             return;
@@ -340,7 +336,7 @@ exports.setApp = function (app, client) {
                 character: character,
                 username: username,
                 jwtToken: refreshedToken,
-                isVerified: isVerified
+                isVerified: isVerified,
             };
             res.status(200).json(ret);
         } else {
@@ -354,11 +350,25 @@ exports.setApp = function (app, client) {
         // incoming: userId
         // outgoing: top 20 users. If not in the array, add the user to the end with their place
         const size = 10;
-        const { userId } = req.body;
+        var token = require('./createJWT.js');
+
+        const { userId, jwtToken } = req.body;
+
         if (userId == undefined) {
             res.status(406).json({ error: 'No User ID passed' });
             return;
         }
+
+        try {
+            if (token.isExpired(jwtToken)) {
+                var r = { error: 'The JWT is no longer valid', jwtToken: '' };
+                res.status(500).json(r);
+                return;
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+
         const db = client.db('UCFGO');
         var query = { Score: -1 };
         const userList = await db
@@ -367,6 +377,14 @@ exports.setApp = function (app, client) {
             .sort(query)
             .limit(size)
             .toArray();
+
+        let refreshedToken = null;
+        try {
+            refreshedToken = token.refresh(jwtToken);
+        } catch (e) {
+            console.log(e.message);
+        }
+
         const topTwenty = [];
         let isInList = false;
         for (let x = 0; x < userList.length; x++) {
@@ -389,7 +407,7 @@ exports.setApp = function (app, client) {
             }
         }
 
-        var ret = { userList: topTwenty, error: '' };
+        var ret = { userList: topTwenty, error: '', jwtToken: refreshedToken };
         res.status(200).json(ret);
     });
 

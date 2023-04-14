@@ -105,6 +105,10 @@ function Login() {
         }
     };
 
+    const goForgotPassword = () => {
+        window.location.href = '/PasswordRecovery';
+    };
+
     const registerForm = () => {
         setIsLogin(false);
         setMessage('');
@@ -168,6 +172,12 @@ function Login() {
                                     ref={(c) => (loginPassword = c)}
                                 ></input>
                             </label>
+                            <button
+                                onClick={goForgotPassword}
+                                className="btn-link bg-transparent border-0"
+                            >
+                                Forgot Password?
+                            </button>
                             <button
                                 onClick={doLogin}
                                 className="clkbtn"

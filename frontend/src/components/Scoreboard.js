@@ -23,9 +23,12 @@ function Scoreboard() {
 
     var Topscores;
     const showleaderBoard = async () => {
+        var storage = require('../tokenStorage.js');
+
         try {
             var obj = {
                 userId: userId,
+                jwtToken: storage.retrieveToken(),
             };
 
             var js = JSON.stringify(obj);
@@ -38,15 +41,20 @@ function Scoreboard() {
             var res = JSON.parse(await response.text());
             console.log(res);
 
-            if (res.userList <= 0) {
-                setMessage('This are no players');
+            if (res.error) {
+                setMessage('API error' + res.error);
             } else {
-                console.log(res.userList);
-                var topThree = res.userList.slice(0, 3);
-                console.log(topThree);
-                setShowPlayers(true);
-                setTopPlayers(topThree);
-                setPlayers(res.userList);
+                storage.storeToken(res.jwtToken);
+                if (res.userList <= 0) {
+                    setMessage('This are no players');
+                } else {
+                    console.log(res.userList);
+                    var topThree = res.userList.slice(0, 3);
+                    console.log(topThree);
+                    setShowPlayers(true);
+                    setTopPlayers(topThree);
+                    setPlayers(res.userList);
+                }
             }
         } catch (e) {
             alert(e.toString());

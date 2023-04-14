@@ -5,6 +5,7 @@ import * as Mdicons from 'react-icons/md';
 
 const Email = () => {
     const [token, setToken] = useState('');
+    const [message, setMessage] = useState('');
     var bp = require('./Path.js');
 
     const handleOutput = (string) => {
@@ -19,7 +20,7 @@ const Email = () => {
         var js = JSON.stringify(obj);
         console.log(js);
         try {
-            const response = await fetch(bp.buildPath('api/verifyEmail'), {
+            const response = await fetch(bp.buildPath('api/verify'), {
                 method: 'POST',
                 body: js,
                 headers: { 'Content-Type': 'application/json' },
@@ -27,8 +28,9 @@ const Email = () => {
             var res = JSON.parse(await response.text());
             console.log(res);
             if (res.error === 'N/A') {
-                alert('You are now verified');
                 window.location.href = '/';
+            } else {
+                setMessage(res.error);
             }
         } catch (e) {
             console.log(e.toString());
@@ -64,7 +66,7 @@ const Email = () => {
                             autoFocus
                             handleOutputString={handleOutput}
                             inputProps={[{ className: 'first-box' }]}
-                            inputRegExp={/^[0-9]$/}
+                            inputRegExp={/^[a-zA-Z0-9_.-]*$/}
                         />
                     </div>
                     <div>
@@ -74,6 +76,8 @@ const Email = () => {
                         >
                             Verify Email
                         </button>
+                        <br />
+                        <span id="loginResult">{message}</span>{' '}
                     </div>
                 </div>
             </div>
