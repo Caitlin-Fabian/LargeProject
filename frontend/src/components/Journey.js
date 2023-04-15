@@ -11,7 +11,7 @@ import {
     InfoWindow,
 } from '@react-google-maps/api';
 import '../App.css';
-import monsters from '../components/monsters';
+//import monsters from '../components/monsters';
 
 const ucf = { lat: 28.60117044744501, lng: -81.20031305970772 };
 
@@ -29,6 +29,8 @@ const Journey = () => {
     const [icons, setIcons] = useState([]);
     const [message, setMessage] = useState('');
     const [activeMarker, setActiveMarker] = useState(null);
+    const [monsters,setMonsters] = useState(null)
+    // const [monsterLength, setMonsterLength] = useState
 
     const handleActiveMarker = (marker) => {
         console.log(marker);
@@ -45,25 +47,28 @@ const Journey = () => {
             anchor: new window.google.maps.Point(20, 40), // anchor point of the icon
             url: visited ? greenIcon : redIcon,
         };
-        console.log(ret.pincolor);
+        console.log(ret.url);
         return ret;
     };
 
     const createIcons = async () => {
-        //console.log(userMonsterList);
-        for (let x = 0; x < monsters.length; x++) {
-            let icon = await markerIcon(
-                userMonsterList.includes(monsters[x].id)
-            );
-
-            locations.push({
-                key: monsters[x].id,
-                position: monsters[x].pos,
-                name: monsters[x].title,
-                icon: icon,
-            });
-        }
-        setIcons(locations);
+        await getAllMonsters().then(async() => {
+            let length = await monsters.length;
+            for (let x = 0; x < length; x++) {
+                let icon = await markerIcon(
+                    userMonsterList.includes(monsters[x]._id)
+                );
+                console.log(parseInt(monsters[x].lat))
+                locations.push({
+                    key: monsters[x]._id,
+                    position: {lat:parseFloat(monsters[x].lat), lng:parseFloat(monsters[x].lng)},
+                    name: monsters[x].title,
+                    icon: icon,
+                });
+            }
+            setIcons(locations);
+            console.log(locations)
+        }) 
     };
 
     const getUserMonsters = async (userId) => {
@@ -99,6 +104,21 @@ const Journey = () => {
         }
     };
 
+    const getAllMonsters = async () => {
+        try {
+            const response = await fetch(bp.buildPath('api/getMonsterList'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            var res = JSON.parse(await response.text());
+            console.log(res.monsterList);
+            setMonsters(res.monsterList);
+        } catch (e) {
+            setMessage(e.toString());
+        }
+    };
+
     const handleName = (marker) => {
         if (userMonsterList.includes(marker.key)) {
             return <p className="infoText"> {marker.name}</p>;
@@ -106,10 +126,11 @@ const Journey = () => {
             return <h3>?</h3>;
         }
     };
-
-    useEffect(() => {
+    
+    useEffect(() => { 
+        getAllMonsters();
         getUserMonsters(userId);
-    }, []);
+    },[])
 
     useEffect(() => {
         if (userMonsterList.length !== 0) {
