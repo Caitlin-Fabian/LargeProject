@@ -9,8 +9,6 @@ import Form from 'react-bootstrap/Form';
 
 import * as Mdicons from 'react-icons/md';
 
-import { monsters } from './monsters';
-
 function Profile() {
     var _ud = localStorage.getItem('user_data');
     var ud = JSON.parse(_ud);

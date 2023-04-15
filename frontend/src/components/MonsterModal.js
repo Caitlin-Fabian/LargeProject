@@ -1,11 +1,33 @@
+import { get } from 'mongoose';
 import React, { useState } from 'react';
-import { monsters } from './monsters';
 import * as Mdicons from 'react-icons/md';
 
 const CharacterModal = ({ setScore, id, setMonsterModal }) => {
+    var bp = require('./Path.js');
     console.log('userid:' + id);
     const [selectedId, setSelectedId] = useState(0);
+    const [monsters, setMonsters] = useState([]);
 
+
+    useState(() => {
+        getMonsters();
+    },[]);
+
+    const getMonsters = async () => {
+        try {
+            const response = await fetch(bp.buildPath('api/getMonsterList'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            var res = JSON.parse(await response.text());
+            console.log(res.monsterList);
+            setMonsters(res.monsterList);
+        } catch (e) {
+            //setMessage(e.toString());
+        }
+    };
+    
     const addMonster = async (id, score) => {
         var bp = require('./Path.js');
         var obj = {
