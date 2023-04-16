@@ -146,7 +146,7 @@ const Journey = () => {
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY,
     });
-    if (!isLoaded) return <div>Loading...</div>;
+    if (!(isLoaded && icons !=[])) return <div>Loading...</div>;
     return (
         <>
             <div className="d-flex justify-content-center m-4 ">
