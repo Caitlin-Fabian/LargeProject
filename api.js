@@ -32,9 +32,10 @@ exports.setApp = function (app, client) {
             id = results[0]._id;
             Name = results[0].Name;
             score = results[0].Score;
+            var isVerified = results[0].IsVerified;
             try {
                 const token = require('./createJWT.js');
-                ret = token.createToken(id, Name, score);
+                ret = token.createToken(id, Name, score,isVerified);
                 console.log(ret);
                 res.status(200).json(ret);
             } catch (e) {

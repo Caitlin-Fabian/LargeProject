@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import RICIBs from 'react-individual-character-input-boxes';
 import { buildPath } from './Path';
 import * as Mdicons from 'react-icons/md';
-
 const Email = () => {
     const [token, setToken] = useState('');
     const [message, setMessage] = useState('');

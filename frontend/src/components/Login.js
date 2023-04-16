@@ -44,18 +44,23 @@ function Login() {
                     console.log(res);
                     storage.storeToken(res);
                     var ud = decodeToken(storage.retrieveToken());
-                    console.log(ud);
-                    var id = ud.userID;
-                    var Name = ud.Name;
-                    var score = ud.Score;
+                    if(!ud.isVerified){
+                        window.location.href = '/email'
+                    }else{
+                        console.log(ud);
+                        var id = ud.userID;
+                        var Name = ud.Name;
+                        var score = ud.Score;
 
-                    var user = {
-                        Name: Name,
-                        score: score,
-                        id: id,
-                    };
-                    localStorage.setItem('user_data', JSON.stringify(user));
-                    window.location.href = '/inventory';
+                        var user = {
+                            Name: Name,
+                            score: score,
+                            id: id,
+                        };
+                        localStorage.setItem('user_data', JSON.stringify(user));
+                        window.location.href = '/inventory';
+                    }
+                    
                 }
             });
         } catch (e) {

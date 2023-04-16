@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-exports.createToken = function (id, Name, score) {
-    return _createToken(id, Name, score);
+exports.createToken = function (id, Name, score, isVerified) {
+    return _createToken(id, Name, score, isVerified);
 };
-_createToken = function (id, Name, score) {
+_createToken = function (id, Name, score, isVerified) {
     try {
         const expiration = new Date();
-        const user = { userID: id, Name: Name, Score: score };
+        const user = { userID: id, Name: Name, Score: score, isVerified: isVerified };
         console.log(user);
         const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
         // In order to exoire with a value other than the default, use the
@@ -42,5 +42,6 @@ exports.refresh = function (token) {
     var id = ud.payload.id;
     var Name = ud.payload.Name;
     var score = ud.payload.score;
-    return _createToken(Name, score, id);
+    var isVerified = ud.payload.isVerified;
+    return _createToken(Name, score, id,isVerified);
 };
