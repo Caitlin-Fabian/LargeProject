@@ -12,6 +12,7 @@ html, body{
     background-size: cover;
     background-attachment: fixed;
     overflow-x: hidden;
+    overflow-y: hidden
 }
 
 
@@ -26,6 +27,7 @@ html, body{
 .monsters{
     background-color: $bg-transparent-white;
     border-radius: 10px;
+    overflow-y: auto;
 }
 
 .ball-background{   
@@ -35,8 +37,7 @@ html, body{
 }
 
 .monster{
-    width: 50%;
-    margin-left: -5vw;    
+    width: 50%;   
     margin-top: 20%;
 }
 
@@ -47,4 +48,9 @@ html, body{
     padding: 10px;
     display: flex;
     justify-content: center ;
+    margin-top: 20px;
+}
+
+.monsterDiv{
+    height: 100vh;
 }

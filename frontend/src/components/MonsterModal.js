@@ -74,6 +74,7 @@ const CharacterModal = ({ setScore, id, setMonsterModal }) => {
                         >
                             <img
                                 className="card-img-top w-50 mx-auto"
+                                style={{ marginLeft: '20px' }}
                                 src={card.picture}
                                 alt="Character Drawing"
                             />

@@ -124,15 +124,17 @@ function Profile() {
     useEffect(() => {
         getUser(userId);
         getMonsters();
-    }, [monsterDisplay]);
+    }, []);
 
     useEffect(() => {
-        if (usersMonsters.length > 0) {
+        if (usersMonsters.length > 0 && monsterList.length > 0) {
+            console.log(' There are monsters');
             displayMonsters();
-        } else {
+            setNoMonsters(false);
+        } else if (usersMonsters.length === 0) {
             displayNothing();
         }
-    }, [monsterList]);
+    }, [monsterList, usersMonsters]);
 
     return (
         <Container
@@ -141,11 +143,11 @@ function Profile() {
         >
             <Row>
                 <Col>
-                    <div className="d-flex name-tag justify-content-around align-items-center h-25 mt-4">
+                    <div className=" d-flex name-tag justify-content-around h-25 mt-4">
                         <h4 className="p-3">{username}</h4>
                         <h4 className="p-3">Score : {score}</h4>
                         <button
-                            class="settings-button"
+                            className="settings-button"
                             onClick={handleShow}
                         >
                             <Mdicons.MdSettingsSuggest size={50} />
@@ -194,7 +196,7 @@ function Profile() {
                             </Modal.Footer>
                         </Modal>
                     </div>
-                    <div className="d-flex justify-content-center">
+                    <div className="row d-flex justify-content-center">
                         <img
                             src={require(`../assets/${character}.png`)}
                             className="w-50 mx-auto"
@@ -207,31 +209,34 @@ function Profile() {
                         <h2 className="p-3">Monsters </h2>
                         <div></div>
                     </div>
-                    {noMonsters && (
-                        <div className="display">
-                            <p>Start your journey!</p>
-                        </div>
-                    )}
-                    {monsterDisplay.map((monster, i) => {
-                        return (
-                            <Row
-                                key={i}
-                                className="d-flex text-center leaderboard-ele m-2 shadow-lg rounded"
-                            >
-                                <Col className="position-relative ball-background m-2">
-                                    <img
-                                        src={require(`../assets/${monster._id}.png`)}
-                                        className="position-relative z-5 monster"
-                                        alt="Monster Caught"
-                                    />
-                                </Col>
+                    <div className="overflow-auto monsterDiv">
+                        {noMonsters ? (
+                            <div className="display">
+                                <p>Start your journey!</p>
+                            </div>
+                        ) : (
+                            monsterDisplay.map((monster, i) => {
+                                return (
+                                    <Row
+                                        key={i}
+                                        className="d-flex text-center leaderboard-ele m-2 shadow-lg rounded"
+                                    >
+                                        <Col className="position-relative ball-background m-2">
+                                            <img
+                                                src={require(`../assets/${monster._id}.png`)}
+                                                className="position-relative z-5 monster"
+                                                alt="Monster Caught"
+                                            />
+                                        </Col>
 
-                                <Col className="d-flex justify-content-center align-items-center">
-                                    <div>{monster.Name}</div>
-                                </Col>
-                            </Row>
-                        );
-                    })}
+                                        <Col className="d-flex justify-content-center align-items-center">
+                                            <div>{monster.Name}</div>
+                                        </Col>
+                                    </Row>
+                                );
+                            })
+                        )}
+                    </div>
                 </Col>
             </Row>
         </Container>
