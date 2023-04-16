@@ -1,4 +1,3 @@
-import { get } from 'mongoose';
 import React, { useState } from 'react';
 import * as Mdicons from 'react-icons/md';
 
@@ -8,10 +7,9 @@ const CharacterModal = ({ setScore, id, setMonsterModal }) => {
     const [selectedId, setSelectedId] = useState(0);
     const [monsters, setMonsters] = useState([]);
 
-
     useState(() => {
         getMonsters();
-    },[]);
+    }, []);
 
     const getMonsters = async () => {
         try {
@@ -27,7 +25,7 @@ const CharacterModal = ({ setScore, id, setMonsterModal }) => {
             //setMessage(e.toString());
         }
     };
-    
+
     const addMonster = async (id, score) => {
         var bp = require('./Path.js');
         var obj = {

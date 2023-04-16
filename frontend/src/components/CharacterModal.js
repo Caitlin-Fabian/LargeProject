@@ -50,7 +50,6 @@ const CharacterModal = ({ id, setMonsterModal, setCharacterModal }) => {
     const handleNext = () => {
         handleSelectedCharacter();
         setCharacterModal(false);
-        setMonsterModal(true);
     };
 
     return (

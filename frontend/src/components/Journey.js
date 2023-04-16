@@ -29,7 +29,7 @@ const Journey = () => {
     const [icons, setIcons] = useState([]);
     const [message, setMessage] = useState('');
     const [activeMarker, setActiveMarker] = useState(null);
-    const [monsters,setMonsters] = useState(null)
+    const [monsters, setMonsters] = useState(null);
     // const [monsterLength, setMonsterLength] = useState
 
     const handleActiveMarker = (marker) => {
@@ -52,23 +52,26 @@ const Journey = () => {
     };
 
     const createIcons = async () => {
-        await getAllMonsters().then(async() => {
+        await getAllMonsters().then(async () => {
             let length = await monsters.length;
             for (let x = 0; x < length; x++) {
                 let icon = await markerIcon(
                     userMonsterList.includes(monsters[x]._id)
                 );
-                console.log(parseInt(monsters[x].lat))
+                console.log(parseInt(monsters[x].lat));
                 locations.push({
                     key: monsters[x]._id,
-                    position: {lat:parseFloat(monsters[x].lat), lng:parseFloat(monsters[x].lng)},
+                    position: {
+                        lat: parseFloat(monsters[x].lat),
+                        lng: parseFloat(monsters[x].lng),
+                    },
                     name: monsters[x].title,
                     icon: icon,
                 });
             }
             setIcons(locations);
-            console.log(locations)
-        }) 
+            console.log(locations);
+        });
     };
 
     const getUserMonsters = async (userId) => {
@@ -126,16 +129,14 @@ const Journey = () => {
             return <h3>?</h3>;
         }
     };
-    
-    useEffect(() => { 
-        getAllMonsters();
-        getUserMonsters(userId);
-    },[])
 
     useEffect(() => {
-        if (userMonsterList.length !== 0) {
-            createIcons();
-        }
+        getAllMonsters();
+        getUserMonsters(userId);
+    }, [monsters]);
+
+    useEffect(() => {
+        createIcons();
     }, [userMonsterList]);
 
     const ucf = useMemo(

@@ -26,6 +26,7 @@ function Profile() {
     const [character, setCharacter] = useState('boy');
     const [monsterDisplay, setMonsterDisplay] = useState([]);
     const [settingsModal, setSettingsModal] = useState(false);
+    const [noMonsters, setNoMonsters] = useState(false);
 
     var bp = require('./Path.js');
 
@@ -101,11 +102,12 @@ function Profile() {
                 (mon) => mon._id === usersMonsters[i]
             );
             console.log(monster[0]);
-            setMonsterDisplay((monsterDisplay) => [
-                ...monsterDisplay,
-                monster[0],
-            ]);
+            setMonsterDisplay((arr) => [...arr, monster[0]]);
         }
+    };
+
+    const displayNothing = () => {
+        setNoMonsters(true);
     };
     const doLogout = (event) => {
         event.preventDefault();
@@ -122,21 +124,26 @@ function Profile() {
     useEffect(() => {
         getUser(userId);
         getMonsters();
-    }, []);
+    }, [monsterDisplay]);
 
     useEffect(() => {
         if (usersMonsters.length > 0) {
             displayMonsters();
+        } else {
+            displayNothing();
         }
     }, [monsterList]);
 
     return (
-        <Container className="profile">
+        <Container
+            fluid
+            className="profile"
+        >
             <Row>
                 <Col>
-                    <div className="d-flex name-tag justify-content-between">
-                        <h2 className="p-3">{name}</h2>
-                        <h3 className="p-3">Score : {score}</h3>
+                    <div className="d-flex name-tag justify-content-around align-items-center h-25 mt-4">
+                        <h4 className="p-3">{username}</h4>
+                        <h4 className="p-3">Score : {score}</h4>
                         <button
                             class="settings-button"
                             onClick={handleShow}
@@ -196,10 +203,15 @@ function Profile() {
                     </div>
                 </Col>
                 <Col>
-                    <div className="monsters">
+                    <div className="monsters mt-4">
                         <h2 className="p-3">Monsters </h2>
                         <div></div>
                     </div>
+                    {noMonsters && (
+                        <div className="display">
+                            <p>Start your journey!</p>
+                        </div>
+                    )}
                     {monsterDisplay.map((monster, i) => {
                         return (
                             <Row
