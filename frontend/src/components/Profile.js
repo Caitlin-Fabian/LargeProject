@@ -55,7 +55,7 @@ function Profile() {
                 headers: { 'Content-Type': 'application/json' },
             });
 
-            var res = JSON.parse(await response.text());
+            var res = await JSON.parse(await response.text());
             console.log(res.monsterList);
             setMonsterList(res.monsterList);
             displayMonsters();
@@ -78,7 +78,7 @@ function Profile() {
                 body: js,
                 headers: { 'Content-Type': 'application/json' },
             });
-            var res = JSON.parse(await response.text());
+            var res = await JSON.parse(await response.text());
             console.log(res);
 
             if (res.error) {
@@ -134,19 +134,21 @@ function Profile() {
     };
 
     const displayMonsters = () => {
-        console.log(usersMonsters);
+        console.log("user monsters "+usersMonsters);
+        let newPush = [];
         for (let i = 0; i < usersMonsters.length; i++) {
             console.log(usersMonsters[i]);
             let monster = monsterList.filter(
                 (mon) => mon._id === usersMonsters[i]
             );
-            console.log(monster[0]);
-            setMonsterDisplay((arr) => [...arr, monster[0]]);
+            if(monster.length === 0){
+                continue
+            }
+            console.log("eyy baka"+monster[0]._id);
+            newPush.push(monster[0])
         }
-    };
-
-    const displayNothing = () => {
-        setNoMonsters(true);
+        setMonsterDisplay(newPush);
+        
     };
 
     const onInputName = (e) => {
@@ -184,8 +186,8 @@ function Profile() {
             console.log(' There are monsters');
             displayMonsters();
             setNoMonsters(false);
-        } else if (usersMonsters.length === 0) {
-            displayNothing();
+        } else {
+            setNoMonsters(true);
         }
     }, [monsterList, usersMonsters]);
 
@@ -197,7 +199,7 @@ function Profile() {
             <Row>
                 <Col>
                     <div className=" d-flex name-tag justify-content-around h-25 mt-4">
-                        <h4 className="p-3">{username}</h4>
+                        <h4 className="p-3">Username : {username}</h4>
                         <h4 className="p-3">Score : {score}</h4>
                         <button
                             className="settings-button"

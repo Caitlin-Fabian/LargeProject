@@ -49,7 +49,7 @@ const Journey = () => {
 
     const createIcons = async () => {
         await getAllMonsters().then(async () => {
-            let length = await monsters.length;
+            let length = monsters.length;
             for (let x = 0; x < length; x++) {
                 let icon = await markerIcon(
                     userMonsterList.includes(monsters[x]._id)
