@@ -52,9 +52,8 @@ function MonsterList() {
                     onClick={() => handleSelect(monster._id)}
                     src={require(`../assets/${monster._id}.png`)}
                     alt="character design"
-                    className={`mx-auto ${chosen ? 'w-25' : 'w-50'} ${
-                        monsterList.includes(monster._id) ? '' : 'silhouette'
-                    }`}
+                    className={`mx-auto w-50 ${monsterList.includes(monster._id) ? '' : 'silhouette'}`}
+                    style={{ objectFit: "cover" }}
                 ></img>
                 {handleName(monster._id)}
             </div>
@@ -115,17 +114,20 @@ function MonsterList() {
     }, [chosenPicture]);
 
     return (
-        <div className="container d-flex flex-column">
-            <div className="d-flex justify-content-center">
-                <Card
-                    className="shadow"
-                    style={{ width: '16rem' }}
+        <div style ={{ position: "relative", justifyContent: "center"}}  >
+          
+            <div className="d-flex justify-content-center" style={{ width: '100%',height: "350px" }}>
+            {chosen && (<Card
+                    className="shadow d-flex justify-content-center"
+                    style={{ width: '16rem',height: "350px"  }}
                 >
                     {chosenPicture > 0 && (
                         <Card.Img
                             variant="top"
                             src={require(`../assets/${chosenPicture}.png`)}
                             className="w-50 mx-auto"
+                            // style={{ height: "250px", objectFit: "cover" }}
+                            
                         />
                     )}
                     <Card.Body>
@@ -136,14 +138,16 @@ function MonsterList() {
                             {choseDescription}
                         </Card.Text>
                     </Card.Body>
-                </Card>
+                </Card>)}
+                
             </div>
-            <div>
+            <div style={{ display: "flex", justifyContent: "center" }}>
                 <Slider
                     dots={true}
-                    slidesToShow={3}
+                    slidesToShow={4}
                     slidesToScroll={1}
                     autoplay={false}
+                    style={{ top: "75px",width: "95%"}}
                 >
                     {renderSlides()}
                 </Slider>
