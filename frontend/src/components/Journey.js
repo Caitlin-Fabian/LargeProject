@@ -1,8 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import PageTitle from '../components/PageTitle';
-import Login from '../components/Login';
-import NavBar from '../components/NavBar';
-import Container from 'react-bootstrap/Container';
 
 import {
     GoogleMap,
@@ -15,8 +11,8 @@ import '../App.css';
 
 const ucf = { lat: 28.60117044744501, lng: -81.20031305970772 };
 
-const redIcon = `https://maps.google.com/mapfiles/ms/icons/red-dot.png`;
-const greenIcon = `https://maps.google.com/mapfiles/ms/icons/green-dot.png`;
+const redIcon = `https://icon-library.com/images/google-map-location-icon/google-map-location-icon-20.jpg`;
+const greenIcon = `https://play-lh.googleusercontent.com/5WifOWRs00-sCNxCvFNJ22d4xg_NQkAODjmOKuCQqe57SjmDw8S6VOSLkqo6fs4zqis=w480-h960-rw`;
 
 const Journey = () => {
     var bp = require('./Path.js');
@@ -29,7 +25,7 @@ const Journey = () => {
     const [icons, setIcons] = useState([]);
     const [message, setMessage] = useState('');
     const [activeMarker, setActiveMarker] = useState(null);
-    const [monsters,setMonsters] = useState(null)
+    const [monsters, setMonsters] = useState(null);
     // const [monsterLength, setMonsterLength] = useState
 
     const handleActiveMarker = (marker) => {
@@ -52,23 +48,27 @@ const Journey = () => {
     };
 
     const createIcons = async () => {
-        await getAllMonsters().then(async() => {
+        await getAllMonsters().then(async () => {
             let length = await monsters.length;
             for (let x = 0; x < length; x++) {
                 let icon = await markerIcon(
                     userMonsterList.includes(monsters[x]._id)
                 );
-                console.log(parseInt(monsters[x].lat))
+                console.log(parseInt(monsters[x].lat));
                 locations.push({
                     key: monsters[x]._id,
-                    position: {lat:parseFloat(monsters[x].lat), lng:parseFloat(monsters[x].lng)},
-                    name: monsters[x].title,
+                    position: {
+                        lat: parseFloat(monsters[x].lat),
+                        lng: parseFloat(monsters[x].lng),
+                    },
+                    name: monsters[x].Name,
                     icon: icon,
+                    location: monsters[x].Location,
                 });
             }
             setIcons(locations);
-            console.log(locations)
-        }) 
+            console.log(locations);
+        });
     };
 
     const getUserMonsters = async (userId) => {
@@ -121,21 +121,27 @@ const Journey = () => {
 
     const handleName = (marker) => {
         if (userMonsterList.includes(marker.key)) {
-            return <p className="infoText"> {marker.name}</p>;
+            return (
+                <>
+                    <p className="infoText">
+                        {' '}
+                        {marker.name} <br />
+                        {marker.location}
+                    </p>
+                </>
+            );
         } else {
             return <h3>?</h3>;
         }
     };
-    
-    useEffect(() => { 
-        getAllMonsters();
-        getUserMonsters(userId);
-    },[])
 
     useEffect(() => {
-        if (userMonsterList.length !== 0) {
-            createIcons();
-        }
+        getAllMonsters();
+        getUserMonsters(userId);
+    }, []);
+
+    useEffect(() => {
+        createIcons();
     }, [userMonsterList]);
 
     const ucf = useMemo(
@@ -152,7 +158,7 @@ const Journey = () => {
             <div className="d-flex justify-content-center m-4 ">
                 <GoogleMap
                     onClick={() => setActiveMarker(null)}
-                    zoom={16.5}
+                    zoom={15.5}
                     center={ucf}
                     options={{
                         mapId: process.env.REACT_APP_MAPS_ID_KEY,

@@ -6,6 +6,7 @@ import MonsterList from './MonsterList';
 import Container from 'react-bootstrap/esm/Container';
 
 function Inventory() {
+    var bp = require('./Path.js');
     var _ud = localStorage.getItem('user_data');
     console.log(_ud);
     var ud = JSON.parse(_ud);
@@ -16,18 +17,50 @@ function Inventory() {
     const [characterModal, setCharacterModal] = useState(false);
     const [monsterModal, setMonsterModal] = useState(false);
     const [score, setScore] = useState(ud.score);
+    const [message, setMessage] = useState('');
+    const [character, setCharacter] = useState(false);
+
+    const getUser = async (userId) => {
+        var storage = require('../tokenStorage.js');
+        var obj = {
+            userId: userId,
+            jwtToken: storage.retrieveToken(),
+        };
+        var js = JSON.stringify(obj);
+        console.log(js);
+        try {
+            const response = await fetch(bp.buildPath('api/getUserInfo'), {
+                method: 'POST',
+                body: js,
+                headers: { 'Content-Type': 'application/json' },
+            });
+            var res = JSON.parse(await response.text());
+            console.log(res);
+
+            if (res.error) {
+                setMessage('API Error:' + res.error);
+            } else {
+                storage.storeToken(res.jwtToken);
+                console.log(res.character);
+                setCharacter(res.character);
+            }
+        } catch (e) {
+            setMessage(e.toString());
+        }
+    };
 
     /* This renders monsterlist if the modals are hidden.
        This means that the player has chosen their character and monster */
-    if (!characterModal && !monsterModal) {
+    if (!characterModal) {
         monster = <MonsterList />;
     }
 
     useEffect(() => {
-        if (score === 0) {
+        getUser();
+        if (character === 0) {
             setCharacterModal(true);
         }
-    }, [score]);
+    }, []);
 
     return (
         <>
@@ -40,13 +73,6 @@ function Inventory() {
                         id={userId}
                         setMonsterModal={setMonsterModal}
                         setCharacterModal={setCharacterModal}
-                    />
-                )}
-                {monsterModal && (
-                    <MonsterModal
-                        id={userId}
-                        setMonsterModal={setMonsterModal}
-                        setScore={setScore}
                     />
                 )}
                 {monster}
