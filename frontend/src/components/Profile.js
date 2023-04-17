@@ -26,6 +26,12 @@ function Profile() {
     const [character, setCharacter] = useState('boy');
     const [monsterDisplay, setMonsterDisplay] = useState([]);
     const [settingsModal, setSettingsModal] = useState(false);
+    const [noMonsters, setNoMonsters] = useState(false);
+
+    const [newName, setNewName] = useState(null);
+    const [newUsername, setNewUsername] = useState(null);
+    const [newEmail, setNewEmail] = useState(null);
+    const [chooseCharacter, setChooseCharacter] = useState(null);
 
     var bp = require('./Path.js');
 
@@ -84,12 +90,46 @@ function Profile() {
                 setUsersMonsters(res.monsters);
                 setUsername(res.username);
                 setEmail(res.Email);
-                let obj = teams.find((o) => o.id === res.character).picture;
-                setCharacter(obj);
+                console.log(res.character);
+                let index = res.character - 1;
+                setCharacter(teams[index].picture);
                 displayMonsters();
             }
         } catch (e) {
             setMessage(e.toString());
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            console.log(chooseCharacter);
+            console.log(newUsername);
+            const obj = {
+                character: chooseCharacter,
+                username: newUsername,
+                email: newEmail,
+                name: newName,
+                userId: userId,
+            };
+
+            const js = JSON.stringify(obj);
+
+            console.log(js);
+            const response = await fetch(bp.buildPath('api/updateUser'), {
+                method: 'POST',
+                body: js,
+                headers: { 'Content-Type': 'application/json' },
+            });
+            var res = JSON.parse(await response.text());
+            console.log(res);
+            if (res.error === '') {
+                window.location.reload(false);
+            } else {
+                setMessage(res.error);
+            }
+        } catch (e) {
+            alert(e.toString());
+            return;
         }
     };
 
@@ -101,12 +141,27 @@ function Profile() {
                 (mon) => mon._id === usersMonsters[i]
             );
             console.log(monster[0]);
-            setMonsterDisplay((monsterDisplay) => [
-                ...monsterDisplay,
-                monster[0],
-            ]);
+            setMonsterDisplay((arr) => [...arr, monster[0]]);
         }
     };
+
+    const displayNothing = () => {
+        setNoMonsters(true);
+    };
+
+    const onInputName = (e) => {
+        setNewName(e.target.value);
+    };
+    const onInputEmail = (e) => {
+        setNewEmail(e.target.value);
+    };
+    const onInputUsername = (e) => {
+        setNewUsername(e.target.value);
+    };
+    const onInputCharacter = (event) => {
+        setChooseCharacter(event.target.value);
+    };
+
     const doLogout = (event) => {
         event.preventDefault();
         localStorage.removeItem('user_data');
@@ -122,23 +177,30 @@ function Profile() {
     useEffect(() => {
         getUser(userId);
         getMonsters();
-    }, []);
+    }, [username, character, score]);
 
     useEffect(() => {
-        if (usersMonsters.length > 0) {
+        if (usersMonsters.length > 0 && monsterList.length > 0) {
+            console.log(' There are monsters');
             displayMonsters();
+            setNoMonsters(false);
+        } else if (usersMonsters.length === 0) {
+            displayNothing();
         }
-    }, [monsterList]);
+    }, [monsterList, usersMonsters]);
 
     return (
-        <Container className="profile">
+        <Container
+            fluid
+            className="profile"
+        >
             <Row>
                 <Col>
-                    <div className="d-flex name-tag justify-content-between">
-                        <h2 className="p-3">{name}</h2>
-                        <h3 className="p-3">Score : {score}</h3>
+                    <div className=" d-flex name-tag justify-content-around h-25 mt-4">
+                        <h4 className="p-3">{username}</h4>
+                        <h4 className="p-3">Score : {score}</h4>
                         <button
-                            class="settings-button"
+                            className="settings-button"
                             onClick={handleShow}
                         >
                             <Mdicons.MdSettingsSuggest size={50} />
@@ -151,29 +213,66 @@ function Profile() {
                                 <Modal.Title>Change Your Settings</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
+                                <span className="text-danger">{message}</span>
                                 <Form>
                                     <Form.Label>Name</Form.Label>
                                     <Form.Control
-                                        type="Name"
+                                        type="text"
                                         placeholder={name}
+                                        value={newName}
+                                        onChange={onInputName}
                                     />
                                     <Form.Label>Username</Form.Label>
                                     <Form.Control
-                                        type="Name"
+                                        type="text"
                                         placeholder={username}
+                                        value={newUsername}
+                                        onChange={onInputUsername}
                                     />
                                     <Form.Label>Email</Form.Label>
                                     <Form.Control
-                                        type="Name"
+                                        type="email"
                                         placeholder={email}
+                                        value={newEmail}
+                                        onChange={onInputEmail}
                                     />
                                 </Form>
+                                <Form.Group controlId="kindOfStand">
+                                    <img
+                                        src={require(`../assets/boy.png`)}
+                                        className="w-25 mx-auto"
+                                        alt="Character choice"
+                                    />
+                                    <Form.Check
+                                        inline
+                                        value="1"
+                                        type="radio"
+                                        aria-label="radio 1"
+                                        label="Character 1"
+                                        name="group1"
+                                        onChange={onInputCharacter}
+                                    />
+                                    <img
+                                        src={require(`../assets/girl.png`)}
+                                        className="w-25 mx-auto"
+                                        alt="Character choice"
+                                    />
+                                    <Form.Check
+                                        inline
+                                        value="2"
+                                        type="radio"
+                                        aria-label="radio 2"
+                                        label="Character 2"
+                                        name="group1"
+                                        onChange={onInputCharacter}
+                                    />
+                                </Form.Group>
                             </Modal.Body>
                             <Modal.Footer>
                                 <Button
                                     variant="primary"
                                     className="text-black"
-                                    onClick={handleClose}
+                                    onClick={handleSave}
                                 >
                                     Save Changes
                                 </Button>
@@ -187,7 +286,7 @@ function Profile() {
                             </Modal.Footer>
                         </Modal>
                     </div>
-                    <div className="d-flex justify-content-center">
+                    <div className="row d-flex justify-content-center">
                         <img
                             src={require(`../assets/${character}.png`)}
                             className="w-50 mx-auto"
@@ -196,30 +295,38 @@ function Profile() {
                     </div>
                 </Col>
                 <Col>
-                    <div className="monsters">
+                    <div className="monsters mt-4">
                         <h2 className="p-3">Monsters </h2>
                         <div></div>
                     </div>
-                    {monsterDisplay.map((monster, i) => {
-                        return (
-                            <Row
-                                key={i}
-                                className="d-flex text-center leaderboard-ele m-2 shadow-lg rounded"
-                            >
-                                <Col className="position-relative ball-background m-2">
-                                    <img
-                                        src={require(`../assets/${monster._id}.png`)}
-                                        className="position-relative z-5 monster"
-                                        alt="Monster Caught"
-                                    />
-                                </Col>
+                    <div className="overflow-auto monsterDiv">
+                        {noMonsters ? (
+                            <div className="display">
+                                <p>Start your journey!</p>
+                            </div>
+                        ) : (
+                            monsterDisplay.map((monster, i) => {
+                                return (
+                                    <Row
+                                        key={i}
+                                        className="d-flex text-center leaderboard-ele m-2 shadow-lg rounded"
+                                    >
+                                        <Col className="position-relative ball-background m-2">
+                                            <img
+                                                src={require(`../assets/${monster._id}.png`)}
+                                                className="position-relative z-5 monster"
+                                                alt="Monster Caught"
+                                            />
+                                        </Col>
 
-                                <Col className="d-flex justify-content-center align-items-center">
-                                    <div>{monster.Name}</div>
-                                </Col>
-                            </Row>
-                        );
-                    })}
+                                        <Col className="d-flex justify-content-center align-items-center">
+                                            <div>{monster.Name}</div>
+                                        </Col>
+                                    </Row>
+                                );
+                            })
+                        )}
+                    </div>
                 </Col>
             </Row>
         </Container>

@@ -4,7 +4,7 @@ import Journey from '../components/Journey';
 
 export default function App() {
     return (
-        <div>
+        <div className="journey">
             <NavBar />
             <Journey />
         </div>

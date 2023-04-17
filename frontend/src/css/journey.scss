@@ -1,3 +1,20 @@
 .infoWindow{
     width: 10vw;
 }
+
+
+.journey{
+    background-image: url('../assets/pokemon-background.jpg');
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    overflow-x: hidden;
+}
+
+.map{
+    border-style: solid yellow !important;
+    border-width: 8px 8px 8px 8px;
+    overflow: hidden;
+}
