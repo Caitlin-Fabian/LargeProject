@@ -444,50 +444,65 @@ exports.setApp = function (app, client) {
         console.log(newCharacter);
 
         if (results.length > 0) {
-            console.log('cool');
-            if (newName != null) {
-                db.collection('Users').updateOne(
-                    { _id: new BSON.ObjectId(results[0]._id) },
-                    {
-                        $set: {
-                            Name: newName,
-                        },
-                    }
-                );
+            const usernameRes = await db
+                .collection('Users')
+                .find({ Username: username })
+                .toArray();
+
+            const emailRes = await db
+                .collection('Users')
+                .find({ Email: email })
+                .toArray();
+
+            if (usernameRes.length == 0 && emailRes.length == 0) {
+                console.log('cool');
+                if (newName != null) {
+                    db.collection('Users').updateOne(
+                        { _id: new BSON.ObjectId(results[0]._id) },
+                        {
+                            $set: {
+                                Name: newName,
+                            },
+                        }
+                    );
+                }
+                if (newUserName != null) {
+                    db.collection('Users').updateOne(
+                        { _id: new BSON.ObjectId(results[0]._id) },
+                        {
+                            $set: {
+                                Username: newUserName,
+                            },
+                        }
+                    );
+                }
+                if (newEmail != null) {
+                    db.collection('Users').updateOne(
+                        { _id: new BSON.ObjectId(results[0]._id) },
+                        {
+                            $set: {
+                                Email: newEmail,
+                            },
+                        }
+                    );
+                }
+                if (newCharacter != null) {
+                    console.log('hello');
+                    db.collection('Users').updateOne(
+                        { _id: new BSON.ObjectId(results[0]._id) },
+                        {
+                            $set: {
+                                Character: newCharacter,
+                            },
+                        }
+                    );
+                }
+                var ret = { error: error };
+                res.status(200).json(ret);
+            } else {
+                var ret = { error: 'User or Email already Exists' };
+                res.status(200).json(ret);
             }
-            if (newUserName != null) {
-                db.collection('Users').updateOne(
-                    { _id: new BSON.ObjectId(results[0]._id) },
-                    {
-                        $set: {
-                            Username: newUserName,
-                        },
-                    }
-                );
-            }
-            if (newEmail != null) {
-                db.collection('Users').updateOne(
-                    { _id: new BSON.ObjectId(results[0]._id) },
-                    {
-                        $set: {
-                            Email: newEmail,
-                        },
-                    }
-                );
-            }
-            if (newCharacter != null) {
-                console.log('hello');
-                db.collection('Users').updateOne(
-                    { _id: new BSON.ObjectId(results[0]._id) },
-                    {
-                        $set: {
-                            Character: newCharacter,
-                        },
-                    }
-                );
-            }
-            var ret = { error: error };
-            res.status(200).json(ret);
         } else {
             var ret = { error: 'Unable to update user' };
             res.status(500).json(ret);

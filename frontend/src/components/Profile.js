@@ -28,6 +28,11 @@ function Profile() {
     const [settingsModal, setSettingsModal] = useState(false);
     const [noMonsters, setNoMonsters] = useState(false);
 
+    const [newName, setNewName] = useState(null);
+    const [newUsername, setNewUsername] = useState(null);
+    const [newEmail, setNewEmail] = useState(null);
+    const [chooseCharacter, setChooseCharacter] = useState(null);
+
     var bp = require('./Path.js');
 
     var teams = [
@@ -85,12 +90,46 @@ function Profile() {
                 setUsersMonsters(res.monsters);
                 setUsername(res.username);
                 setEmail(res.Email);
-                let obj = teams.find((o) => o.id === res.character).picture;
-                setCharacter(obj);
+                console.log(res.character);
+                let index = res.character - 1;
+                setCharacter(teams[index].picture);
                 displayMonsters();
             }
         } catch (e) {
             setMessage(e.toString());
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            console.log(chooseCharacter);
+            console.log(newUsername);
+            const obj = {
+                character: chooseCharacter,
+                username: newUsername,
+                email: newEmail,
+                name: newName,
+                userId: userId,
+            };
+
+            const js = JSON.stringify(obj);
+
+            console.log(js);
+            const response = await fetch(bp.buildPath('api/updateUser'), {
+                method: 'POST',
+                body: js,
+                headers: { 'Content-Type': 'application/json' },
+            });
+            var res = JSON.parse(await response.text());
+            console.log(res);
+            if (res.error === '') {
+                window.location.reload(false);
+            } else {
+                setMessage(res.error);
+            }
+        } catch (e) {
+            alert(e.toString());
+            return;
         }
     };
 
@@ -109,6 +148,20 @@ function Profile() {
     const displayNothing = () => {
         setNoMonsters(true);
     };
+
+    const onInputName = (e) => {
+        setNewName(e.target.value);
+    };
+    const onInputEmail = (e) => {
+        setNewEmail(e.target.value);
+    };
+    const onInputUsername = (e) => {
+        setNewUsername(e.target.value);
+    };
+    const onInputCharacter = (event) => {
+        setChooseCharacter(event.target.value);
+    };
+
     const doLogout = (event) => {
         event.preventDefault();
         localStorage.removeItem('user_data');
@@ -124,7 +177,7 @@ function Profile() {
     useEffect(() => {
         getUser(userId);
         getMonsters();
-    }, []);
+    }, [username, character, score]);
 
     useEffect(() => {
         if (usersMonsters.length > 0 && monsterList.length > 0) {
@@ -160,29 +213,66 @@ function Profile() {
                                 <Modal.Title>Change Your Settings</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
+                                <span className="text-danger">{message}</span>
                                 <Form>
                                     <Form.Label>Name</Form.Label>
                                     <Form.Control
-                                        type="Name"
+                                        type="text"
                                         placeholder={name}
+                                        value={newName}
+                                        onChange={onInputName}
                                     />
                                     <Form.Label>Username</Form.Label>
                                     <Form.Control
-                                        type="Name"
+                                        type="text"
                                         placeholder={username}
+                                        value={newUsername}
+                                        onChange={onInputUsername}
                                     />
                                     <Form.Label>Email</Form.Label>
                                     <Form.Control
-                                        type="Name"
+                                        type="email"
                                         placeholder={email}
+                                        value={newEmail}
+                                        onChange={onInputEmail}
                                     />
                                 </Form>
+                                <Form.Group controlId="kindOfStand">
+                                    <img
+                                        src={require(`../assets/boy.png`)}
+                                        className="w-25 mx-auto"
+                                        alt="Character choice"
+                                    />
+                                    <Form.Check
+                                        inline
+                                        value="1"
+                                        type="radio"
+                                        aria-label="radio 1"
+                                        label="Character 1"
+                                        name="group1"
+                                        onChange={onInputCharacter}
+                                    />
+                                    <img
+                                        src={require(`../assets/girl.png`)}
+                                        className="w-25 mx-auto"
+                                        alt="Character choice"
+                                    />
+                                    <Form.Check
+                                        inline
+                                        value="2"
+                                        type="radio"
+                                        aria-label="radio 2"
+                                        label="Character 2"
+                                        name="group1"
+                                        onChange={onInputCharacter}
+                                    />
+                                </Form.Group>
                             </Modal.Body>
                             <Modal.Footer>
                                 <Button
                                     variant="primary"
                                     className="text-black"
-                                    onClick={handleClose}
+                                    onClick={handleSave}
                                 >
                                     Save Changes
                                 </Button>
