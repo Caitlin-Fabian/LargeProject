@@ -52,8 +52,10 @@ function MonsterList() {
                     onClick={() => handleSelect(monster._id)}
                     src={require(`../assets/${monster._id}.png`)}
                     alt="character design"
-                    className={`mx-auto w-50 ${monsterList.includes(monster._id) ? '' : 'silhouette'}`}
-                    style={{ objectFit: "cover" }}
+                    className={`mx-auto w-50 ${
+                        monsterList.includes(monster._id) ? '' : 'silhouette'
+                    }`}
+                    style={{ objectFit: 'cover' }}
                 ></img>
                 {handleName(monster._id)}
             </div>
@@ -114,40 +116,45 @@ function MonsterList() {
     }, [chosenPicture]);
 
     return (
-        <div style ={{ position: "relative", justifyContent: "center"}}  >
-          
-            <div className="d-flex justify-content-center" style={{ width: '100%',height: "350px" }}>
-            {chosen && (<Card
-                    className="shadow d-flex justify-content-center"
-                    style={{ width: '16rem',height: "350px"  }}
-                >
-                    {chosenPicture > 0 && (
-                        <Card.Img
-                            variant="top"
-                            src={require(`../assets/${chosenPicture}.png`)}
-                            className="w-50 mx-auto"
-                            // style={{ height: "250px", objectFit: "cover" }}
-                            
-                        />
-                    )}
-                    <Card.Body>
-                        <Card.Title className="text-center">
-                            {chosenName}
-                        </Card.Title>
-                        <Card.Text className="text-center">
-                            {choseDescription}
-                        </Card.Text>
-                    </Card.Body>
-                </Card>)}
-                
+        <div style={{ position: 'relative', justifyContent: 'center' }}>
+            <div className="d-flex justify-content-center">
+                {chosen ? (
+                    <Card
+                        className="shadow d-flex justify-content-center mt-4"
+                        style={{ width: '17rem' }}
+                    >
+                        {chosenPicture > 0 && (
+                            <Card.Img
+                                variant="top"
+                                src={require(`../assets/${chosenPicture}.png`)}
+                                className="w-50 mx-auto"
+                                // style={{ height: "250px", objectFit: "cover" }}
+                            />
+                        )}
+                        <Card.Body>
+                            <Card.Title className="text-center">
+                                {chosenName}
+                            </Card.Title>
+                            <Card.Text className="text-center">
+                                {choseDescription}
+                            </Card.Text>
+                        </Card.Body>
+                    </Card>
+                ) : (
+                    <>
+                        <div className="choose shadow">
+                            <h2>Choose A Character!</h2>
+                        </div>
+                    </>
+                )}
             </div>
-            <div style={{ display: "flex", justifyContent: "center" }}>
+            <div className="d-flex justify-content-center align-items-center">
                 <Slider
                     dots={true}
                     slidesToShow={4}
                     slidesToScroll={1}
                     autoplay={false}
-                    style={{ top: "75px",width: "95%"}}
+                    style={{ top: '75px', width: '95%' }}
                 >
                     {renderSlides()}
                 </Slider>

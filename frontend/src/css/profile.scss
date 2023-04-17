@@ -1,18 +1,18 @@
 $bg-transparent-white: rgba(255,255,255,0.7);
 
 html, body{
-    height:100%
+    height:100vh
 }
 .profile{
     height: 100vh;
     background-image: url('../assets/pokemon-background.jpg');
-    height: 100vh;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
     overflow-x: hidden;
-    overflow-y: hidden
+    overflow-y: hidden;
+    margin-bottom: 100px;
 }
 
 
@@ -21,11 +21,12 @@ html, body{
     background-image: url('../assets/textbox.png');
     background-size: contain;
     background-repeat: no-repeat;
-    padding: 20px;
+    position: relative;
+    padding-top: 5vh;
 }
 
 .monsters{
-    background-color: $bg-transparent-white;
+    background-color: white;
     border-radius: 10px;
     overflow-y: auto;
 }
@@ -41,7 +42,6 @@ html, body{
     margin-top: 20%;
 }
 
-
 .display{
     background-color: $bg-transparent-white;
     border-radius: 10px;
@@ -52,5 +52,8 @@ html, body{
 }
 
 .monsterDiv{
-    height: 100vh;
+    height: 90vh;
+}
+.characterDiv img{
+    width: 47%
 }

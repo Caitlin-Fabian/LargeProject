@@ -134,21 +134,20 @@ function Profile() {
     };
 
     const displayMonsters = () => {
-        console.log("user monsters "+usersMonsters);
+        console.log('user monsters ' + usersMonsters);
         let newPush = [];
         for (let i = 0; i < usersMonsters.length; i++) {
             console.log(usersMonsters[i]);
             let monster = monsterList.filter(
                 (mon) => mon._id === usersMonsters[i]
             );
-            if(monster.length === 0){
-                continue
+            if (monster.length === 0) {
+                continue;
             }
-            console.log("eyy baka"+monster[0]._id);
-            newPush.push(monster[0])
+            console.log('eyy baka' + monster[0]._id);
+            newPush.push(monster[0]);
         }
         setMonsterDisplay(newPush);
-        
     };
 
     const onInputName = (e) => {
@@ -288,18 +287,17 @@ function Profile() {
                             </Modal.Footer>
                         </Modal>
                     </div>
-                    <div className="row d-flex justify-content-center">
+                    <div className="row d-flex justify-content-center characterDiv">
                         <img
                             src={require(`../assets/${character}.png`)}
-                            className="w-50 mx-auto"
+                            className="mx-auto"
                             alt="Character choice"
                         />
                     </div>
                 </Col>
                 <Col>
-                    <div className="monsters mt-4">
+                    <div className=" text-center shadow monsters mt-4">
                         <h2 className="p-3">Monsters </h2>
-                        <div></div>
                     </div>
                     <div className="overflow-auto monsterDiv">
                         {noMonsters ? (
@@ -313,7 +311,10 @@ function Profile() {
                                         key={i}
                                         className="d-flex text-center leaderboard-ele m-2 shadow-lg rounded"
                                     >
-                                        <Col className="position-relative ball-background m-2">
+                                        <Col
+                                            lg={3}
+                                            className="position-relative ball-background m-2"
+                                        >
                                             <img
                                                 src={require(`../assets/${monster._id}.png`)}
                                                 className="position-relative z-5 monster"
@@ -321,8 +322,8 @@ function Profile() {
                                             />
                                         </Col>
 
-                                        <Col className="d-flex justify-content-center align-items-center">
-                                            <div>{monster.Name}</div>
+                                        <Col className="d-flex justify-content-center monster-name align-items-center">
+                                            <h2>{monster.Name}</h2>
                                         </Col>
                                     </Row>
                                 );
