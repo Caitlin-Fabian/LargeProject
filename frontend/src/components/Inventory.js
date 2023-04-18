@@ -18,9 +18,9 @@ function Inventory() {
     const [monsterModal, setMonsterModal] = useState(false);
     const [score, setScore] = useState(ud.score);
     const [message, setMessage] = useState('');
-    const [character, setCharacter] = useState(false);
+    const [character, setCharacter] = useState();
 
-    const getUser = async (userId) => {
+    const getUser = async () => {
         var storage = require('../tokenStorage.js');
         var obj = {
             userId: userId,
@@ -57,10 +57,14 @@ function Inventory() {
 
     useEffect(() => {
         getUser();
+    }, []);
+    useEffect(() => {
         if (character === 0) {
+            console.log();
+            console.log(character);
             setCharacterModal(true);
         }
-    }, []);
+    }, [character]);
 
     return (
         <>
@@ -71,7 +75,6 @@ function Inventory() {
                 {characterModal && (
                     <CharacterModal
                         id={userId}
-                        setMonsterModal={setMonsterModal}
                         setCharacterModal={setCharacterModal}
                     />
                 )}

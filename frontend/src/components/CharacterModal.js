@@ -4,7 +4,7 @@ import girl from '../assets/girl.png';
 import boy from '../assets/boy.png';
 import * as Mdicons from 'react-icons/md';
 
-const CharacterModal = ({ id, setMonsterModal, setCharacterModal }) => {
+const CharacterModal = ({ id, setCharacterModal }) => {
     var bp = require('./Path.js');
     var teams = [
         {
@@ -19,7 +19,7 @@ const CharacterModal = ({ id, setMonsterModal, setCharacterModal }) => {
         },
     ];
 
-    const [selectedId, setSelectedId] = useState(null);
+    const [selectedId, setSelectedId] = useState(0);
 
     const handleSelectedCharacter = async () => {
         try {
