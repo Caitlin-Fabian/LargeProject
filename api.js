@@ -47,7 +47,18 @@ exports.setApp = function (app, client) {
             res.status(200).json({ error: 'Wrong Credentials' });
         }
     });
-
+    app.post('/api/deleteUser', async (req, res, next) => {
+        // incoming: username
+        // nothing outgoing
+        var error = '';
+        const { username } = req.body;
+        const db = client.db('UCFGO');
+        await db
+            .collection('Users')
+            .deleteOne({ Username: username })
+        
+        res.status(200).json({});
+    })
     //register api
     app.post('/api/register', async (req, res, next) => {
         // incoming: name, username, password, email

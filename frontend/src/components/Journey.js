@@ -49,8 +49,7 @@ const Journey = () => {
 
     const createIcons = async () => {
         await getAllMonsters().then(async () => {
-            console.log(monsters);
-            let length = monsters.length;
+            let length = await monsters.length;
             for (let x = 0; x < length; x++) {
                 let icon = await markerIcon(
                     userMonsterList.includes(monsters[x]._id)
@@ -153,13 +152,13 @@ const Journey = () => {
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY,
     });
-    if (!(isLoaded && icons != [])) return <div>Loading...</div>;
+    if ((!isLoaded || monsters === null || icons === [])) return <div>Loading...</div>;
     return (
         <>
             <div className="d-flex justify-content-center m-4 ">
                 <GoogleMap
                     onClick={() => setActiveMarker(null)}
-                    zoom={15.5}
+                    zoom={16.8}
                     center={ucf}
                     options={{
                         mapId: process.env.REACT_APP_MAPS_ID_KEY,
