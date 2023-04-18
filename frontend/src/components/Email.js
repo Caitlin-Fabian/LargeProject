@@ -10,6 +10,9 @@ const Email = () => {
     const handleOutput = (string) => {
         setToken(string);
     };
+    const goLogIn = () => {
+        window.location.href = '/';
+    };
 
     const verifyEmail = async () => {
         var obj = {
@@ -27,7 +30,11 @@ const Email = () => {
             var res = JSON.parse(await response.text());
             console.log(res);
             if (res.error === 'N/A') {
-                window.location.href = '/';
+                setMessage(
+                    'Your Email is now Verified! Sending You back to Log In'
+                );
+
+                setTimeout(goLogIn, 3000);
             } else {
                 setMessage(res.error);
             }
@@ -68,6 +75,7 @@ const Email = () => {
                             inputRegExp={/^[a-zA-Z0-9_.-]*$/}
                         />
                     </div>
+
                     <div>
                         <button
                             className="clkbtn"

@@ -17,6 +17,11 @@ const Email = () => {
     const handleOutput = (string) => {
         setToken(string);
     };
+
+    const goEmail = () => {
+        window.location.href = '/email';
+    };
+
     const sendEmail = async () => {
         var obj = {
             email: email,
@@ -39,8 +44,9 @@ const Email = () => {
             if (res.error === 'N/A') {
                 setEnterEmail(false);
                 setVerifyEmail(true);
-            } else {
-                setMessage(res.error);
+            } else if (res.error === 'Please verify email') {
+                setTimeout(goEmail, 3000);
+                setMessage('Sending you to verify your Email first');
             }
         } catch (e) {
             console.log(e.toString());
@@ -109,7 +115,7 @@ const Email = () => {
                     {enterEmail && (
                         <>
                             <p>Please enter your email</p>
-                            <Form>
+                            <Form className="w-100 d-flex justify-content-center">
                                 <Form.Control
                                     className="w-75 d-flex justify-content-center"
                                     type="Email"
@@ -119,7 +125,7 @@ const Email = () => {
                             </Form>
                             <div>
                                 <button
-                                    className="clkbtn"
+                                    className="clkbtn m-4"
                                     onClick={sendEmail}
                                 >
                                     Send Email
@@ -140,8 +146,8 @@ const Email = () => {
                                     inputProps={[{ className: 'first-box' }]}
                                     inputRegExp={/^[a-zA-Z0-9_.-]*$/}
                                 />
-                                <Form>
-                                    <Form.Label>New Password</Form.Label>
+                                <Form className="d-flex justify-content-center align-items-center w-100 flex-column">
+                                    <Form.Label>New Password:</Form.Label>
                                     <Form.Control
                                         className="w-75 d-flex justify-content-center"
                                         type="Password"
@@ -149,13 +155,13 @@ const Email = () => {
                                         onChange={handlePassword}
                                     />
                                 </Form>
+                                <button
+                                    className="clkbtn m-3"
+                                    onClick={verify}
+                                >
+                                    Change Password
+                                </button>
                             </div>
-                            <button
-                                className="clkbtn"
-                                onClick={verify}
-                            >
-                                Change Password
-                            </button>
                             <span id="loginResult">{message}</span>{' '}
                         </>
                     )}

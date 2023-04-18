@@ -35,7 +35,7 @@ exports.setApp = function (app, client) {
             var isVerified = results[0].IsVerified;
             try {
                 const token = require('./createJWT.js');
-                ret = token.createToken(id, Name, score,isVerified);
+                ret = token.createToken(id, Name, score, isVerified);
                 console.log(ret);
                 res.status(200).json(ret);
             } catch (e) {
@@ -241,43 +241,45 @@ exports.setApp = function (app, client) {
             .find({ Email: email.trim() })
             .toArray();
 
-        console.log(user[0].IsVerified + ' ' + user[0].IsVerfied);
+        console.log(user);
+
         const et = Math.random().toString(36).substring(2, 7);
+        try {
+            if (user.length >= 1 && user[0].IsVerified) {
+                db.collection('Users').updateOne(
+                    { Email: user[0].Email },
+                    {
+                        $set: {
+                            EmailToken: et,
+                        },
+                    }
+                );
 
-        if (user.length >= 1 && user[0].IsVerified) {
-            db.collection('Users').updateOne(
-                { Email: user[0].Email },
-                {
-                    $set: {
-                        EmailToken: et,
-                    },
-                }
-            );
-
-            const msg = {
-                from: 'ucfgoteams@gmail.com',
-                to: email,
-                subject: 'UCFGO Action Required - Password Change ',
-                text: `
+                const msg = {
+                    from: 'ucfgoteams@gmail.com',
+                    to: email,
+                    subject: 'UCFGO Action Required - Password Change ',
+                    text: `
                     You have requested to reset your password.
                     Please enter the following one-time token: ${et}
                     `,
-                html: `
+                    html: `
                     <h1>Hello,</h1>
                     <p>You have requested to reset your password.</p>
                     <p>Please enter the following one-time token: ${et}</p>
                 `,
-            }; //TODO: please change this
+                }; //TODO: please change this
 
-            //send email to new user
-            //await sgMail.send(msg);
-            sgMail.send(msg);
-            console.log('A verification code was sent to ' + email);
+                //send email to new user
+                //await sgMail.send(msg);
+                sgMail.send(msg);
+                console.log('A verification code was sent to ' + email);
 
-            res.status(200).json({ error: 'N/A' });
-        } else if (!user[0].isVerified) {
-            res.status(200).json({ error: 'Please verify email' });
-        } else {
+                res.status(200).json({ error: 'N/A' });
+            } else if (!user[0].isVerified) {
+                res.status(200).json({ error: 'Please verify email' });
+            }
+        } catch {
             res.status(200).json({
                 error: 'Email does not exist. Please try again',
             });

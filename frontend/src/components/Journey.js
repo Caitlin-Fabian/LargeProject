@@ -11,8 +11,8 @@ import '../App.css';
 
 const ucf = { lat: 28.60117044744501, lng: -81.20031305970772 };
 
-const redIcon = `https://icon-library.com/images/google-map-location-icon/google-map-location-icon-20.jpg`;
-const greenIcon = `https://play-lh.googleusercontent.com/5WifOWRs00-sCNxCvFNJ22d4xg_NQkAODjmOKuCQqe57SjmDw8S6VOSLkqo6fs4zqis=w480-h960-rw`;
+const redIcon = require('../assets/red-icon.png');
+const greenIcon = require('../assets/green-icon.png');
 
 const Journey = () => {
     var bp = require('./Path.js');
@@ -49,6 +49,7 @@ const Journey = () => {
 
     const createIcons = async () => {
         await getAllMonsters().then(async () => {
+            console.log(monsters);
             let length = monsters.length;
             for (let x = 0; x < length; x++) {
                 let icon = await markerIcon(
@@ -152,7 +153,7 @@ const Journey = () => {
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY,
     });
-    if (!(isLoaded && icons !=[])) return <div>Loading...</div>;
+    if (!(isLoaded && icons != [])) return <div>Loading...</div>;
     return (
         <>
             <div className="d-flex justify-content-center m-4 ">

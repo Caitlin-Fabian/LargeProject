@@ -44,9 +44,9 @@ function Login() {
                     console.log(res);
                     storage.storeToken(res);
                     var ud = decodeToken(storage.retrieveToken());
-                    if(!ud.isVerified){
-                        window.location.href = '/email'
-                    }else{
+                    if (!ud.isVerified) {
+                        window.location.href = '/email';
+                    } else {
                         console.log(ud);
                         var id = ud.userID;
                         var Name = ud.Name;
@@ -60,7 +60,6 @@ function Login() {
                         localStorage.setItem('user_data', JSON.stringify(user));
                         window.location.href = '/inventory';
                     }
-                    
                 }
             });
         } catch (e) {
