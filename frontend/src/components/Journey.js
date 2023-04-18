@@ -11,8 +11,8 @@ import '../App.css';
 
 const ucf = { lat: 28.60117044744501, lng: -81.20031305970772 };
 
-const redIcon = require('../assets/red-icon.png');
-const greenIcon = require('../assets/green-icon.png');
+const redIcon = `https://icon-library.com/images/google-map-location-icon/google-map-location-icon-20.jpg`;
+const greenIcon = `https://play-lh.googleusercontent.com/5WifOWRs00-sCNxCvFNJ22d4xg_NQkAODjmOKuCQqe57SjmDw8S6VOSLkqo6fs4zqis=w480-h960-rw`;
 
 const Journey = () => {
     var bp = require('./Path.js');
