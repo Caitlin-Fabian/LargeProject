@@ -36,7 +36,7 @@ const Journey = () => {
         setActiveMarker(marker);
     };
 
-    const markerIcon = async (visited) => {
+    const markerIcon = (visited) => {
         let ret = {
             scaledSize: new window.google.maps.Size(40, 40), // size of the icon
             origin: new window.google.maps.Point(0, 0), // origin of the icon
@@ -48,27 +48,26 @@ const Journey = () => {
     };
 
     const createIcons = async () => {
-        await getAllMonsters().then(async () => {
-            let length = await monsters.length;
-            for (let x = 0; x < length; x++) {
-                let icon = await markerIcon(
-                    userMonsterList.includes(monsters[x]._id)
-                );
-                console.log(parseInt(monsters[x].lat));
-                locations.push({
-                    key: monsters[x]._id,
-                    position: {
-                        lat: parseFloat(monsters[x].lat),
-                        lng: parseFloat(monsters[x].lng),
-                    },
-                    name: monsters[x].Name,
-                    icon: icon,
-                    location: monsters[x].Location,
-                });
-            }
-            setIcons(locations);
-            console.log(locations);
-        });
+        await getAllMonsters();
+        let length = monsters.length;
+        for (let x = 0; x < length; x++) {
+            let icon = markerIcon(
+                userMonsterList.includes(monsters[x]._id)
+            );
+            console.log(parseInt(monsters[x].lat));
+            locations.push({
+                key: monsters[x]._id,
+                position: {
+                    lat: parseFloat(monsters[x].lat),
+                    lng: parseFloat(monsters[x].lng),
+                },
+                name: monsters[x].Name,
+                icon: icon,
+                location: monsters[x].Location,
+            });
+        }
+        setIcons(locations);
+        console.log(locations);
     };
 
     const getUserMonsters = async (userId) => {
