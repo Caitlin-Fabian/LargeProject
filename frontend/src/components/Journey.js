@@ -14,6 +14,22 @@ const ucf = { lat: 28.60117044744501, lng: -81.20031305970772 };
 const redIcon = `https://icon-library.com/images/google-map-location-icon/google-map-location-icon-20.jpg`;
 const greenIcon = `https://play-lh.googleusercontent.com/5WifOWRs00-sCNxCvFNJ22d4xg_NQkAODjmOKuCQqe57SjmDw8S6VOSLkqo6fs4zqis=w480-h960-rw`;
 
+async function getAllMonsters(){
+    var bp = require('./Path.js');
+    try {
+        const response = await fetch(bp.buildPath('api/getMonsterList'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        var res = JSON.parse(await response.text());
+        console.log(res.monsterList);
+        return res.monsterList;
+    } catch (e) {
+       // setMessage(e.toString());
+    }
+}
+
 const Journey = () => {
     var bp = require('./Path.js');
 
@@ -48,22 +64,23 @@ const Journey = () => {
     };
 
     const createIcons = async () => {
-        await getAllMonsters();
-        let length = monsters.length;
+        let m = await getAllMonsters();
+        setMonsters(m);
+        let length = m.length;
         for (let x = 0; x < length; x++) {
             let icon = markerIcon(
-                userMonsterList.includes(monsters[x]._id)
+                userMonsterList.includes(m[x]._id)
             );
-            console.log(parseInt(monsters[x].lat));
+            console.log(parseInt(m[x].lat));
             locations.push({
-                key: monsters[x]._id,
+                key: m[x]._id,
                 position: {
-                    lat: parseFloat(monsters[x].lat),
-                    lng: parseFloat(monsters[x].lng),
+                    lat: parseFloat(m[x].lat),
+                    lng: parseFloat(m[x].lng),
                 },
-                name: monsters[x].Name,
+                name: m[x].Name,
                 icon: icon,
-                location: monsters[x].Location,
+                location: m[x].Location,
             });
         }
         setIcons(locations);
@@ -103,20 +120,20 @@ const Journey = () => {
         }
     };
 
-    const getAllMonsters = async () => {
-        try {
-            const response = await fetch(bp.buildPath('api/getMonsterList'), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-            });
+    // const getAllMonsters = async () => {
+    //     try {
+    //         const response = await fetch(bp.buildPath('api/getMonsterList'), {
+    //             method: 'POST',
+    //             headers: { 'Content-Type': 'application/json' },
+    //         });
 
-            var res = JSON.parse(await response.text());
-            console.log(res.monsterList);
-            setMonsters(res.monsterList);
-        } catch (e) {
-            setMessage(e.toString());
-        }
-    };
+    //         var res = JSON.parse(await response.text());
+    //         console.log(res.monsterList);
+    //         setMonsters(res.monsterList);
+    //     } catch (e) {
+    //         setMessage(e.toString());
+    //     }
+    // };
 
     const handleName = (marker) => {
         if (userMonsterList.includes(marker.key)) {
