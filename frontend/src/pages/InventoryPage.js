@@ -5,7 +5,7 @@ import Inventory from '../components/Inventory';
 const InventoryPage = () => {
     return (
         <div className="inventory sticky-top">
-            <NavBar />
+            <NavBar activeLink="inventory" />
             <Inventory />
         </div>
     );

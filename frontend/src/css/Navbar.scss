@@ -1,9 +1,25 @@
 $gold: #F2BD00;
+$grey: #363636;
+
+.greyLink{
+    background-color: #6B6B6B;
+    padding: 11px;
+
+}
 
 .nav-link{
-    color: $gold
+    color: $gold;
+    margin: 5px;
+    font-size: 18px;
 }
+
+.nav-link:hover{color: white;}
+
+
 .navbar-brand{
     color:$gold;
     -webkit-text-stroke: 0.5px white; 
 }
+
+.navbar {padding-bottom: 0; 
+padding-top:0; height: 50px}

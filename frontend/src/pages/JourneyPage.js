@@ -5,7 +5,7 @@ import Journey from '../components/Journey';
 export default function App() {
     return (
         <div className="journey">
-            <NavBar />
+            <NavBar activeLink="journey" />
             <Journey />
         </div>
     );

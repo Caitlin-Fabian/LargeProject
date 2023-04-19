@@ -5,7 +5,7 @@ const ProfilePage = () => {
     return (
         <>
             <div>
-                <NavBar />
+                <NavBar activeLink="profile" />
                 <Profile />
             </div>
         </>

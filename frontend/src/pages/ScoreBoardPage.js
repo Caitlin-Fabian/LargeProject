@@ -8,7 +8,7 @@ const ScoreBoardPage = () => {
     return (
         <>
             <div className="scoreboard">
-                <NavBar />
+                <NavBar activeLink="Scoreboard" />
                 <Scoreboard />
             </div>
         </>

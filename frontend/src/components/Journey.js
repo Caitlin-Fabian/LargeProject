@@ -14,7 +14,7 @@ const ucf = { lat: 28.60117044744501, lng: -81.20031305970772 };
 const redIcon = `https://icon-library.com/images/google-map-location-icon/google-map-location-icon-20.jpg`;
 const greenIcon = `https://play-lh.googleusercontent.com/5WifOWRs00-sCNxCvFNJ22d4xg_NQkAODjmOKuCQqe57SjmDw8S6VOSLkqo6fs4zqis=w480-h960-rw`;
 
-async function getAllMonsters(){
+async function getAllMonsters() {
     var bp = require('./Path.js');
     try {
         const response = await fetch(bp.buildPath('api/getMonsterList'), {
@@ -26,7 +26,7 @@ async function getAllMonsters(){
         console.log(res.monsterList);
         return res.monsterList;
     } catch (e) {
-       // setMessage(e.toString());
+        // setMessage(e.toString());
     }
 }
 
@@ -68,9 +68,7 @@ const Journey = () => {
         setMonsters(m);
         let length = m.length;
         for (let x = 0; x < length; x++) {
-            let icon = markerIcon(
-                userMonsterList.includes(m[x]._id)
-            );
+            let icon = markerIcon(userMonsterList.includes(m[x]._id));
             console.log(parseInt(m[x].lat));
             locations.push({
                 key: m[x]._id,
@@ -168,13 +166,14 @@ const Journey = () => {
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_MAPS_API_KEY,
     });
-    if ((!isLoaded || monsters === null || icons === [])) return <div>Loading...</div>;
+    if (!isLoaded || monsters === null || icons === [])
+        return <div>Loading...</div>;
     return (
         <>
             <div className="d-flex justify-content-center m-4 ">
                 <GoogleMap
                     onClick={() => setActiveMarker(null)}
-                    zoom={16.8}
+                    zoom={16.2}
                     center={ucf}
                     options={{
                         mapId: process.env.REACT_APP_MAPS_ID_KEY,
