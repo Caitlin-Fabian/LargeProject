@@ -143,7 +143,7 @@ function MonsterList() {
                 ) : (
                     <>
                         <div className="choose shadow">
-                            <h2>Choose A Character!</h2>
+                            <h2>Inventory</h2>
                         </div>
                     </>
                 )}

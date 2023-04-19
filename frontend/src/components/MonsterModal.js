@@ -58,7 +58,7 @@ const CharacterModal = ({ setScore, id, setMonsterModal }) => {
     return (
         <div className="CharModal d-flex flex-column justify-content-around">
             <div className=" d-flex justify-content-center flex-column container text-center ">
-                <h1>Choose Your Monster!</h1>
+                <h1>Inventory</h1>
                 <div className="d-flex flex-row justify-content-around">
                     {monsters.map((card) => (
                         <div

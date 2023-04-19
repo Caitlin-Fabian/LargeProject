@@ -9,12 +9,12 @@ const CharacterModal = ({ id, setCharacterModal }) => {
     var teams = [
         {
             id: 1,
-            title: 'Male',
+            title: 'Character 1',
             picture: boy,
         },
         {
             id: 2,
-            title: 'Female',
+            title: 'Character 2',
             picture: girl,
         },
     ];
