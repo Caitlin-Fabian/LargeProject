@@ -26,7 +26,7 @@ function BasicExample() {
                     <Nav.Link href="/inventory">Inventory</Nav.Link>
                     <Nav.Link href="/journey">Journey</Nav.Link>
                     <Nav.Link href="/Scoreboard">Score Board</Nav.Link>
-                    <Nav.Link href="/profile">profile</Nav.Link>
+                    <Nav.Link href="/profile">Profile</Nav.Link>
                 </Nav>
             </div>
         </Navbar>
